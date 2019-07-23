@@ -58,7 +58,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
 
     
-    public var BubbleService : BubbleService
+    public var bubbleService : BubbleService
     
     public func fetchNewDataIfNeeded(_ completion: @escaping (CGMResult) -> Void) {
         guard BubbleClientManager.proxy != nil else {
@@ -153,7 +153,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     public init(){
         lastConnected = nil
         //let isui = (self is CGMManagerUI)
-        self.BubbleService = BubbleService(keychainManager: keychain)
+        self.bubbleService = BubbleService(keychainManager: keychain)
         
         os_log("dabear: BubbleClientManager will be created now")
         //proxy = BubbleBluetoothManager()
@@ -200,15 +200,15 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     }
     
     public var firmwareVersion : String {
-        return BubbleClientManager.proxy?.Bubble?.firmware ?? "n/a"
+        return BubbleClientManager.proxy?.bubble?.firmware ?? "n/a"
     }
     
     public var hardwareVersion : String {
-        return BubbleClientManager.proxy?.Bubble?.hardware ?? "n/a"
+        return BubbleClientManager.proxy?.bubble?.hardware ?? "n/a"
     }
     
     public var battery : String {
-        if let bat = BubbleClientManager.proxy?.Bubble?.battery {
+        if let bat = BubbleClientManager.proxy?.bubble?.battery {
             return "\(bat)%"
         }
         return "n/a"

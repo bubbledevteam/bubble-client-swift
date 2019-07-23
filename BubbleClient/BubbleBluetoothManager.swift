@@ -57,7 +57,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     private var lastConnectedIdentifier : String?
     
     static let bt_log = OSLog(subsystem: "com.LibreMonitor", category: "BubbleManager")
-    var Bubble: Bubble?
+    var bubble: Bubble?
     var BubbleResponseState: BubbleResponseState?
     var centralManager: CBCentralManager!
     var peripheral: CBPeripheral?
@@ -385,7 +385,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                         let hardware = value[2].description + ".0"
                         let firmware = value[1].description + ".0"
                         let battery = Int(value[4])
-                        Bubble = Bubble(hardware: hardware,
+                        bubble = Bubble(hardware: hardware,
                                             firmware: firmware,
                                             battery: battery)
                         
@@ -547,7 +547,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 })
             }
             // Inform delegate that new data is available
-            delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: Bubble!)
+            delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble!)
         }
         
         
