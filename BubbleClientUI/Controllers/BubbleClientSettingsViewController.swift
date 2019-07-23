@@ -106,7 +106,7 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         
         case delete
 
-        static let count = 8
+        static let count = 7
     }
 
     override public func numberOfSections(in tableView: UITableView) -> Int {
