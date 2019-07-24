@@ -500,14 +500,13 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             }
         case .latestBridgeInfo:
             switch LatestBridgeInfoRow(rawValue: indexPath.row)! {
-            case .battery:
-            case .firmware:
-            case .hardware:
             case .connectionState:
                 tableView.deselectRow(at: indexPath, animated: true)
                 let vc = BubbleClientSearchViewController()
                 vc.cgmManager = cgmManager
                 navigationController?.pushViewController(vc, animated: true)
+            default:
+                tableView.deselectRow(at: indexPath, animated: true)
             }
 //        case .latestCalibrationData:
 //
