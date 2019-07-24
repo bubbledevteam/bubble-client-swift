@@ -68,8 +68,10 @@ public func calibrateSensor(accessToken: String, site:String, sensordata: Sensor
     do {
         let data = try Data.init(contentsOf: url)
         let response = try decoder.decode(DerivedAlgorithmParameters.self, from: data)
-        callback(response)
-        return
+        if response.serialNumber == sensordata.serialNumber {
+            callback(response)
+            return
+        }
     } catch {
         print("decoder error:", error)
     }

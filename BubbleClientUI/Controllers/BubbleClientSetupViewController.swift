@@ -20,12 +20,12 @@ class BubbleClientSetupViewController: UINavigationController, CGMManagerSetupVi
 
     init() {
         
-        let service = BubbleService(keychainManager: KeychainManager())
-        let authVC = AuthenticationViewController(authentication: service)
+//        let service = BubbleService(keychainManager: KeychainManager())
+//        let authVC = AuthenticationViewController(authentication: service)
         
-        
+        let vc = UIViewController()
 
-        super.init(rootViewController: authVC)
+        super.init(rootViewController: vc)
 
         authVC.authenticationObserver = {  (service) in
             //self?.cgmManager?.miaomiaoService = service

@@ -24,8 +24,6 @@ extension BubbleClientManager: CGMManagerUI {
     }
 
     public var smallImage: UIImage? {
-        let bundle = Bundle(for: type(of: self))
-        
-        return UIImage(named: "bubble", in: bundle, compatibleWith: nil)
+        return UIImage.init(named: "bubble")
     }
 }

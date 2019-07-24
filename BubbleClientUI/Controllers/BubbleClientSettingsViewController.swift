@@ -152,14 +152,14 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         
         case edit
         
-        static let count = 8
+        static let count = 7
     }
     
     private enum AdvancedSettingsRow: Int {
         case alarms
         case glucoseNotifications
         case dangermode
-        static let count = 3
+        static let count = 2
     }
 
     override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
