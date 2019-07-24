@@ -499,7 +499,16 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
                 tableView.deselectRow(at: indexPath, animated: true)
             }
         case .latestBridgeInfo:
-            tableView.deselectRow(at: indexPath, animated: true)
+            switch LatestBridgeInfoRow(rawValue: indexPath.row)! {
+            case .battery:
+            case .firmware:
+            case .hardware:
+            case .connectionState:
+                tableView.deselectRow(at: indexPath, animated: true)
+                let vc = BubbleClientSearchViewController()
+                vc.cgmManager = cgmManager
+                navigationController?.pushViewController(vc, animated: true)
+            }
 //        case .latestCalibrationData:
 //
 //            if LatestCalibrationDataInfoRow(rawValue: indexPath.row)! == .edit {
@@ -571,17 +580,6 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
 //
         case .sensorInfo:
             tableView.deselectRow(at: indexPath, animated: true)
-            switch LatestSensorInfoRow.init(rawValue: indexPath.row)! {
-            case .sensorState:
-                let vc = BubbleClientSearchViewController()
-                vc.cgmManager = cgmManager
-                navigationController?.pushViewController(vc, animated: true)
-                break
-            case .sensorAge:
-                break
-            case .sensorSerialNumber:
-                break
-            }
         case .advanced:
             tableView.deselectRow(at: indexPath, animated: true)
             
