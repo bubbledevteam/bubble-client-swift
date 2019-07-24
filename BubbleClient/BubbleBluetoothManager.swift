@@ -57,7 +57,7 @@ protocol BubbleBluetoothManagerDelegate {
 }
 
 final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
-    
+    var list = [BubblePeripheral]()
     // MARK: - Properties
     private var wantsToTerminate = false
     private var lastConnectedIdentifier : String?

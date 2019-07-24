@@ -21,6 +21,7 @@ class BubbleClientSearchViewController: UITableViewController {
             self?.list = list
             self?.tableView.reloadData()
         }
+        list = cgmManager?.list ?? []
         
         title = cgmManager?.localizedTitle
         
