@@ -100,6 +100,7 @@
 		27E3C39C222EE9450036AAC7 /* LibreOOPResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E3C397222EE9450036AAC7 /* LibreOOPResponse.swift */; };
 		27E3C39F222EE9A80036AAC7 /* LibreOOPWebExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E3C39E222EE9A80036AAC7 /* LibreOOPWebExtensions.swift */; };
 		27E3C3A2222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E3C3A1222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift */; };
+		2C75834622E89D800002448E /* BubbleClientSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C75834522E89D800002448E /* BubbleClientSearchViewController.swift */; };
 		4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9CE210E6A0A00969CE5 /* HKUnit.swift */; };
 		4325E9D3210E6ADA00969CE5 /* IdentifiableClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */; };
 		4325E9D5210E6B4400969CE5 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D4210E6B4300969CE5 /* UIColor.swift */; };
@@ -259,6 +260,7 @@
 		27E3C397222EE9450036AAC7 /* LibreOOPResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreOOPResponse.swift; sourceTree = "<group>"; };
 		27E3C39E222EE9A80036AAC7 /* LibreOOPWebExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreOOPWebExtensions.swift; sourceTree = "<group>"; };
 		27E3C3A1222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivedAlgorithmParameters.swift; sourceTree = "<group>"; };
+		2C75834522E89D800002448E /* BubbleClientSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleClientSearchViewController.swift; sourceTree = "<group>"; };
 		4325E9CE210E6A0A00969CE5 /* HKUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKUnit.swift; sourceTree = "<group>"; };
 		4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentifiableClass.swift; sourceTree = "<group>"; };
 		4325E9D4210E6B4300969CE5 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
@@ -486,6 +488,7 @@
 				27CBEB3D225FE5CB004F7BF5 /* AlarmSettingsTableViewController.swift */,
 				2701478C2281FA4A0013C9E3 /* NotificationsSettingsTableViewController.swift */,
 				43A8EC8F210E676500A81379 /* BubbleClientSettingsViewController.swift */,
+				2C75834522E89D800002448E /* BubbleClientSearchViewController.swift */,
 				43A8EC8D210E676500A81379 /* BubbleClientSetupViewController.swift */,
 			);
 			path = Controllers;
@@ -937,6 +940,7 @@
 				27E0969B22B94D4400B3164D /* CustomDatePickerViewController.swift in Sources */,
 				27E0968422A6EFCD00B3164D /* SnoozeView.swift in Sources */,
 				43A8EC97210E680100A81379 /* ShareService+UI.swift in Sources */,
+				2C75834622E89D800002448E /* BubbleClientSearchViewController.swift in Sources */,
 				275C3D99229AA88200E27439 /* mmSwitchTableViewCell.swift in Sources */,
 				27E0969822B94CAD00B3164D /* CustomDatePicker.swift in Sources */,
 				270C265C22691253005B27F3 /* GlucoseAlarmInputCell.swift in Sources */,

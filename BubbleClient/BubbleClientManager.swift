@@ -10,11 +10,24 @@ import Foundation
 import LoopKit
 import LoopKitUI
 import UserNotifications
+import CoreBluetooth
 
 import os.log
 import HealthKit
 
 public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelegate {
+    
+    func BubbleBluetoothManagerDidFound(peripheral: BubblePeripheral) {
+        found?(peripheral)
+    }
+    
+    public func connect(peripheral: CBPeripheral?) {
+        BubbleClientManager.proxy?.peripheral = peripheral
+        BubbleClientManager.proxy?.connect()
+    }
+    
+    public var found: ((BubblePeripheral) -> Void)?
+    
     public var sensorState: SensorDisplayable? {
         return latestBackfill
     }

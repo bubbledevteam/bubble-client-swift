@@ -162,7 +162,7 @@ public class SnoozeTableViewController: UITableViewController, UIPickerViewDataS
             let cell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "DefaultCell")
             
             cell.textLabel?.textAlignment = .center
-            cell.textLabel?.text = LocalizedString("Click to Snooze Alerts", comment: "Title of cell to snooze active alarms")
+            cell.textLabel?.text = NSLocalizedString("Click to Snooze Alerts", comment: "Title of cell to snooze active alarms")
             return cell
         case .snoozePicker:
             let cell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "DefaultCell")

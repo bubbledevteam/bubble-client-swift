@@ -290,7 +290,7 @@ public class NotificationsSettingsTableViewController: UITableViewController , m
     }
     
     public override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return LocalizedString("Notification settings", comment: "The title text for the Notification settings")
+        return NSLocalizedString("Notification settings", comment: "The title text for the Notification settings")
             
        
     }

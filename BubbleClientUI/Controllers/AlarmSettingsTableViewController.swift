@@ -338,7 +338,7 @@ public class AlarmSettingsTableViewController: UITableViewController, AlarmTimeI
         default: //case .sync:
             let cell = tableView.dequeueReusableCell(withIdentifier: TextButtonTableViewCell.className, for: indexPath) as! TextButtonTableViewCell
             
-            cell.textLabel?.text = LocalizedString("Save glucose alarms", comment: "The title for Save glucose alarms")
+            cell.textLabel?.text = NSLocalizedString("Save glucose alarms", comment: "The title for Save glucose alarms")
             cell.isEnabled = !isSyncInProgress
             cell.isLoading = isSyncInProgress
             
@@ -350,7 +350,7 @@ public class AlarmSettingsTableViewController: UITableViewController, AlarmTimeI
         switch section {
         case let x where x < glucoseSchedulesCount:
             
-            return LocalizedString("Glucose Alarm Schedule", comment: "The title text for the Glucose Alarm Schedule") + " #\(section+1)"
+            return NSLocalizedString("Glucose Alarm Schedule", comment: "The title text for the Glucose Alarm Schedule") + " #\(section+1)"
             
         default: //case .sync:
             return nil
@@ -365,7 +365,7 @@ public class AlarmSettingsTableViewController: UITableViewController, AlarmTimeI
          case .schedule2:
          return nil
          case .sync:
-         return nil //LocalizedString("Save alarms", comment: "The title for saving alarms")
+         return nil //NSLocalizedString("Save alarms", comment: "The title for saving alarms")
          }*/
     }
     

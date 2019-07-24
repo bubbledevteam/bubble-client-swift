@@ -13,6 +13,11 @@ import UIKit
 import CoreBluetooth
 import os.log
 
+public class BubblePeripheral: NSObject {
+    public var mac: String?
+    public var peripheral: CBPeripheral?
+}
+
 public enum BubbleManagerState: String {
     case Unassigned = "Unassigned"
     case Scanning = "Scanning"
@@ -48,6 +53,7 @@ protocol BubbleBluetoothManagerDelegate {
     func BubbleBluetoothManagerPeripheralStateChanged(_ state: BubbleManagerState)
     func BubbleBluetoothManagerReceivedMessage(_ messageIdentifier:UInt16, txFlags:UInt8, payloadData:Data)
     func BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: SensorData, Bubble: Bubble) -> Void
+    func BubbleBluetoothManagerDidFound(peripheral: BubblePeripheral)
 }
 
 final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
@@ -183,8 +189,22 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         
         os_log("Did discover peripheral while state %{public}@ with name: %{public}@, wantstoterminate?:  %d", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue), String(describing: peripheral.name), self.wantsToTerminate)
         if peripheral.name == deviceName {
-            self.peripheral = peripheral
-            connect()
+            if let data = advertisementData["kCBAdvDataManufacturerData"] as? Data {
+                var mac = ""
+                for i in 0 ..< 6 {
+                    mac += data.subdata(in: (7 - i)..<(8 - i)).hexEncodedString().uppercased()
+                    if i != 5 {
+                        mac += ":"
+                    }
+                }
+                let bubblePeripheral = BubblePeripheral()
+                bubblePeripheral.mac = mac
+                bubblePeripheral.peripheral = peripheral
+                delegate?.BubbleBluetoothManagerDidFound(peripheral: bubblePeripheral)
+            }
+            
+//            self.peripheral = peripheral
+//            connect()
             
 //            if let data = advertisementData["kCBAdvDataManufacturerData"] as? Data {
 //                var mac = ""

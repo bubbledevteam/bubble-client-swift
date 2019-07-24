@@ -19,15 +19,15 @@ extension BubbleService: ServiceAuthenticationUI {
         return [
 
             ServiceCredential(
-                title: LocalizedString("Password", comment: "The title of the Spike password credential"),
+                title: NSLocalizedString("Password", comment: "The title of the Spike password credential"),
                 isSecret: true,
                 keyboardType: .asciiCapable
             ),
             ServiceCredential(
-                title: LocalizedString("AutoCalibrationSite", comment: "The title of the auto calibration server URL credential"),
+                title: NSLocalizedString("AutoCalibrationSite", comment: "The title of the auto calibration server URL credential"),
                 isSecret: false,
                 options: [
-                    (title: LocalizedString("LibreOOPWeb", comment: "LibreOOPWeb server option"),
+                    (title: NSLocalizedString("LibreOOPWeb", comment: "LibreOOPWeb server option"),
                      value: LibreOOPWebAzzure.LibreOOPWebAzzure.rawValue)
                     
                 ]

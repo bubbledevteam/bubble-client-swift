@@ -153,7 +153,7 @@ public class CalibrationEditTableViewController: UITableViewController , mmTextF
         if indexPath.section == Section.sync.rawValue {
             let cell = tableView.dequeueReusableCell(withIdentifier: TextButtonTableViewCell.className, for: indexPath) as! TextButtonTableViewCell
             
-            cell.textLabel?.text = LocalizedString("Save calibrations", comment: "The title for Save calibration")
+            cell.textLabel?.text = NSLocalizedString("Save calibrations", comment: "The title for Save calibration")
             return cell
         }
         
@@ -230,7 +230,7 @@ public class CalibrationEditTableViewController: UITableViewController , mmTextF
         if section == Section.sync.rawValue {
             return nil
         }
-        return LocalizedString("Calibrations edit mode", comment: "The title text for the Notification settings")
+        return NSLocalizedString("Calibrations edit mode", comment: "The title text for the Notification settings")
             
        
     }
