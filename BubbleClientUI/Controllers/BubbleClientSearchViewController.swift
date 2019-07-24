@@ -17,20 +17,9 @@ class BubbleClientSearchViewController: UITableViewController {
         super.viewDidLoad()
         
         cgmManager?.found = {
-            [weak self] bubblePeripheral in
-            var insert = true
-            if let mac = bubblePeripheral.mac {
-                for temp in self?.list ?? [] {
-                    if temp.mac == mac {
-                        insert = false
-                        break
-                    }
-                }
-                if insert {
-                    self?.list.append(bubblePeripheral)
-                    self?.tableView.reloadData()
-                }
-            }
+            [weak self] list in
+            self?.list = list
+            self?.tableView.reloadData()
         }
         
         title = cgmManager?.localizedTitle

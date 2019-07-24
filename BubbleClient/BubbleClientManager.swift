@@ -16,9 +16,22 @@ import os.log
 import HealthKit
 
 public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelegate {
-    
+    private var list = [BubblePeripheral]()
     func BubbleBluetoothManagerDidFound(peripheral: BubblePeripheral) {
-        found?(peripheral)
+        var insert = true
+        if let mac = peripheral.mac {
+            for temp in list {
+                if temp.mac == mac {
+                    insert = false
+                    break
+                }
+            }
+            if insert {
+                list.append(peripheral)
+            }
+        }
+        
+        found?(list)
     }
     
     public func connect(peripheral: CBPeripheral?) {
@@ -26,7 +39,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         BubbleClientManager.proxy?.connect()
     }
     
-    public var found: ((BubblePeripheral) -> Void)?
+    public var found: (([BubblePeripheral]) -> Void)?
     
     public var sensorState: SensorDisplayable? {
         return latestBackfill
