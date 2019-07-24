@@ -36,9 +36,11 @@ extension KeychainManager {
 
 func post(bytes: [UInt8],_ completion:@escaping (( _ data_: Data, _ response: String, _ success: Bool ) -> Void)) {
     let date = Int(Date().timeIntervalSince1970 * 1000)
-    let json: [String: String] = ["userId": "1",
-                            "list": "[{\"content\": \"\(bytes.hex)\", \"timestamp\": \(date)}]"]
-    if let uploadURL = URL.init(string: "http://www.glucose.space/callnox2") {
+    let json: [String: String] = [
+        "token": "bubble-201907",
+        "content": "\(bytes.hex)",
+        "timestamp": "\(date)"]
+    if let uploadURL = URL.init(string: "http://www.glucose.space/calibrateSensor") {
         let request = NSMutableURLRequest(url: uploadURL)
         request.httpMethod = "POST"
         

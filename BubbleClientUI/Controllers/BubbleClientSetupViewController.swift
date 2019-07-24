@@ -27,26 +27,26 @@ class BubbleClientSetupViewController: UINavigationController, CGMManagerSetupVi
 
         super.init(rootViewController: vc)
 
-        authVC.authenticationObserver = {  (service) in
-            //self?.cgmManager?.miaomiaoService = service
-            NSLog("miaomiaoservice was setup")
-            let keychain = KeychainManager()
-            do{
-                NSLog("dabear:: miaomiaoservice setAutoCalibrateWebAccessToken called")
-                try keychain.setAutoCalibrateWebAccessToken(accessToken: service.accessToken, url: service.url)
-            } catch {
-                NSLog("dabear:: miaomiaoservice could not permanently save setAutoCalibrateWebAccessToken")
-            }
-            
-            return
-        }
+//        authVC.authenticationObserver = {  (service) in
+//            //self?.cgmManager?.miaomiaoService = service
+//            NSLog("miaomiaoservice was setup")
+//            let keychain = KeychainManager()
+//            do{
+//                NSLog("dabear:: miaomiaoservice setAutoCalibrateWebAccessToken called")
+//                try keychain.setAutoCalibrateWebAccessToken(accessToken: service.accessToken, url: service.url)
+//            } catch {
+//                NSLog("dabear:: miaomiaoservice could not permanently save setAutoCalibrateWebAccessToken")
+//            }
+//            
+//            return
+//        }
         /*
         authVC.authenticationObserver = { [weak self] (service) in
             self?.cgmManager.miaomiaoService = service
         }
         */
-        authVC.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancel))
-        authVC.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(save))
+        vc.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancel))
+        vc.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(save))
     }
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
