@@ -24,6 +24,7 @@ class BubbleClientSetupViewController: UINavigationController, CGMManagerSetupVi
 //        let authVC = AuthenticationViewController(authentication: service)
         
         let vc = UIViewController()
+        vc.view.backgroundColor = .white
 
         super.init(rootViewController: vc)
 
