@@ -33,12 +33,13 @@ class BubbleClientSearchViewController: UITableViewController {
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
-        let button = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelAction))
+        let button = UIBarButtonItem.init(title: NSLocalizedString("Scan", comment: "scan bubble"), style: .done, target: self, action: #selector(scanAction))
         self.navigationItem.setRightBarButton(button, animated: false)
     }
     
-    @objc func cancelAction() {
-        navigationController?.popViewController(animated: true)
+    @objc func scanAction() {
+        cgmManager?.clearList()
+        tableView.reloadData()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

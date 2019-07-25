@@ -108,8 +108,8 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         os_log("Scan for Bubble while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state))
         //        print(centralManager.debugDescription)
         if centralManager.state == .poweredOn {
+            disconnectManually()
             os_log("Before scan for Bubble while central manager state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: centralManager.state.rawValue))
-            
             centralManager.scanForPeripherals(withServices: nil, options: nil)
             
             state = .Scanning

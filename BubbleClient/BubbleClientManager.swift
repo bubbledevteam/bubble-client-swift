@@ -35,6 +35,11 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         }
     }
     
+    public func clearList() {
+        BubbleClientManager.proxy?.list = []
+        BubbleClientManager.proxy?.scanForBubble()
+    }
+    
     public var list: [BubblePeripheral] {
         return BubbleClientManager.proxy?.list ?? []
     }
