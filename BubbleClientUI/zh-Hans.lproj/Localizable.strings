@@ -1,37 +1,183 @@
-﻿/* The title of the cancel action in an action sheet */
+/* Advanced Section */
+"Advanced" = "高级设置";
+
+/* Title describing sensor Gluocse Alarms */
+"Alarms" = "报警";
+
+/* The title text for the Bubble enable alarm schedules and notitifications */
+"Alarms schedules active" = "Alarms schedules active";
+
+/* The title text for the looping enabled switch cell */
+"Always Notify Glucose" = "推送血糖到通知栏";
+
+/* Confirmation message for deleting a CGM */
+"Are you sure you want to delete this CGM?" = "确定删除该血糖数据源?";
+
+/* Confirmation message for recalibrate sensor */
+"Are you sure you want to recalibrate this sensor?" = "确认重新校准该传感器?";
+
+/* The title of the auto calibration server URL credential */
+"AutoCalibrationSite" = "AutoCalibrationSite";
+
+/* Title describing bridge battery info */
+"Battery" = "电量";
+
+/* The title text for the Notification settings */
+"Calibrations edit mode" = "Calibrations edit mode";
+
+/* The title of the cancel action in an action sheet */
 "Cancel" = "取消";
 
+/* Title of cell to snooze active alarms */
+"Click to Snooze Alerts" = "延迟报警";
+
+/* Title Bridge connection state */
+"Connection State" = "连接状态";
+
+/* Title describing  Advanced dangerous settings button */
+"Danger mode" = "Danger mode";
+
+/* Title describing glucose date */
 "Date" = "日期";
 
-"Glucose" = "葡萄糖";
+/* Button title to delete CGM
+ Title text for the button to remove a CGM from Loop */
+"Delete CGM" = "删除动态血糖数据源";
 
-/* Outside US share server option title */
-"Outside US" = "非美国地区";
+/* Title describing calibrationdata edit button */
+"Edit Calibrations" = "Edit Calibrations";
 
-/* The title of the Dexcom share password credential */
-"Password" = "密码";
+/* Title describing calibrationdata extra offset */
+"Extra_offset" = "Extra_offset";
 
-/* The title of the Dexcom share server URL credential */
-"Server" = "服务器";
+/* Title describing calibrationdata extra slope */
+"Extra_slope" = "Extra_slope";
 
-/* U.S. share server option title */
-"US" = "美国";
+/* The title text for extra offset calibration setting */
+"extraOffset" = "extraOffset";
 
-/* The title of the Dexcom share username credential */
-"Username" = "用户名";
+/* The title text for extra slope calibration setting */
+"extraSlope" = "extraSlope";
+
+/* Title describing bridge firmware info */
+"Firmware" = "固件版本";
+
+/* Title describing glucose value */
+"Glucose" = "血糖";
+
+/* The title text for the Glucose Alarm Schedule */
+"Glucose Alarm Schedule" = "血糖报警设置";
+
+/* The title text for the Glucose Alarms vibrate notifications */
+"Glucose Alarms vibrate" = "血糖报警震动";
+
+/* Title describing bridge hardware info */
+"Hardware" = "硬件版本";
+
+/* The title text for the Bubble Invalid sensor detected */
+"Invalid Sensor" = "不支持的传感器";
+
+/* The title for the footer crc checksum linking these calibration values to this particular sensor */
+"IsValidForFooter" = "IsValidForFooter";
+
+/* Section title for latest bridge info */
+"Latest Autocalibration Parameters" = "Latest Autocalibration Parameters";
+
+/* Section title for latest bridge info */
+"Latest Bridge info" = "Bubble最新状态";
+
+/* Section title for latest glucose reading */
+"Latest Reading" = "最近一次血糖值";
+
+/* LibreOOPWeb server option */
+"LibreOOPWeb" = "LibreOOPWeb";
+
+/* The title text for the Bubble low battery notifications */
+"Low Battery" = "低电量";
+
+/* The title text for the Notification settings */
+"Notification settings" = "提醒设置";
+
+/* Title describing  Notifications Setup */
+"Notifications" = "提醒";
+
+/* The title text for the Notify every reading nr */
+"Notify Per Reading (0-9)" = "Notify Per Reading (0-9)";
+
+/* Title describing calibrationdata offsetoffset */
+"Offset_offset" = "Offset_offset";
+
+/* Title describing calibrationdata offsetslope */
+"Offset_slope" = "Offset_slope";
+
+/* The title text for offsetoffset calibration setting */
+"offsetoffset" = "offsetoffset";
+
+/* The title text for offsetslope calibration setting */
+"offsetslope" = "offsetslope";
+
+/* The title of the Spike password credential */
+"Password" = "Password";
+
+/* Button title to recalibrate */
+"Recalibrate" = "Recalibrate";
+
+/* The title for saving alarms */
+"Save alarms" = "保存报警设置";
+
+/* The title for Save calibration */
+"Save calibrations" = "Save calibrations";
+
+/* The title for Save glucose alarms */
+"Save glucose alarms" = "保存血糖报警设置";
+
+/* Title describing sensor Age */
+"Sensor Age" = "传感器已使用天数";
+
+/* The title text for the Bubble sensor change detected event */
+"Sensor Change" = "传感器已更换";
+
+/* The title text for the Bubble sensor Sensor Expires soon event */
+"Sensor Expires Soon" = "传感器即将结束";
+
+/* Title describing Sensor footer reverse checksum */
+"Sensor Footer checksum" = "Sensor Footer checksum";
+
+/* Section title for latest sensor info */
+"Sensor Info" = "传感器信息";
+
+/* The title text for the Bubble sensor not found event */
+"Sensor Not found" = "未读取到传感器";
+
+/* Title describing sensor serial */
+"Sensor Serial" = "传感器编号";
+
+/* Title describing sensor state */
+"Sensor State" = "传感器状态";
+
+/* Title describing calibrationdata slopeoffset */
+"Slope_offset" = "Slope_offset";
+
+/* Title describing calibrationdata slopeslope */
+"Slope_slope" = "Slope_slope";
+
+/* The title text for slopeoffset calibration setting */
+"slopeoffset" = "slopeoffset";
+
+/* The title text for slopeslope calibration setting */
+"slopeslope" = "slopeslope";
+
+/* Title of cell to snooze active alarms */
+"Snooze Alert" = "延迟报警";
+
+/* Title of cell to snooze active alarms */
+"Snooze Alerts" = "延迟报警";
 
 /* Title describing glucose trend */
 "Trend" = "趋势";
 
-/* Confirmation message for deleting a CGM */
-"Are you sure you want to delete this CGM?" = "确认删除该血糖数据源?";
+/* Title describing calibrationdata validity */
+"Valid For Footer" = "Valid For Footer";
 
-/* Title of cell to set credentials */
-"Credentials" = "密钥";
-
-/* Button title to delete CGM
- Title text for the button to remove a CGM from Loop */
-"Delete CGM" = "删除血糖数据源";
-
-/* Section title for latest glucose reading */
-"Latest Reading" = "最新血糖数据";
+/* scan bubble */
+"Scan" = "扫描设备";
