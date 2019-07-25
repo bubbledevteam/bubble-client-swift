@@ -12,7 +12,7 @@ import UIKit
 
 extension BubbleClientManager: CGMManagerUI {
     public static func setupViewController() -> (UIViewController & CGMManagerSetupViewController & CompletionNotifying)? {
-        return BubbleClientSetupViewController()
+        return nil
     }
     
    
