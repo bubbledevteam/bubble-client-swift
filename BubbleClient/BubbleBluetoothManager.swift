@@ -26,6 +26,7 @@ public enum BubbleManagerState: String {
     case Connecting = "Connecting"
     case Connected = "Connected"
     case Notifying = "Notifying"
+    case powerOff = "powerOff"
 }
 
 public enum BubbleResponseState: UInt8 {
@@ -189,7 +190,9 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         
         
         switch central.state {
-        case .poweredOff, .resetting, .unauthorized, .unknown, .unsupported:
+        case .poweredOff:
+            state = .powerOff
+        case  .resetting, .unauthorized, .unknown, .unsupported:
             os_log("Central Manager was either .poweredOff, .resetting, .unauthorized, .unknown, .unsupported: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: central.state))
             state = .Unassigned
         case .poweredOn:

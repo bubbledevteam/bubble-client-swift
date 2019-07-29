@@ -320,7 +320,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         // force trying to reconnect every time a we detect
         // a disconnected state while fetching
         switch (proxy.state) {
-        case .Unassigned:
+        case .Unassigned, .powerOff:
             break
             //proxy.scanForBubble()
         case .Scanning:
@@ -442,7 +442,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         switch state {
         case .Connected:
             lastConnected = Date()
-        case .Unassigned:
+        case .powerOff:
             NotificationHelper.sendBluetoothPowerOffNotification()
         default:
             break
