@@ -199,10 +199,10 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         BubbleClientManager.instanceCount += 1
         
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-            BubbleClientManager.proxy?.test()
-            print("test start")
-        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+//            BubbleClientManager.proxy?.test()
+//            print("test start")
+//        }
         
     }
     
