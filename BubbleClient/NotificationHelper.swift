@@ -51,7 +51,7 @@ class NotificationHelper {
     }
     
     
-    private static func ensureCanSendNotification(_ completion: @escaping (_ canSend: Bool) -> Void ) -> Void{
+    static func ensureCanSendNotification(_ completion: @escaping (_ canSend: Bool) -> Void ) -> Void{
         UNUserNotificationCenter.current().getNotificationSettings { (settings) in
             if #available(iOSApplicationExtension 12.0, *) {
                 guard (settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional) else {
@@ -218,6 +218,36 @@ class NotificationHelper {
         
         sendSensorNotDetectedNotification()
         
+    }
+    
+    public static func sendBluetoothPowerOffNotification() {
+        
+        ensureCanSendNotification { (ensured) in
+            
+            guard (ensured) else {
+                NSLog("dabear:: not sending noSensorDetected notification")
+                return
+            }
+            NSLog("dabear:: sending noSensorDetected")
+            
+            let content = UNMutableNotificationContent()
+            content.title = "Bluetooth Power Off"
+            content.body = "Please turn on Bluetooth"
+            
+            let center = UNUserNotificationCenter.current()
+            
+            
+            
+            //content.sound = UNNotificationSound.
+            let request = UNNotificationRequest(identifier: Identifiers.noSensorDetected.rawValue, content: content, trigger: nil)
+            
+            center.add(request) { (error) in
+                if let error = error {
+                    NSLog("dabear:: unable to add no sensordetected-notification: \(error.localizedDescription)")
+                }
+            }
+            
+        }
     }
     
     private static func sendSensorNotDetectedNotification() {

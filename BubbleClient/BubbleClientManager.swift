@@ -442,7 +442,8 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         switch state {
         case .Connected:
             lastConnected = Date()
-        
+        case .Unassigned:
+            NotificationHelper.sendBluetoothPowerOffNotification()
         default:
             break
         }
