@@ -127,6 +127,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         
         #if DEBUG
         test()
+        print("test start")
         #endif
     }
     

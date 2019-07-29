@@ -479,6 +479,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         
     }
     
+    public var reloadData: (() -> ())?
     public func BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: SensorData, Bubble: Bubble) {
         
         
@@ -497,13 +498,14 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                         NSLog("dabear:: handleGoodReading returned with error: \(error)")
                         
                         self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(error))
+                        self.reloadData?()
                         return
                     }
                     
                     guard let glucose = glucose else {
                         NSLog("dabear:: handleGoodReading returned with no data")
                         self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .noData)
-                        
+                        self.reloadData?()
                         return
                     }
                     
@@ -536,6 +538,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
             os_log("dit not get sensordata with valid crcs")
         }
+        self.reloadData?()
         return
     }
     

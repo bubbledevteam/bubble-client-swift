@@ -117,7 +117,8 @@
 		43AB5127213315D300B3D58D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 43AB5125213315D300B3D58D /* Localizable.strings */; };
 		43AB51362133177800B3D58D /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB51352133177800B3D58D /* LocalizedString.swift */; };
 		43AB51372133177800B3D58D /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB51352133177800B3D58D /* LocalizedString.swift */; };
-		EED7E06922E6A16100E03BAE /* BubbleClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE9947E122EE993B00DCB876 /* BubbleClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; };
+		EE9947E222EE993B00DCB876 /* BubbleClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EED7E06E22E6BC8700E03BAE /* bubble.png in Resources */ = {isa = PBXBuildFile; fileRef = EED7E06D22E6BC8700E03BAE /* bubble.png */; };
 /* End PBXBuildFile section */
 
@@ -157,7 +158,7 @@
 			remoteGlobalIDString = 432B0E871CDFC3C50045347B;
 			remoteInfo = BubbleClient;
 		};
-		EED7E06A22E6A16100E03BAE /* PBXContainerItemProxy */ = {
+		EE9947E322EE993B00DCB876 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 432B0E7F1CDFC3C50045347B /* Project object */;
 			proxyType = 1;
@@ -176,13 +177,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
-		EED7E06C22E6A16100E03BAE /* Embed Frameworks */ = {
+		EE9947E522EE993B00DCB876 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				EED7E06922E6A16100E03BAE /* BubbleClient.framework in Embed Frameworks */,
+				EE9947E222EE993B00DCB876 /* BubbleClient.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -316,6 +317,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE9947E122EE993B00DCB876 /* BubbleClient.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -655,12 +657,12 @@
 				27C335DA21667C7A00CF0868 /* Sources */,
 				27C335DB21667C7A00CF0868 /* Frameworks */,
 				27C335DC21667C7A00CF0868 /* Resources */,
-				EED7E06C22E6A16100E03BAE /* Embed Frameworks */,
+				EE9947E522EE993B00DCB876 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				EED7E06B22E6A16100E03BAE /* PBXTargetDependency */,
+				EE9947E422EE993B00DCB876 /* PBXTargetDependency */,
 			);
 			name = singleviewtesterapp2;
 			productName = singleviewtesterapp2;
@@ -760,6 +762,7 @@
 					};
 					43A8EC81210E664300A81379 = {
 						CreatedOnToolsVersion = 9.4.1;
+						DevelopmentTeam = EG7BNV2CC4;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -998,10 +1001,10 @@
 			target = 432B0E871CDFC3C50045347B /* BubbleClient */;
 			targetProxy = 432B0E941CDFC3C50045347B /* PBXContainerItemProxy */;
 		};
-		EED7E06B22E6A16100E03BAE /* PBXTargetDependency */ = {
+		EE9947E422EE993B00DCB876 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 432B0E871CDFC3C50045347B /* BubbleClient */;
-			targetProxy = EED7E06A22E6A16100E03BAE /* PBXContainerItemProxy */;
+			targetProxy = EE9947E322EE993B00DCB876 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1399,10 +1402,11 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = EG7BNV2CC4;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1434,10 +1438,11 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = EG7BNV2CC4;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
