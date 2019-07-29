@@ -126,26 +126,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         //        }
     }
     
-    func test() {
-        bubble = Bubble(hardware: "0",
-                        firmware: "0",
-                        battery: 30)
-        var data = "7e71401303000000000000000000000000000000000000006bcb04002d07c83459012d07c83059012a07c82459012707c83859016607c82059016e07c82859017007c82859016d07c84059016307c85459015707c84859015607c84859014c07c86459014407c87459013d07c87c59013b07c86459014507c84459011e06c8cc1b013406c8605a013706c8841a017805c8c0dc00b204c84cde001604c84ca000b503c844a1007303c8f062007603c8c861008c03c81ca100ee03c8c0dd00e404c8e05a011e06c8345a013c07880e1b01ce07c8785a019b07c8581a01d107c8f01901f907c8c45901de07c8705901de07c8f49801c507c8185901a807c8105901fb07c8385901f508c81499015c09c86c98015309c86498013809c88c9801e008c8c458015708c8f09801b707c8f498015807c8f898013707c84459014529000044d100015108f550140796805a00eda6187b1ac804c25869".hexadecimal ?? Data()
-        data = data.subdata(in: 0..<344)
-        sensorData = SensorData(uuid: Data(), bytes: [UInt8](data), date: Date(), derivedAlgorithmParameterSet: nil)
-        if let sensorData = sensorData {
-            if !(sensorData.hasValidHeaderCRC && sensorData.hasValidBodyCRC && sensorData.hasValidFooterCRC) {
-                Timer.scheduledTimer(withTimeInterval: 30, repeats: false, block: {_ in
-                    self.requestData()
-                })
-            }
-            // Inform delegate that new data is available
-            delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble!)
-        }
-        
-        
-    }
-    
     func connect() {
         os_log("Connect while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue))
         if let peripheral = peripheral {
@@ -423,113 +403,34 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         } else {
             if characteristic.uuid == CBUUID(string: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"), let value = characteristic.value {
                 if let firstByte = value.first {
-                    if firstByte == 128 {
-                        let hardware = value[2].description + ".0"
-                        let firmware = value[1].description + ".0"
-                        let battery = Int(value[4])
-                        bubble = Bubble(hardware: hardware,
+                    if let bubbleResponseState = BubbleResponseType(rawValue: firstByte) {
+                        switch bubbleResponseState {
+                        case .bubbleInfo:
+                            let hardware = value[2].description + ".0"
+                            let firmware = value[1].description + ".0"
+                            let battery = Int(value[4])
+                            bubble = Bubble(hardware: hardware,
                                             firmware: firmware,
                                             battery: battery)
-                        
-                        if let writeCharacteristic = writeCharacteristic {
-                            print("-----set: ", writeCharacteristic)
-                            peripheral.writeValue(Data([0x02, 0x00, 0x00, 0x00, 0x00, 0x2B]), for: writeCharacteristic, type: .withResponse)
+                            
+                            if let writeCharacteristic = writeCharacteristic {
+                                print("-----set: ", writeCharacteristic)
+                                peripheral.writeValue(Data([0x02, 0x00, 0x00, 0x00, 0x00, 0x2B]), for: writeCharacteristic, type: .withResponse)
+                            }
+                        case .dataPacket:
+                            rxBuffer.append(value.suffix(from: 4))
+                            if rxBuffer.count >= 352 {
+                                handleCompleteMessage()
+                                resetBuffer()
+                            }
+                        case .noSensor:
+                            delegate?.BubbleBluetoothManagerReceivedMessage(0x0000, txFlags: 0x34, payloadData: rxBuffer)
+                            resetBuffer()
+                        case .serialNumber:
+                            rxBuffer.append(value.subdata(in: 2..<10))
                         }
                     }
-                    
-                    if firstByte == 191 {
-                        delegate?.BubbleBluetoothManagerReceivedMessage(0x0000, txFlags: 0x34, payloadData: rxBuffer)
-                        resetBuffer()
-                    }
-                    
-                    if firstByte == 192 {
-                        rxBuffer.append(value.subdata(in: 2..<10))
-                    }
-                    
-                    if firstByte == 130 {
-                        rxBuffer.append(value.suffix(from: 4))
-                    }
-                    if rxBuffer.count >= 352 {
-                        handleCompleteMessage()
-                        print("++++++++++first: ", rxBuffer.count)
-                        resetBuffer()
-                    }
                 }
-                
-                
-//                rxBuffer.append(value)
-//                os_log("Appended value with length %{public}@, buffer length is: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: value.count), String(describing: rxBuffer.count))
-//
-//                if let firstByte = rxBuffer.first {
-//                    BubbleResponseState = BubbleResponseState(rawValue: firstByte)
-//                    if let BubbleResponseState = BubbleResponseState {
-//                        switch BubbleResponseState {
-//                        case .dataPacketReceived: // 0x28: // data received, append to buffer and inform delegate if end reached
-//
-//                            // Set timer to check if data is still uncomplete after a certain time frame
-//                            // Any old buffer is invalidated and a new buffer created with every reception of data
-//                            timer?.invalidate()
-//                            timer = Timer.scheduledTimer(withTimeInterval: 8, repeats: false) { _ in
-//                                os_log("********** BubbleManagertimer fired **********", log: BubbleBluetoothManager.bt_log, type: .default)
-//                                if self.rxBuffer.count >= 364 {
-//                                    // buffer large enough and can be used
-//                                    os_log("Buffer incomplete but large enough, inform delegate.", log: BubbleBluetoothManager.bt_log, type: .default)
-//                                    self.delegate?.BubbleBluetoothManagerReceivedMessage(0x0000, txFlags: 0x29, payloadData: self.rxBuffer)
-//                                    self.handleCompleteMessage()
-//
-//                                    self.rxBuffer = Data()  // reset buffer, once completed and delegate is informed
-//                                } else {
-//                                    // buffer not large enough and has to be reset
-//                                    os_log("Buffer incomplete and not large enough, reset buffer and request new data, again", log: BubbleBluetoothManager.bt_log, type: .default)
-//                                    self.requestData()
-//                                }
-//                            }
-//
-//                            if rxBuffer.count >= 363 && rxBuffer.last! == 0x29 {
-//                                os_log("Buffer complete, inform delegate.", log: BubbleBluetoothManager.bt_log, type: .default)
-//                                delegate?.BubbleBluetoothManagerReceivedMessage(0x0000, txFlags: 0x28, payloadData: rxBuffer)
-//                                handleCompleteMessage()
-//                                rxBuffer = Data()  // reset buffer, once completed and delegate is informed
-//                                timer?.invalidate()
-//                            } else {
-//                                // buffer not yet complete, inform delegate with txFlags 0x27 to display intermediate data
-//                                //dabear-edit: don't notify on incomplete readouts
-//                                //delegate?.BubbleManagerReceivedMessage(0x0000, txFlags: 0x27, payloadData: rxBuffer)
-//                            }
-//
-//                            // if data is not complete after 10 seconds: use anyways, if long enough, do not use if not long enough and reset buffer in both cases.
-//
-//                        case .newSensor: // 0x32: // A new sensor has been detected -> acknowledge to use sensor and reset buffer
-//                            delegate?.BubbleBluetoothManagerReceivedMessage(0x0000, txFlags: 0x32, payloadData: rxBuffer)
-//                            if let writeCharacteristic = writeCharacteristic {
-//                                peripheral.writeValue(Data.init(bytes: [0x00, 0x00, 0x05]), for: writeCharacteristic, type: .withResponse)
-//                            }
-//                            rxBuffer = Data()
-//                        case .noSensor: // 0x34: // No sensor has been detected -> reset buffer (and wait for new data to arrive)
-//                            delegate?.BubbleBluetoothManagerReceivedMessage(0x0000, txFlags: 0x34, payloadData: rxBuffer)
-//                            rxBuffer = Data()
-//                        case .frequencyChangedResponse: // 0xD1: // Success of fail for setting time intervall
-//                            delegate?.BubbleBluetoothManagerReceivedMessage(0x0000, txFlags: 0xD1, payloadData: rxBuffer)
-//                            if rxBuffer.count >= 2 {
-//                                if rxBuffer[2] == 0x01 {
-//                                    os_log("Success setting time interval.", log: BubbleBluetoothManager.bt_log, type: .default)
-//                                } else if rxBuffer[2] == 0x00 {
-//                                    os_log("Failure setting time interval.", log: BubbleBluetoothManager.bt_log, type: .default)
-//                                } else {
-//                                    os_log("Unkown response for setting time interval.", log: BubbleBluetoothManager.bt_log, type: .default)
-//                                }
-//                            }
-//                            rxBuffer = Data()
-//                            //                    default: // any other data (e.g. partial response ...)
-//                            //                        delegate?.BubbleManagerReceivedMessage(0x0000, txFlags: 0x99, payloadData: rxBuffer)
-//                            //                        rxBuffer = Data() // reset buffer, since no valid response
-//                        }
-//                    }
-//                } else {
-//                    // any other data (e.g. partial response ...)
-//                    delegate?.BubbleBluetoothManagerReceivedMessage(0x0000, txFlags: 0x99, payloadData: rxBuffer)
-//                    rxBuffer = Data() // reset buffer, since no valid response
-//                }
             }
         }
     }
@@ -550,7 +451,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     func requestData() {
         if let writeCharacteristic = writeCharacteristic {
-//            confirmSensor()
             resetBuffer()
             timer?.invalidate()
             peripheral?.writeValue(Data.init(bytes: [0x00, 0x00, 0x05]), for: writeCharacteristic, type: .withResponse)
@@ -563,23 +463,15 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     }
     
     func handleCompleteMessage() {
-        guard rxBuffer.count >= 352 else {
+        guard rxBuffer.count >= 352, let bubble = bubble else {
             return
         }
-//        #if DEBUG
-//        data = "7e71401303000000000000000000000000000000000000006bcb04002d07c83459012d07c83059012a07c82459012707c83859016607c82059016e07c82859017007c82859016d07c84059016307c85459015707c84859015607c84859014c07c86459014407c87459013d07c87c59013b07c86459014507c84459011e06c8cc1b013406c8605a013706c8841a017805c8c0dc00b204c84cde001604c84ca000b503c844a1007303c8f062007603c8c861008c03c81ca100ee03c8c0dd00e404c8e05a011e06c8345a013c07880e1b01ce07c8785a019b07c8581a01d107c8f01901f907c8c45901de07c8705901de07c8f49801c507c8185901a807c8105901fb07c8385901f508c81499015c09c86c98015309c86498013809c88c9801e008c8c458015708c8f09801b707c8f498015807c8f898013707c84459014529000044d100015108f550140796805a00eda6187b1ac804c25869".hexadecimal ?? Data()
-//        data = data.subdata(in: 0..<344)
-//        #endif
         let data = rxBuffer.subdata(in: 8..<352)
         sensorData = SensorData(uuid: rxBuffer.subdata(in: 0..<8), bytes: [UInt8](data), date: Date(), derivedAlgorithmParameterSet: nil)
         
-        // Set notifications
-//        NotificationManager.scheduleApplicationTerminatedNotification(wait: 500)
-//        NotificationManager.scheduleDataTransferInterruptedNotification(wait: 400)
-//
-//        if Bubble.battery < 20 {
-//            NotificationManager.setLowBatteryNotification(voltage: Double(Bubble.battery))
-//        }
+        if bubble.battery < 20 {
+            NotificationHelper.sendLowBatteryNotificationIfNeeded(device: bubble)
+        }
         
         // Check if sensor data is valid and, if this is not the case, request data again after thirty second
         if let sensorData = sensorData {
@@ -589,7 +481,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 })
             }
             // Inform delegate that new data is available
-            delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble!)
+            delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
         }
         
         
@@ -598,10 +490,15 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     deinit {
         self.delegate = nil
         os_log("dabear:: Bubblemanager deinit called")
-        
-        
     }
     
+}
+
+fileprivate enum BubbleResponseType: UInt8 {
+    case dataPacket = 130
+    case bubbleInfo = 128
+    case noSensor = 191
+    case serialNumber = 192
 }
 
 
