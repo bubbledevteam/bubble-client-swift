@@ -32,6 +32,10 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
 
     public init(cgmManager: BubbleClientManager, glucoseUnit: HKUnit, allowsDeletion: Bool) {
         self.cgmManager = cgmManager
+        self.cgmManager?.reloadData = {
+            [weak self] in
+            self?.tableView?.reloadData()
+        }
         self.glucoseUnit = glucoseUnit
         
         //only override savedglucose unit if we haven't saved this locally before
