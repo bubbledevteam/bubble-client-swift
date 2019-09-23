@@ -205,7 +205,6 @@ class GlucoseSchedule: Codable, CustomStringConvertible{
         var toDate : Date?
         if  toComponents.minute == 0 && toComponents.hour == 0 {
             toDate = nextMidnight
-            
         } else {
             toDate = Calendar.current.date(byAdding: toComponents, to: previousMidnight)!
         }

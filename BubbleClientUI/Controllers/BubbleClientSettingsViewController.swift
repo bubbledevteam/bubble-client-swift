@@ -102,14 +102,16 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
 
     private enum Section: Int {
         case snooze
+        case authentication
         case latestReading
         case sensorInfo
         case latestBridgeInfo
+        case latestCalibrationData
         case advanced
         
         case delete
 
-        static let count = 6
+        static let count = 8
     }
 
     override public func numberOfSections(in tableView: UITableView) -> Int {
@@ -155,18 +157,20 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         
         case edit
         
-        static let count = 0
+        static let count = 8
     }
     
     private enum AdvancedSettingsRow: Int {
         case alarms
         case glucoseNotifications
         case dangermode
-        static let count = 2
+        static let count = 3
     }
 
     override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
+        case .authentication:
+            return 1
         case .latestReading:
             return LatestReadingRow.count
         case .sensorInfo:
@@ -176,6 +180,9 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         case .latestBridgeInfo:
             return LatestBridgeInfoRow.count
             
+        case .latestCalibrationData:
+            return LatestCalibrationDataInfoRow.count
+        
         case .advanced:
             return AdvancedSettingsRow.count
         case .snooze:
@@ -212,11 +219,11 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
                 let dangerCellIndex = IndexPath(row: AdvancedSettingsRow.dangermode.rawValue, section: Section.advanced.rawValue)
                 
                 
-
+                
                 let editCellIndex = IndexPath(row:  LatestCalibrationDataInfoRow.edit.rawValue, section: Section.latestCalibrationData.rawValue)
-
+                
                 self.tableView.reloadRows(at: [dangerCellIndex, editCellIndex],with: .none)
-
+                
                 self.presentStatus(controller)
                 
                 
@@ -228,6 +235,18 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
 
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch Section(rawValue: indexPath.section)! {
+        case .authentication:
+            let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath) as! SettingsTableViewCell
+
+            
+
+            cell.textLabel?.text = LocalizedString("Calibration Settings", comment: "Title of cell to set credentials")
+            let tokenLength = cgmManager?.miaomiaoService.accessToken?.count ?? 0
+            
+            cell.detailTextLabel?.text =  tokenLength > 0 ? "token set" : "token not set"
+            cell.accessoryType = .disclosureIndicator
+
+            return cell
         case .latestReading:
             let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath) as! SettingsTableViewCell
             let glucose = cgmManager?.latestBackfill
@@ -460,7 +479,7 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
 
     public override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch Section(rawValue: section)! {
-        case .snooze:
+        case .authentication, .snooze:
             return nil
         case .sensorInfo:
             return NSLocalizedString("Sensor Info", comment: "Section title for latest sensor info")
@@ -470,9 +489,9 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             return nil
         case .latestBridgeInfo:
             return NSLocalizedString("Latest Bridge info", comment: "Section title for latest bridge info")
-//        case .latestCalibrationData:
-//            return NSLocalizedString("Latest Autocalibration Parameters", comment: "Section title for latest bridge info")
-//
+        case .latestCalibrationData:
+            return NSLocalizedString("Latest Autocalibration Parameters", comment: "Section title for latest bridge info")
+
         case .advanced:
             return NSLocalizedString("Advanced", comment: "Advanced Section")
         
@@ -481,6 +500,28 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
 
     public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch Section(rawValue: indexPath.section)! {
+        case .authentication:
+            guard let service = cgmManager?.miaomiaoService else {
+                NSLog("dabear:: no miaomiaoservice?")
+                self.tableView.reloadRows(at: [indexPath], with: .none)
+                break
+            }
+            let vc = AuthenticationViewController(authentication: service)
+            vc.authenticationObserver = { [weak self] (service) in
+                self?.cgmManager?.miaomiaoService = service
+                
+                let keychain = KeychainManager()
+                do{
+                    NSLog("dabear:: miaomiaoservice alter: setAutoCalibrateWebAccessToken called")
+                    try keychain.setAutoCalibrateWebAccessToken(accessToken: service.accessToken, url: service.url)
+                } catch {
+                    NSLog("dabear:: miaomiaoservice alter:could not permanently save setAutoCalibrateWebAccessToken")
+                }
+                
+                self?.tableView.reloadRows(at: [indexPath], with: .none)
+            }
+
+            show(vc, sender: nil)
         case .latestReading:
             tableView.deselectRow(at: indexPath, animated: true)
         case .delete:
