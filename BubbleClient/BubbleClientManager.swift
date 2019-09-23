@@ -196,14 +196,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         BubbleClientManager.proxy?.delegate = self
             //proxy?.connect()
         
-        BubbleClientManager.instanceCount += 1
-        
-        
-//        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
-//            BubbleClientManager.proxy?.test()
-//            print("test start")
-//        }
-//        
+        BubbleClientManager.instanceCount += 1   
     }
     
     public var connectionState : String {

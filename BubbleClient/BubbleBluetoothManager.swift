@@ -103,10 +103,12 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         //        slipBuffer.delegate = self
         os_log("Bubblemanager init called ", log: BubbleBluetoothManager.bt_log)
         
+        #if DEBUG
         DispatchQueue.global().async {
             sleep(3)
-            self.test()
+//            self.test()
         }
+        #endif
     }
     
     func test() {
