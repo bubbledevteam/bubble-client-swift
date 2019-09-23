@@ -102,7 +102,7 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
 
     private enum Section: Int {
         case snooze
-        case authentication
+//        case authentication
         case latestReading
         case sensorInfo
         case latestBridgeInfo
@@ -111,7 +111,7 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         
         case delete
 
-        static let count = 8
+        static let count = 7
     }
 
     override public func numberOfSections(in tableView: UITableView) -> Int {
@@ -169,8 +169,8 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
 
     override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
-        case .authentication:
-            return 1
+//        case .authentication:
+//            return 1
         case .latestReading:
             return LatestReadingRow.count
         case .sensorInfo:
@@ -235,18 +235,18 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
 
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch Section(rawValue: indexPath.section)! {
-        case .authentication:
-            let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath) as! SettingsTableViewCell
-
-            
-
-            cell.textLabel?.text = LocalizedString("Calibration Settings", comment: "Title of cell to set credentials")
-            let tokenLength = cgmManager?.bubbleService.accessToken?.count ?? 0
-            
-            cell.detailTextLabel?.text =  tokenLength > 0 ? "token set" : "token not set"
-            cell.accessoryType = .disclosureIndicator
-
-            return cell
+//        case .authentication:
+//            let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath) as! SettingsTableViewCell
+//
+//
+//
+//            cell.textLabel?.text = LocalizedString("Calibration Settings", comment: "Title of cell to set credentials")
+//            let tokenLength = cgmManager?.bubbleService.accessToken?.count ?? 0
+//
+//            cell.detailTextLabel?.text =  tokenLength > 0 ? "token set" : "token not set"
+//            cell.accessoryType = .disclosureIndicator
+//
+//            return cell
         case .latestReading:
             let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath) as! SettingsTableViewCell
             let glucose = cgmManager?.latestBackfill
@@ -479,7 +479,9 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
 
     public override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch Section(rawValue: section)! {
-        case .authentication, .snooze:
+//        case .authentication:
+//            return nil
+        case .snooze:
             return nil
         case .sensorInfo:
             return NSLocalizedString("Sensor Info", comment: "Section title for latest sensor info")
@@ -500,28 +502,28 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
 
     public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch Section(rawValue: indexPath.section)! {
-        case .authentication:
-            guard let service = cgmManager?.bubbleService else {
-                NSLog("dabear:: no miaomiaoservice?")
-                self.tableView.reloadRows(at: [indexPath], with: .none)
-                break
-            }
-            let vc = AuthenticationViewController(authentication: service)
-            vc.authenticationObserver = { [weak self] (service) in
-                self?.cgmManager?.bubbleService = service
-                
-                let keychain = KeychainManager()
-                do{
-                    NSLog("dabear:: miaomiaoservice alter: setAutoCalibrateWebAccessToken called")
-                    try keychain.setAutoCalibrateWebAccessToken(accessToken: service.accessToken, url: service.url)
-                } catch {
-                    NSLog("dabear:: miaomiaoservice alter:could not permanently save setAutoCalibrateWebAccessToken")
-                }
-                
-                self?.tableView.reloadRows(at: [indexPath], with: .none)
-            }
-
-            show(vc, sender: nil)
+//        case .authentication:
+//            guard let service = cgmManager?.bubbleService else {
+//                NSLog("dabear:: no miaomiaoservice?")
+//                self.tableView.reloadRows(at: [indexPath], with: .none)
+//                break
+//            }
+//            let vc = AuthenticationViewController(authentication: service)
+//            vc.authenticationObserver = { [weak self] (service) in
+//                self?.cgmManager?.bubbleService = service
+//                
+//                let keychain = KeychainManager()
+//                do{
+//                    NSLog("dabear:: miaomiaoservice alter: setAutoCalibrateWebAccessToken called")
+//                    try keychain.setAutoCalibrateWebAccessToken(accessToken: service.accessToken, url: service.url)
+//                } catch {
+//                    NSLog("dabear:: miaomiaoservice alter:could not permanently save setAutoCalibrateWebAccessToken")
+//                }
+//                
+//                self?.tableView.reloadRows(at: [indexPath], with: .none)
+//            }
+//
+//            show(vc, sender: nil)
         case .latestReading:
             tableView.deselectRow(at: indexPath, animated: true)
         case .delete:
