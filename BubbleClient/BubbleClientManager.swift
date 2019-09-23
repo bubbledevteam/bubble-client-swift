@@ -491,12 +491,12 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
 //        NotificationHelper.sendInvalidSensorNotificationIfNeeded(sensorData: sensorData)
         NotificationHelper.sendSensorExpireAlertIfNeeded(sensorData: sensorData)
         
-        if sensorData.hasValidCRCs {
-            
-            if sensorData.state == .ready ||  sensorData.state == .starting {
-                NSLog("dabear:: got sensordata with valid crcs, sensor was ready")
-                self.lastValidSensorData = sensorData
-                
+//        if sensorData.hasValidCRCs {
+        
+//            if sensorData.state == .ready ||  sensorData.state == .starting {
+//                NSLog("dabear:: got sensordata with valid crcs, sensor was ready")
+//                self.lastValidSensorData = sensorData
+//
                 self.handleGoodReading(data: sensorData) { (error, glucose) in
                     if let error = error {
                         NSLog("dabear:: handleGoodReading returned with error: \(error)")
@@ -532,16 +532,16 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                     
                 }
                 
-            } else {
-                os_log("dabear:: got sensordata with valid crcs, but sensor is either expired or failed")
-                self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.expiredSensor))
-            }
+//            } else {
+//                os_log("dabear:: got sensordata with valid crcs, but sensor is either expired or failed")
+//                self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.expiredSensor))
+//            }
             
             
-        } else {
-            self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
-            os_log("dit not get sensordata with valid crcs")
-        }
+//        } else {
+//            self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
+//            os_log("dit not get sensordata with valid crcs")
+//        }
         self.reloadData?()
         return
     }

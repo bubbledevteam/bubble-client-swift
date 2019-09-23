@@ -43,9 +43,6 @@
 		2729D69F221F44670030E1B8 /* SensorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D68F221F44670030E1B8 /* SensorState.swift */; };
 		2729D6A3221F44C80030E1B8 /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D6A2221F44C70030E1B8 /* Data.swift */; };
 		2729D6A822248BDD0030E1B8 /* BubbleClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D6A722248BDD0030E1B8 /* BubbleClientManager.swift */; };
-		272DFE6F223E909600FBE2CB /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 272DFE6D223E909500FBE2CB /* LoopKitUI.framework */; };
-		272DFE71223E909E00FBE2CB /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 272DFE70223E909E00FBE2CB /* LoopKit.framework */; };
-		272DFE72223E909E00FBE2CB /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 272DFE70223E909E00FBE2CB /* LoopKit.framework */; };
 		272FAF08228CA590002D8064 /* SegmentViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272FAF06228CA590002D8064 /* SegmentViewCell.swift */; };
 		272FAF09228CA590002D8064 /* SegmentViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 272FAF07228CA590002D8064 /* SegmentViewCell.xib */; };
 		274DF85222A5AEA400BFAFFE /* AlertControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274DF85122A5AEA400BFAFFE /* AlertControllers.swift */; };
@@ -74,7 +71,6 @@
 		27CBEB552261DF9D004F7BF5 /* AlarmTimeInputRangeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CBEB542261DF9C004F7BF5 /* AlarmTimeInputRangeCell.swift */; };
 		27CBEB5C2261E1E6004F7BF5 /* AlarmTimeInputRangeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 27CBEB5B2261E1E0004F7BF5 /* AlarmTimeInputRangeCell.xib */; };
 		27CFAB52223EA0B2006DEFE3 /* BubbleClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; };
-		27CFAB53223EA4A7006DEFE3 /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 272DFE6D223E909500FBE2CB /* LoopKitUI.framework */; };
 		27CFAB5522496C7A006DEFE3 /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFAB5422496C7A006DEFE3 /* DoubleExtensions.swift */; };
 		27CFAB5622496CBB006DEFE3 /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFAB5422496C7A006DEFE3 /* DoubleExtensions.swift */; };
 		27CFAB59224977B9006DEFE3 /* GlucoseSmoothing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFAB5722497744006DEFE3 /* GlucoseSmoothing.swift */; };
@@ -117,8 +113,16 @@
 		43AB5127213315D300B3D58D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 43AB5125213315D300B3D58D /* Localizable.strings */; };
 		43AB51362133177800B3D58D /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB51352133177800B3D58D /* LocalizedString.swift */; };
 		43AB51372133177800B3D58D /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB51352133177800B3D58D /* LocalizedString.swift */; };
-		EE9947E122EE993B00DCB876 /* BubbleClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; };
-		EE9947E222EE993B00DCB876 /* BubbleClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE72B06D230CD6AB00D67B8F /* BubbleClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		EE72B06E230CD6AB00D67B8F /* BubbleClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE72B073230CDDF500D67B8F /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B072230CDDF500D67B8F /* LoopKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		EE72B075230CDE0200D67B8F /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B074230CDE0200D67B8F /* LoopKitUI.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		EE72B076230CE02000D67B8F /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B072230CDDF500D67B8F /* LoopKit.framework */; };
+		EE72B077230CE02C00D67B8F /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B074230CDE0200D67B8F /* LoopKitUI.framework */; };
+		EE72B083230CE28E00D67B8F /* LoopKitUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B080230CE28E00D67B8F /* LoopKitUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE72B084230CE28E00D67B8F /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B081230CE28E00D67B8F /* LoopKit.framework */; };
+		EE72B085230CE28E00D67B8F /* LoopKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B081230CE28E00D67B8F /* LoopKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE72B086230CE2A900D67B8F /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B080230CE28E00D67B8F /* LoopKitUI.framework */; };
 		EED7E06E22E6BC8700E03BAE /* bubble.png in Resources */ = {isa = PBXBuildFile; fileRef = EED7E06D22E6BC8700E03BAE /* bubble.png */; };
 /* End PBXBuildFile section */
 
@@ -158,7 +162,7 @@
 			remoteGlobalIDString = 432B0E871CDFC3C50045347B;
 			remoteInfo = BubbleClient;
 		};
-		EE9947E322EE993B00DCB876 /* PBXContainerItemProxy */ = {
+		EE72B06F230CD6AB00D67B8F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 432B0E7F1CDFC3C50045347B /* Project object */;
 			proxyType = 1;
@@ -177,13 +181,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
-		EE9947E522EE993B00DCB876 /* Embed Frameworks */ = {
+		EE72B071230CD6AB00D67B8F /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				EE9947E222EE993B00DCB876 /* BubbleClient.framework in Embed Frameworks */,
+				EE72B06E230CD6AB00D67B8F /* BubbleClient.framework in Embed Frameworks */,
+				EE72B085230CE28E00D67B8F /* LoopKit.framework in Embed Frameworks */,
+				EE72B083230CE28E00D67B8F /* LoopKitUI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -212,8 +218,6 @@
 		2729D68F221F44670030E1B8 /* SensorState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorState.swift; sourceTree = "<group>"; };
 		2729D6A2221F44C70030E1B8 /* Data.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		2729D6A722248BDD0030E1B8 /* BubbleClientManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleClientManager.swift; sourceTree = "<group>"; };
-		272DFE6D223E909500FBE2CB /* LoopKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKitUI.framework; path = ../../Build/iOS/LoopKitUI.framework; sourceTree = "<group>"; };
-		272DFE70223E909E00FBE2CB /* LoopKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKit.framework; path = ../../Build/iOS/LoopKit.framework; sourceTree = "<group>"; };
 		272FAF06228CA590002D8064 /* SegmentViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentViewCell.swift; sourceTree = "<group>"; };
 		272FAF07228CA590002D8064 /* SegmentViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SegmentViewCell.xib; sourceTree = "<group>"; };
 		274DF85122A5AEA400BFAFFE /* AlertControllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertControllers.swift; sourceTree = "<group>"; };
@@ -301,6 +305,10 @@
 		43AB51302133161A00B3D58D /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		43AB51352133177800B3D58D /* LocalizedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedString.swift; sourceTree = "<group>"; };
 		43C418AE1CE0488900405B6A /* LibreGlucose.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreGlucose.swift; sourceTree = "<group>"; };
+		EE72B072230CDDF500D67B8F /* LoopKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKit.framework; path = Carthage/Build/iOS/LoopKit.framework; sourceTree = "<group>"; };
+		EE72B074230CDE0200D67B8F /* LoopKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKitUI.framework; path = Carthage/Build/iOS/LoopKitUI.framework; sourceTree = "<group>"; };
+		EE72B080230CE28E00D67B8F /* LoopKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKitUI.framework; path = Carthage/Build/iOS/LoopKitUI.framework; sourceTree = "<group>"; };
+		EE72B081230CE28E00D67B8F /* LoopKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKit.framework; path = Carthage/Build/iOS/LoopKit.framework; sourceTree = "<group>"; };
 		EED7E06D22E6BC8700E03BAE /* bubble.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bubble.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -317,7 +325,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE9947E122EE993B00DCB876 /* BubbleClient.framework in Frameworks */,
+				EE72B086230CE2A900D67B8F /* LoopKitUI.framework in Frameworks */,
+				EE72B06D230CD6AB00D67B8F /* BubbleClient.framework in Frameworks */,
+				EE72B084230CE28E00D67B8F /* LoopKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,9 +335,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE72B075230CDE0200D67B8F /* LoopKitUI.framework in Frameworks */,
+				EE72B073230CDDF500D67B8F /* LoopKit.framework in Frameworks */,
 				43A8EC95210E67B000A81379 /* HealthKit.framework in Frameworks */,
-				272DFE71223E909E00FBE2CB /* LoopKit.framework in Frameworks */,
-				27CFAB53223EA4A7006DEFE3 /* LoopKitUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,9 +353,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE72B077230CE02C00D67B8F /* LoopKitUI.framework in Frameworks */,
+				EE72B076230CE02000D67B8F /* LoopKit.framework in Frameworks */,
 				27CFAB52223EA0B2006DEFE3 /* BubbleClient.framework in Frameworks */,
-				272DFE6F223E909600FBE2CB /* LoopKitUI.framework in Frameworks */,
-				272DFE72223E909E00FBE2CB /* LoopKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -518,6 +528,8 @@
 		432B0E7E1CDFC3C50045347B = {
 			isa = PBXGroup;
 			children = (
+				EE72B081230CE28E00D67B8F /* LoopKit.framework */,
+				EE72B080230CE28E00D67B8F /* LoopKitUI.framework */,
 				2729D6A62220C1030030E1B8 /* LibreSensor */,
 				2729D671221F42070030E1B8 /* Bluetooth */,
 				432B0E8A1CDFC3C50045347B /* BubbleClient */,
@@ -570,8 +582,8 @@
 		43A8EC7A210E661300A81379 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				272DFE70223E909E00FBE2CB /* LoopKit.framework */,
-				272DFE6D223E909500FBE2CB /* LoopKitUI.framework */,
+				EE72B074230CDE0200D67B8F /* LoopKitUI.framework */,
+				EE72B072230CDDF500D67B8F /* LoopKit.framework */,
 				43A8EC94210E67B000A81379 /* HealthKit.framework */,
 			);
 			name = Frameworks;
@@ -657,12 +669,12 @@
 				27C335DA21667C7A00CF0868 /* Sources */,
 				27C335DB21667C7A00CF0868 /* Frameworks */,
 				27C335DC21667C7A00CF0868 /* Resources */,
-				EE9947E522EE993B00DCB876 /* Embed Frameworks */,
+				EE72B071230CD6AB00D67B8F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				EE9947E422EE993B00DCB876 /* PBXTargetDependency */,
+				EE72B070230CD6AB00D67B8F /* PBXTargetDependency */,
 			);
 			name = singleviewtesterapp2;
 			productName = singleviewtesterapp2;
@@ -743,7 +755,7 @@
 					};
 					27C335DD21667C7A00CF0868 = {
 						CreatedOnToolsVersion = 9.4.1;
-						DevelopmentTeam = EG7BNV2CC4;
+						DevelopmentTeam = W4JY5996A9;
 						ProvisioningStyle = Automatic;
 					};
 					432B0E871CDFC3C50045347B = {
@@ -1001,10 +1013,10 @@
 			target = 432B0E871CDFC3C50045347B /* BubbleClient */;
 			targetProxy = 432B0E941CDFC3C50045347B /* PBXContainerItemProxy */;
 		};
-		EE9947E422EE993B00DCB876 /* PBXTargetDependency */ = {
+		EE72B070230CD6AB00D67B8F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 432B0E871CDFC3C50045347B /* BubbleClient */;
-			targetProxy = EE9947E322EE993B00DCB876 /* PBXContainerItemProxy */;
+			targetProxy = EE72B06F230CD6AB00D67B8F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1113,7 +1125,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = EG7BNV2CC4;
+				DEVELOPMENT_TEAM = W4JY5996A9;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -1308,6 +1320,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/$(CARTHAGE_PLATFORM_PATH_$(PLATFORM_NAME))",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = BubbleClient/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1338,6 +1351,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/$(CARTHAGE_PLATFORM_PATH_$(PLATFORM_NAME))",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = BubbleClient/Info.plist;

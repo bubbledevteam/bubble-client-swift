@@ -209,15 +209,15 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
                     controller = ErrorAlertController("Danger mode could not be activated, check that your team identifier matches", title: "Danger mode unsuccessful")
                     
                 }
-//                let dangerCellIndex = IndexPath(row: AdvancedSettingsRow.dangermode.rawValue, section: Section.advanced.rawValue)
+                let dangerCellIndex = IndexPath(row: AdvancedSettingsRow.dangermode.rawValue, section: Section.advanced.rawValue)
                 
                 
-//
-//                let editCellIndex = IndexPath(row:  LatestCalibrationDataInfoRow.edit.rawValue, section: Section.latestCalibrationData.rawValue)
-//
-//                self.tableView.reloadRows(at: [dangerCellIndex, editCellIndex],with: .none)
-//
-//                self.presentStatus(controller)
+
+                let editCellIndex = IndexPath(row:  LatestCalibrationDataInfoRow.edit.rawValue, section: Section.latestCalibrationData.rawValue)
+
+                self.tableView.reloadRows(at: [dangerCellIndex, editCellIndex],with: .none)
+
+                self.presentStatus(controller)
                 
                 
                 
@@ -298,93 +298,93 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             }
             
             return cell
-//        case .latestCalibrationData:
-//            var cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath)
-//
-//            let data = cgmManager?.calibrationData
-//            /*
-//             case slopeslope
-//             case slopeoffset
-//             case offsetslope
-//             case offsetoffset
-//             extraSlope
-//             extraOffset
-//             */
-//            switch LatestCalibrationDataInfoRow(rawValue: indexPath.row)! {
-//
-//            case .slopeslope:
-//                cell.textLabel?.text = NSLocalizedString("Slope_slope", comment: "Title describing calibrationdata slopeslope")
-//
-//                if let data=data{
-//                    cell.detailTextLabel?.text = "\(data.slope_slope.scientificStyle)"
-//                } else {
-//                    cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
-//                }
-//            case .slopeoffset:
-//                cell.textLabel?.text = NSLocalizedString("Slope_offset", comment: "Title describing calibrationdata slopeoffset")
-//
-//                if let data=data{
-//                    cell.detailTextLabel?.text = "\(data.slope_offset.scientificStyle)"
-//                } else {
-//                    cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
-//                }
-//            case .offsetslope:
-//                cell.textLabel?.text = NSLocalizedString("Offset_slope", comment: "Title describing calibrationdata offsetslope")
-//
-//                if let data=data{
-//                    cell.detailTextLabel?.text = "\(data.offset_slope.scientificStyle)"
-//                } else {
-//                    cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
-//                }
-//            case .offsetoffset:
-//                cell.textLabel?.text = NSLocalizedString("Offset_offset", comment: "Title describing calibrationdata offsetoffset")
-//
-//                if let data=data{
-//                    cell.detailTextLabel?.text = "\(data.offset_offset.fourDecimals)"
-//                } else {
-//                    cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
-//                }
-//
-//            case .isValidForFooterWithCRCs:
-//                cell.textLabel?.text = NSLocalizedString("Valid For Footer", comment: "Title describing calibrationdata validity")
-//
-//                if let data=data{
-//                    cell.detailTextLabel?.text = isDemoMode ? "demo123"  : "\(data.isValidForFooterWithReverseCRCs)"
-//                } else {
-//                    cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
-//                }
-//            case .edit:
-//                cell = tableView.dequeueReusableCell(withIdentifier: TextButtonTableViewCell.className, for: indexPath)
-//
-//                cell.textLabel?.text = NSLocalizedString("Edit Calibrations", comment: "Title describing calibrationdata edit button")
-//
-//                cell.textLabel?.textColor = UIColor.blue
-//                if UserDefaults.standard.dangerModeActivated{
-//
-//                    cell.detailTextLabel?.text = "Available"
-//                    cell.accessoryType = .disclosureIndicator
-//                } else {
-//
-//                    cell.detailTextLabel?.text = "Unavailable"
-//                }
-//            case .extraSlope:
-//                cell.textLabel?.text = NSLocalizedString("Extra_slope", comment: "Title describing calibrationdata extra slope")
-//
-//                if let data=data{
-//                    cell.detailTextLabel?.text = "\(data.extraSlope)"
-//                } else {
-//                    cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
-//                }
-//            case .extraOffset:
-//                cell.textLabel?.text = NSLocalizedString("Extra_offset", comment: "Title describing calibrationdata extra offset")
-//
-//                if let data=data{
-//                    cell.detailTextLabel?.text = "\(data.extraOffset)"
-//                } else {
-//                    cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
-//                }
-//            }
-//            return cell
+        case .latestCalibrationData:
+            var cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath)
+
+            let data = cgmManager?.calibrationData
+            /*
+             case slopeslope
+             case slopeoffset
+             case offsetslope
+             case offsetoffset
+             extraSlope
+             extraOffset
+             */
+            switch LatestCalibrationDataInfoRow(rawValue: indexPath.row)! {
+
+            case .slopeslope:
+                cell.textLabel?.text = NSLocalizedString("Slope_slope", comment: "Title describing calibrationdata slopeslope")
+
+                if let data=data{
+                    cell.detailTextLabel?.text = "\(data.slope_slope.scientificStyle)"
+                } else {
+                    cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
+                }
+            case .slopeoffset:
+                cell.textLabel?.text = NSLocalizedString("Slope_offset", comment: "Title describing calibrationdata slopeoffset")
+
+                if let data=data{
+                    cell.detailTextLabel?.text = "\(data.slope_offset.scientificStyle)"
+                } else {
+                    cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
+                }
+            case .offsetslope:
+                cell.textLabel?.text = NSLocalizedString("Offset_slope", comment: "Title describing calibrationdata offsetslope")
+
+                if let data=data{
+                    cell.detailTextLabel?.text = "\(data.offset_slope.scientificStyle)"
+                } else {
+                    cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
+                }
+            case .offsetoffset:
+                cell.textLabel?.text = NSLocalizedString("Offset_offset", comment: "Title describing calibrationdata offsetoffset")
+
+                if let data=data{
+                    cell.detailTextLabel?.text = "\(data.offset_offset.fourDecimals)"
+                } else {
+                    cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
+                }
+
+            case .isValidForFooterWithCRCs:
+                cell.textLabel?.text = NSLocalizedString("Valid For Footer", comment: "Title describing calibrationdata validity")
+
+                if let data=data{
+                    cell.detailTextLabel?.text = isDemoMode ? "demo123"  : "\(data.isValidForFooterWithReverseCRCs)"
+                } else {
+                    cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
+                }
+            case .edit:
+                cell = tableView.dequeueReusableCell(withIdentifier: TextButtonTableViewCell.className, for: indexPath)
+
+                cell.textLabel?.text = NSLocalizedString("Edit Calibrations", comment: "Title describing calibrationdata edit button")
+
+                cell.textLabel?.textColor = UIColor.blue
+                if UserDefaults.standard.dangerModeActivated{
+
+                    cell.detailTextLabel?.text = "Available"
+                    cell.accessoryType = .disclosureIndicator
+                } else {
+
+                    cell.detailTextLabel?.text = "Unavailable"
+                }
+            case .extraSlope:
+                cell.textLabel?.text = NSLocalizedString("Extra_slope", comment: "Title describing calibrationdata extra slope")
+
+                if let data=data{
+                    cell.detailTextLabel?.text = "\(data.extraSlope)"
+                } else {
+                    cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
+                }
+            case .extraOffset:
+                cell.textLabel?.text = NSLocalizedString("Extra_offset", comment: "Title describing calibrationdata extra offset")
+
+                if let data=data{
+                    cell.detailTextLabel?.text = "\(data.extraOffset)"
+                } else {
+                    cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
+                }
+            }
+            return cell
         case .sensorInfo:
             let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath) as! SettingsTableViewCell
             
@@ -512,75 +512,75 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             default:
                 tableView.deselectRow(at: indexPath, animated: true)
             }
-//        case .latestCalibrationData:
-//
-//            if LatestCalibrationDataInfoRow(rawValue: indexPath.row)! == .edit {
-//                if UserDefaults.standard.dangerModeActivated {
-//                    //ok
-//                    print("user can edit calibrations")
-//                    let controller = CalibrationEditTableViewController(cgmManager: self.cgmManager)
-//                    controller.disappearDelegate = self
-//                    self.show(controller, sender: self)
-//                } else {
-//                    self.presentStatus(OKAlertController("Could not access calibration settings, danger mode was not activated!", title: "No can do!"))
-//                }
-//                tableView.deselectRow(at: indexPath, animated: true)
-//                return
-//            }
-//
-//            let confirmVC = UIAlertController(calibrateHandler:  {
-//
-//                if let cgmManager = self.cgmManager {
-//
-//                    guard let (accessToken, url) =  cgmManager.keychain.getAutoCalibrateWebCredentials() else {
-//                        NSLog("dabear:: could not calibrate, accesstoken or url was nil")
-//                        self.presentStatus(OKAlertController(LibreError.invalidAutoCalibrationCredentials.errorDescription, title: "Error"))
-//
-//                        return
-//                    }
-//
-//                    guard let data = cgmManager.lastValidSensorData else {
-//                        NSLog("No sensordata was present, unable to recalibrate!")
-//                        self.presentStatus(OKAlertController(LibreError.noSensorData.errorDescription, title: "Error"))
-//
-//                        return
-//                    }
-//
-//                    calibrateSensor(accessToken: accessToken, site: url.absoluteString, sensordata: data) { [weak self] (calibrationparams)  in
-//                        guard let params = calibrationparams else {
-//                            NSLog("dabear:: could not calibrate sensor, check libreoopweb permissions and internet connection")
-//                            self?.presentStatus(OKAlertController(LibreError.noCalibrationData.errorDescription, title: "Error"))
-//
-//                            return
-//                        }
-//
-//                        do {
-//                            try self?.cgmManager?.keychain.setLibreCalibrationData(params)
-//                        } catch {
-//                            NSLog("dabear:: could not save calibrationdata")
-//                            self?.presentStatus(OKAlertController(LibreError.invalidCalibrationData.errorDescription, title: "Error"))
-//                            return
-//                        }
-//
-//                        self?.presentStatus(OKAlertController("Calibration success!", title: "Success"))
-//
-//
-//
-//                    }
-//
-//
-//
-//                }
-//
-//
-//            })
-//
-//            present(confirmVC, animated: true) {
-//                tableView.deselectRow(at: indexPath, animated: true)
-//
-//            }
-//
-//
+        case .latestCalibrationData:
+
+            if LatestCalibrationDataInfoRow(rawValue: indexPath.row)! == .edit {
+                if UserDefaults.standard.dangerModeActivated {
+                    //ok
+                    print("user can edit calibrations")
+                    let controller = CalibrationEditTableViewController(cgmManager: self.cgmManager)
+                    controller.disappearDelegate = self
+                    self.show(controller, sender: self)
+                } else {
+                    self.presentStatus(OKAlertController("Could not access calibration settings, danger mode was not activated!", title: "No can do!"))
+                }
+                tableView.deselectRow(at: indexPath, animated: true)
+                return
+            }
+
+            let confirmVC = UIAlertController(calibrateHandler:  {
+
+                if let cgmManager = self.cgmManager {
+
+                    guard let (accessToken, url) =  cgmManager.keychain.getAutoCalibrateWebCredentials() else {
+                        NSLog("dabear:: could not calibrate, accesstoken or url was nil")
+                        self.presentStatus(OKAlertController(LibreError.invalidAutoCalibrationCredentials.errorDescription, title: "Error"))
+
+                        return
+                    }
+
+                    guard let data = cgmManager.lastValidSensorData else {
+                        NSLog("No sensordata was present, unable to recalibrate!")
+                        self.presentStatus(OKAlertController(LibreError.noSensorData.errorDescription, title: "Error"))
+
+                        return
+                    }
+
+                    calibrateSensor(accessToken: accessToken, site: url.absoluteString, sensordata: data) { [weak self] (calibrationparams)  in
+                        guard let params = calibrationparams else {
+                            NSLog("dabear:: could not calibrate sensor, check libreoopweb permissions and internet connection")
+                            self?.presentStatus(OKAlertController(LibreError.noCalibrationData.errorDescription, title: "Error"))
+
+                            return
+                        }
+
+                        do {
+                            try self?.cgmManager?.keychain.setLibreCalibrationData(params)
+                        } catch {
+                            NSLog("dabear:: could not save calibrationdata")
+                            self?.presentStatus(OKAlertController(LibreError.invalidCalibrationData.errorDescription, title: "Error"))
+                            return
+                        }
+
+                        self?.presentStatus(OKAlertController("Calibration success!", title: "Success"))
+
+
+
+                    }
+
+
+
+                }
+
+
+            })
+
+            present(confirmVC, animated: true) {
+                tableView.deselectRow(at: indexPath, animated: true)
+
+            }
+
+
         case .sensorInfo:
             tableView.deselectRow(at: indexPath, animated: true)
         case .advanced:
@@ -600,9 +600,9 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             case .dangermode:
                 if UserDefaults.standard.dangerModeActivated {
                     UserDefaults.standard.dangerModeActivated = false
-//                    let dangerCellIndex = IndexPath(row: AdvancedSettingsRow.dangermode.rawValue, section: Section.advanced.rawValue)
-//                    let editCellIndex = IndexPath(row:  LatestCalibrationDataInfoRow.edit.rawValue, section: Section.latestCalibrationData.rawValue)
-//                    self.tableView.reloadRows(at: [dangerCellIndex, editCellIndex], with: .none)
+                    let dangerCellIndex = IndexPath(row: AdvancedSettingsRow.dangermode.rawValue, section: Section.advanced.rawValue)
+                    let editCellIndex = IndexPath(row:  LatestCalibrationDataInfoRow.edit.rawValue, section: Section.latestCalibrationData.rawValue)
+                    self.tableView.reloadRows(at: [dangerCellIndex, editCellIndex], with: .none)
                     
                 } else {
                     let team = bundleSeedID() ?? "Unknown???!"
