@@ -241,7 +241,7 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             
 
             cell.textLabel?.text = LocalizedString("Calibration Settings", comment: "Title of cell to set credentials")
-            let tokenLength = cgmManager?.miaomiaoService.accessToken?.count ?? 0
+            let tokenLength = cgmManager?.bubbleService.accessToken?.count ?? 0
             
             cell.detailTextLabel?.text =  tokenLength > 0 ? "token set" : "token not set"
             cell.accessoryType = .disclosureIndicator
@@ -501,14 +501,14 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
     public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch Section(rawValue: indexPath.section)! {
         case .authentication:
-            guard let service = cgmManager?.miaomiaoService else {
+            guard let service = cgmManager?.bubbleService else {
                 NSLog("dabear:: no miaomiaoservice?")
                 self.tableView.reloadRows(at: [indexPath], with: .none)
                 break
             }
             let vc = AuthenticationViewController(authentication: service)
             vc.authenticationObserver = { [weak self] (service) in
-                self?.cgmManager?.miaomiaoService = service
+                self?.cgmManager?.bubbleService = service
                 
                 let keychain = KeychainManager()
                 do{
