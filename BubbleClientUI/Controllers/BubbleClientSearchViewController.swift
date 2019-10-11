@@ -13,6 +13,12 @@ import CoreBluetooth
 class BubbleClientSearchViewController: UITableViewController {
     public var cgmManager: BubbleClientManager?
     private var list = [BubblePeripheral]()
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        cgmManager?.stopScan()
+    }
+    
     override public func viewDidLoad() {
         super.viewDidLoad()
         
@@ -21,7 +27,6 @@ class BubbleClientSearchViewController: UITableViewController {
             self?.list = list
             self?.tableView.reloadData()
         }
-        list = cgmManager?.list ?? []
         
         title = cgmManager?.localizedTitle
         
@@ -35,10 +40,14 @@ class BubbleClientSearchViewController: UITableViewController {
         
         let button = UIBarButtonItem.init(title: NSLocalizedString("Scan", comment: "scan bubble"), style: .done, target: self, action: #selector(scanAction))
         self.navigationItem.setRightBarButton(button, animated: false)
+        
+        scanAction()
     }
     
+    
+    
     @objc func scanAction() {
-        cgmManager?.clearList()
+        cgmManager?.reScan()
         tableView.reloadData()
     }
     

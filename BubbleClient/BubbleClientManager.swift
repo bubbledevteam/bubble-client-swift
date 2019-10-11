@@ -35,7 +35,11 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         }
     }
     
-    public func clearList() {
+    public func stopScan() {
+        BubbleClientManager.proxy?.stopScan()
+    }
+    
+    public func reScan() {
         BubbleClientManager.proxy?.list = []
         BubbleClientManager.proxy?.scanForBubble()
     }

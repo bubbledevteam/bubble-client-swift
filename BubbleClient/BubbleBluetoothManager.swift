@@ -126,24 +126,18 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     func scanForBubble() {
         os_log("Scan for Bubble while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state))
-        //        print(centralManager.debugDescription)
         if centralManager.state == .poweredOn {
             disconnectManually()
             os_log("Before scan for Bubble while central manager state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: centralManager.state.rawValue))
             centralManager.scanForPeripherals(withServices: nil, options: nil)
             
             state = .Scanning
-            
-            //            print(centralManager.debugDescription)
         }
-        //        // Set timer to check connection and reconnect if necessary
-        //        timer = Timer.scheduledTimer(withTimeInterval: 20, repeats: false) {_ in
-        //            os_log("********** Reconnection timer fired in background **********", log: BubbleManager.bt_log, type: .default)
-        //            if self.state != .Notifying {
-        //                self.scanForBubble()
-        //                //                NotificationManager.scheduleDebugNotification(message: "Reconnection timer fired in background", wait: 0.5)
-        //            }
-        //        }
+    }
+    
+    func stopScan() {
+        centralManager.stopScan()
+        list = []
     }
     
     func connect() {
@@ -158,52 +152,17 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     func disconnectManually() {
         os_log("Disconnect manually while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue))
-        //        NotificationManager.scheduleDebugNotification(message: "Timer fired in Background", wait: 3)
-        //        _ = Timer(timeInterval: 150, repeats: false, block: {timer in NotificationManager.scheduleDebugNotification(message: "Timer fired in Background", wait: 0.5)})
-        
-        switch state {
-        case .Connected, .Connecting, .Notifying:
-            self.state = .DisconnectingDueToButtonPress  // to avoid reconnect in didDisconnetPeripheral
-            centralManager.cancelPeripheralConnection(peripheral!)
-            self.wantsToTerminate = true
-        case .Scanning:
-            self.state = .DisconnectingDueToButtonPress  // to avoid reconnect in didDisconnetPeripheral
-             os_log("stopping scan", log: BubbleBluetoothManager.bt_log, type: .default)
-            centralManager.stopScan()
-            self.wantsToTerminate = true
-            // at this point, the peripherial is not connected and therefore not available either
-            //centralManager.cancelPeripheralConnection(peripheral!)
-        default:
-            break
+
+        stopScan()
+        if let p = peripheral {
+            centralManager.cancelPeripheralConnection(p)
         }
-        //        if state == .Connected || peripheral?.state == .Connecting {
-        //            centralManager.cancelPeripheralConnection(peripheral!)
-        //        }
     }
     
     
     // MARK: - CBCentralManagerDelegate
-    
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         
-        os_log("Central Manager did update state to %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: central.state.rawValue))
-        
-        
-        switch central.state {
-        case .poweredOff:
-            state = .powerOff
-        case  .resetting, .unauthorized, .unknown, .unsupported:
-            os_log("Central Manager was either .poweredOff, .resetting, .unauthorized, .unknown, .unsupported: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: central.state))
-            state = .Unassigned
-        case .poweredOn:
-            if state == .DisconnectingDueToButtonPress {
-                os_log("Central Manager was powered on but sensorstate was DisconnectingDueToButtonPress:  %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: central.state))
-            } else {
-                os_log("Central Manager was powered on, scanningforBubble: state: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state))
-                scanForBubble() // power was switched on, while app is running -> reconnect.
-            }
-            
-        }
     }
     
     
@@ -224,65 +183,10 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 bubblePeripheral.peripheral = peripheral
                 delegate?.BubbleBluetoothManagerDidFound(peripheral: bubblePeripheral)
             }
-            
-//            self.peripheral = peripheral
-//            connect()
-            
-//            if let data = advertisementData["kCBAdvDataManufacturerData"] as? Data {
-//                var mac = ""
-//                for i in 0 ..< 6 {
-//                    mac += data.subdata(in: (7 - i)..<(8 - i)).hexEncodedString().uppercased()
-//                    if i != 5 {
-//                        mac += ":"
-//                    }
-//                }
-//
-//                if mac == "EB:12:CD:ED:7E:3B" {
-//                    print("mac: \(mac)")
-//                    self.peripheral = peripheral
-//                    connect()
-//                }
-//            }
-            
-//            if let lastConnectedIdentifier = self.lastConnectedIdentifier {
-//                if peripheral.identifier.uuidString == lastConnectedIdentifier {
-//                    os_log("Did connect to previously known Bubble with identifier %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: peripheral.identifier))
-//                    if let data = advertisementData["kCBAdvDataManufacturerData"] as? Data {
-//                        var mac = ""
-//                        for i in 0 ..< 6 {
-//                            mac += data.subdata(in: (7 - i)..<(8 - i)).hexEncodedString().uppercased()
-//                            if i != 5 {
-//                                mac += ":"
-//                            }
-//                        }
-//
-//                        if mac == "EB:12:CD:ED:7E:3B" {
-//                            self.peripheral = peripheral
-//                            connect()
-//                        }
-//                    }
-//                } else {
-//                    os_log("Did not connect to miamiao with identifier %{public}@, because it did not match previously connected Bubble with identifer %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: peripheral.identifier.uuidString), lastConnectedIdentifier)
-//                }
-//
-//            } else {
-//                os_log("Did connect to Bubble with new identifier %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: peripheral.identifier))
-//                self.peripheral = peripheral
-//                connect()
-//            }
-            
         }
-        
-        /*
-        if peripheral.name == deviceName {
-            
-            self.peripheral = peripheral
-            connect()
-        }*/
     }
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        
         os_log("Did connect peripheral while state %{public}@ with name: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue), String(describing: peripheral.name))
         state = .Connected
         self.lastConnectedIdentifier = peripheral.identifier.uuidString
@@ -312,25 +216,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         if let error = error {
             os_log("Did disconnect peripheral error: %{public}@", log: BubbleBluetoothManager.bt_log, type: .error ,  "\(error.localizedDescription)")
         }
-        
-        
-        switch state {
-        case .DisconnectingDueToButtonPress:
-            state = .Disconnected
-            self.wantsToTerminate = true
-        
-        default:
-            state = .Disconnected
-            connect()
-            //    scanForBubble()
-        }
-        // Keep this code in case you want it some later time: it is used for reconnection only in background mode
-        //        state = .Disconnected
-        //        // Start scanning, if disconnection occurred in background mode
-        //        if UIApplication.sharedApplication().applicationState == .Background ||
-        //            UIApplication.sharedApplication().applicationState == .Inactive {
-        //            scanForBubble()
-        //        }
     }
     
     
@@ -367,27 +252,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         if let characteristics = service.characteristics {
             for characteristic in characteristics {
                 os_log("Did discover characteristic: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: characteristic.debugDescription))
-                //                print("Characteristic: ")
-                //                debugPrint(characteristic.debugDescription)
-                //                print("... with properties: ")
-                //                debugPrint(characteristic.properties)
-                //                print("Broadcast:                           ", [characteristic.properties.contains(.broadcast)])
-                //                print("Read:                                ", [characteristic.properties.contains(.read)])
-                //                print("WriteWithoutResponse:                ", [characteristic.properties.contains(.writeWithoutResponse)])
-                //                print("Write:                               ", [characteristic.properties.contains(.write)])
-                //                print("Notify:                              ", [characteristic.properties.contains(.notify)])
-                //                print("Indicate:                            ", [characteristic.properties.contains(.indicate)])
-                //                print("AuthenticatedSignedWrites:           ", [characteristic.properties.contains(.authenticatedSignedWrites )])
-                //                print("ExtendedProperties:                  ", [characteristic.properties.contains(.extendedProperties)])
-                //                print("NotifyEncryptionRequired:            ", [characteristic.properties.contains(.notifyEncryptionRequired)])
-                //                print("BroaIndicateEncryptionRequireddcast: ", [characteristic.properties.contains(.indicateEncryptionRequired)])
-                //                print("Serivce for Characteristic:          ", [characteristic.service.debugDescription])
-                //
-                //                if characteristic.service.uuid == CBUUID(string: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E") {
-                //                    print("\n B I N G O \n")
-                //                }
-                
-                // Choose the notifiying characteristic and Register to be notified whenever the Bubble transmits
                 if (characteristic.properties.intersection(.notify)) == .notify && characteristic.uuid == CBUUID(string: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E") {
                     peripheral.setNotifyValue(true, for: characteristic)
                     os_log("Set notify value for this characteristic", log: BubbleBluetoothManager.bt_log, type: .default)
