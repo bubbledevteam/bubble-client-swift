@@ -366,8 +366,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
             // Inform delegate that new data is available
             delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
         }
-        
-        
     }
     
     deinit {
