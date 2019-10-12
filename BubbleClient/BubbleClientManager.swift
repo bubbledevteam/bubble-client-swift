@@ -48,7 +48,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         return BubbleClientManager.proxy?.list ?? []
     }
     
-    public func connect(peripheral: CBPeripheral?) {
+    public func connect(peripheral: BubblePeripheral?) {
         BubbleClientManager.proxy?.peripheral = peripheral
         BubbleClientManager.proxy?.connect()
     }
@@ -149,7 +149,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     public private(set) var latestBackfill: LibreGlucose? {
         didSet(oldValue) {
-            NSLog("dabear:: latestBackfill set, newvalue is \(latestBackfill)")
+            NSLog("dabear:: latestBackfill set, newvalue is \(latestBackfill )")
             if let latestBackfill = latestBackfill {
                 BubbleClientManager.latestGlucose = latestBackfill
                 NSLog("dabear:: sending glucose notification")
@@ -347,7 +347,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         
         
         for i in 0 ..< arr.count {
-            var trend = arr[i]
+            let trend = arr[i]
             //we know that the array "always" (almost) will contain 16 entries
             //the last five entries will get a trend arrow of flat, because it's not computable when we don't have
             //more entries in the array to base it on
@@ -363,13 +363,13 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             return arr
         }
         
-        var filtered = [LibreGlucose]()
-        for elm in arr.enumerated() where elm.offset % 5 == 0 {
-            filtered.append(elm.element)
-        }
-        
-        //NSLog("dabear:: glucose samples after smoothing: \(String(describing: arr))")
-        return filtered
+//        var filtered = [LibreGlucose]()
+//        for elm in arr.enumerated() where elm.offset % 5 == 0 {
+//            filtered.append(elm.element)
+//        }
+//
+//        //NSLog("dabear:: glucose samples after smoothing: \(String(describing: arr))")
+//        return filtered
     }
     
     public func handleGoodReading(data: SensorData?,_ callback: @escaping (LibreError?, [LibreGlucose]?) -> Void) {
@@ -378,34 +378,9 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         guard let data=data else {
             callback(LibreError.noSensorData, nil)
             return
-            
         }
         
-        
-//        let calibrationdata = keychain.getLibreCalibrationData()
-//        
-//        
-//        if let calibrationdata = calibrationdata{
-//            NSLog("dabear:: calibrationdata loaded")
-//            
-//            if calibrationdata.isValidForFooterWithReverseCRCs == data.footerCrc.byteSwapped {
-//                NSLog("dabear:: calibrationdata correct for this sensor, returning last values")
-//                let last16 = data.trendMeasurements(derivedAlgorithmParameterSet: calibrationdata)
-//                callback(nil, trendToLibreGlucose(last16) )
-//                return
-//
-//            } else {
-//                NSLog("dabear:: calibrationdata incorrect for this sensor, calibrationdata.isValidForFooterWithReverseCRCs: \(calibrationdata.isValidForFooterWithReverseCRCs),  data.footerCrc.byteSwapped: \(data.footerCrc.byteSwapped)")
-//            }
-//            
-//        } else {
-//            NSLog("dabear:: calibrationdata was nil")
-//
-//        }
-        
-        
-        
-        calibrateSensor(accessToken: "", site: "", sensordata: data) { [weak self] (calibrationparams)  in
+        calibrateSensor(sensordata: data) { [weak self] (calibrationparams)  in
             guard let params = calibrationparams else {
                 NSLog("dabear:: could not calibrate sensor, check libreoopweb permissions and internet connection")
                 callback(LibreError.noCalibrationData, nil)
@@ -423,17 +398,8 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             //and we trust that the remote endpoint returns correct data for the sensor
             let last16 = data.trendMeasurements(derivedAlgorithmParameterSet: params)
             callback(nil, self?.trendToLibreGlucose(last16) )
-            
-            
         }
-        
-        
-        
-        
     }
-    
-    
-   
     
     public func BubbleBluetoothManagerPeripheralStateChanged(_ state: BubbleManagerState) {
         switch state {
@@ -488,12 +454,12 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
 //        NotificationHelper.sendInvalidSensorNotificationIfNeeded(sensorData: sensorData)
         NotificationHelper.sendSensorExpireAlertIfNeeded(sensorData: sensorData)
         
-//        if sensorData.hasValidCRCs {
+        if sensorData.hasValidCRCs {
         
-//            if sensorData.state == .ready ||  sensorData.state == .starting {
-//                NSLog("dabear:: got sensordata with valid crcs, sensor was ready")
-//                self.lastValidSensorData = sensorData
-//
+            if sensorData.state == .ready ||  sensorData.state == .starting {
+                NSLog("dabear:: got sensordata with valid crcs, sensor was ready")
+                self.lastValidSensorData = sensorData
+
                 self.handleGoodReading(data: sensorData) { (error, glucose) in
                     if let error = error {
                         NSLog("dabear:: handleGoodReading returned with error: \(error)")
@@ -529,16 +495,14 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                     
                 }
                 
-//            } else {
-//                os_log("dabear:: got sensordata with valid crcs, but sensor is either expired or failed")
-//                self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.expiredSensor))
-//            }
-            
-            
-//        } else {
-//            self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
-//            os_log("dit not get sensordata with valid crcs")
-//        }
+            } else {
+                os_log("dabear:: got sensordata with valid crcs, but sensor is either expired or failed")
+                self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.expiredSensor))
+            }
+        } else {
+            self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
+            os_log("dit not get sensordata with valid crcs")
+        }
         self.reloadData?()
         return
     }

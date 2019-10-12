@@ -62,7 +62,7 @@ class BubbleClientSearchViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        cgmManager?.connect(peripheral: list[indexPath.row].peripheral)
+        cgmManager?.connect(peripheral: list[indexPath.row])
         navigationController?.popViewController(animated: true)
     }
 

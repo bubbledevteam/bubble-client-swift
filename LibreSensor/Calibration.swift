@@ -64,7 +64,7 @@ func post(bytes: [UInt8],_ completion:@escaping (( _ data_: Data, _ response: St
     }
 }
 
-public func calibrateSensor(accessToken: String, site:String, sensordata: SensorData,  callback: @escaping (DerivedAlgorithmParameters?) -> Void) {
+public func calibrateSensor(sensordata: SensorData,  callback: @escaping (DerivedAlgorithmParameters?) -> Void) {
     let url = URL.init(fileURLWithPath: filePath)
     let decoder = JSONDecoder()
     do {

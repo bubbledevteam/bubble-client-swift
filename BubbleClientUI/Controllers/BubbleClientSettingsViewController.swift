@@ -534,11 +534,7 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
                     cgmManager.cgmManagerDelegate?.cgmManagerWantsDeletion(cgmManager)
                     
                     self.cgmManager = nil
-                    
-                    
-                    
                 }
-                
                 self.complete()
             })
 
@@ -574,14 +570,6 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             let confirmVC = UIAlertController(calibrateHandler:  {
 
                 if let cgmManager = self.cgmManager {
-
-                    guard let (accessToken, url) =  cgmManager.keychain.getAutoCalibrateWebCredentials() else {
-                        NSLog("dabear:: could not calibrate, accesstoken or url was nil")
-                        self.presentStatus(OKAlertController(LibreError.invalidAutoCalibrationCredentials.errorDescription, title: "Error"))
-
-                        return
-                    }
-
                     guard let data = cgmManager.lastValidSensorData else {
                         NSLog("No sensordata was present, unable to recalibrate!")
                         self.presentStatus(OKAlertController(LibreError.noSensorData.errorDescription, title: "Error"))
@@ -589,7 +577,7 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
                         return
                     }
 
-                    calibrateSensor(accessToken: accessToken, site: url.absoluteString, sensordata: data) { [weak self] (calibrationparams)  in
+                    calibrateSensor(sensordata: data) { [weak self] (calibrationparams)  in
                         guard let params = calibrationparams else {
                             NSLog("dabear:: could not calibrate sensor, check libreoopweb permissions and internet connection")
                             self?.presentStatus(OKAlertController(LibreError.noCalibrationData.errorDescription, title: "Error"))
@@ -606,16 +594,8 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
                         }
 
                         self?.presentStatus(OKAlertController("Calibration success!", title: "Success"))
-
-
-
                     }
-
-
-
                 }
-
-
             })
 
             present(confirmVC, animated: true) {

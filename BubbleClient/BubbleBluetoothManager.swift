@@ -16,6 +16,8 @@ import os.log
 public class BubblePeripheral: NSObject {
     public var mac: String?
     public var peripheral: CBPeripheral?
+    public var hardware: String?
+    public var firmware: String?
 }
 
 public enum BubbleManagerState: String {
@@ -67,7 +69,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     var bubble: Bubble?
     var BubbleResponseState: BubbleResponseState?
     var centralManager: CBCentralManager!
-    var peripheral: CBPeripheral?
+    var peripheral: BubblePeripheral?
     //    var slipBuffer = SLIPBuffer()
     var writeCharacteristic: CBCharacteristic?
     
@@ -77,9 +79,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     //    fileprivate let serviceUUIDs:[CBUUID]? = [CBUUID(string: "6E400001B5A3F393E0A9E50E24DCCA9E")]
     fileprivate let deviceName = "Bubble"
     fileprivate let serviceUUIDs:[CBUUID]? = [CBUUID(string: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E")]
-    
-    var BLEScanDuration = 3.0
-    weak var timer: Timer?
     
     var delegate: BubbleBluetoothManagerDelegate? {
         didSet {
@@ -103,12 +102,17 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         //        slipBuffer.delegate = self
         os_log("Bubblemanager init called ", log: BubbleBluetoothManager.bt_log)
         
-        #if DEBUG
+//        #if DEBUG
         DispatchQueue.global().async {
             sleep(3)
-//            self.test()
+            self.test()
         }
-        #endif
+        
+        let timer = Timer.init(timeInterval: 60 * 5, repeats: true) { (_) in
+            self.test()
+        }
+        RunLoop.current.add(timer, forMode: .commonModes)
+//        #endif
     }
     
     func test() {
@@ -142,11 +146,13 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     func connect() {
         os_log("Connect while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue))
-        if let peripheral = peripheral {
-            peripheral.delegate = self
+        if let p = peripheral?.peripheral {
+            p.delegate = self
             centralManager.stopScan()
-            centralManager.connect(peripheral, options: nil)
+            centralManager.connect(p, options: nil)
             state = .Connecting
+            firmware = peripheral?.firmware
+            hardware = peripheral?.hardware
         }
     }
     
@@ -154,7 +160,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         os_log("Disconnect manually while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue))
 
         stopScan()
-        if let p = peripheral {
+        if let p = peripheral?.peripheral {
             centralManager.cancelPeripheralConnection(p)
         }
     }
@@ -181,6 +187,18 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 let bubblePeripheral = BubblePeripheral()
                 bubblePeripheral.mac = mac
                 bubblePeripheral.peripheral = peripheral
+                if data.count >= 10 {
+                    let fSub1 = Data.init(repeating: data[8], count: 1)
+                    let fSub2 = Data.init(repeating: data[9], count: 1)
+                    let fVersion = Float("\(fSub1.hexEncodedString()).\(fSub2.hexEncodedString())")
+                    
+                    let hSub1 = Data.init(repeating: data[8], count: 1)
+                    let hSub2 = Data.init(repeating: data[9], count: 1)
+                    let hVersion = Float("\(hSub1.hexEncodedString()).\(hSub2.hexEncodedString())")
+                    bubblePeripheral.hardware = hVersion?.description
+                    bubblePeripheral.firmware = fVersion?.description
+                }
+                
                 delegate?.BubbleBluetoothManagerDidFound(peripheral: bubblePeripheral)
             }
         }
@@ -273,12 +291,13 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         if let error = error {
             os_log("Peripheral did update notification state for characteristic: %{public}@ with error", log: BubbleBluetoothManager.bt_log, type: .error ,  "\(error.localizedDescription)")
         } else {
-            resetBuffer()
             requestData()
         }
         state = .Notifying
     }
     
+    var hardware: String?
+    var firmware: String?
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         os_log("Did update value for characteristic: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: characteristic.debugDescription))
         
@@ -290,18 +309,16 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                     if let bubbleResponseState = BubbleResponseType(rawValue: firstByte) {
                         switch bubbleResponseState {
                         case .bubbleInfo:
-                            let hardware = value[2].description + ".0"
-                            let firmware = value[1].description + ".0"
                             let battery = Int(value[4])
-                            bubble = Bubble(hardware: hardware,
-                                            firmware: firmware,
+                            bubble = Bubble(hardware: hardware ?? "0",
+                                            firmware: firmware ?? "0",
                                             battery: battery)
-                            
                             if let writeCharacteristic = writeCharacteristic {
                                 print("-----set: ", writeCharacteristic)
-                                peripheral.writeValue(Data([0x02, 0x00, 0x00, 0x00, 0x00, 0x2B]), for: writeCharacteristic, type: .withResponse)
+                                peripheral.writeValue(Data([0x02, 0x00, 0x00, 0x00, 0x00, 0x2B]), for: writeCharacteristic, type: .withoutResponse)
                             }
                         case .dataPacket:
+                            guard rxBuffer.count >= 8 else { return }
                             rxBuffer.append(value.suffix(from: 4))
                             if rxBuffer.count >= 352 {
                                 handleCompleteMessage()
@@ -325,19 +342,10 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     }
     
     // Bubble specific commands
-    
-    // Confirm (to replace) the sensor. Iif a new sensor is detected and shall be used, send this command (0xD301)
-    func confirmSensor() {
-        if let writeCharacteristic = writeCharacteristic {
-            peripheral?.writeValue(Data.init(bytes: [0xD3, 0x00]), for: writeCharacteristic, type: .withResponse)
-        }
-    }
-    
     func requestData() {
         if let writeCharacteristic = writeCharacteristic {
             resetBuffer()
-            timer?.invalidate()
-            peripheral?.writeValue(Data.init(bytes: [0x00, 0x00, 0x05]), for: writeCharacteristic, type: .withResponse)
+            peripheral?.peripheral?.writeValue(Data.init(bytes: [0x00, 0x00, 0x05]), for: writeCharacteristic, type: .withoutResponse)
         }
     }
     
@@ -359,11 +367,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         
         // Check if sensor data is valid and, if this is not the case, request data again after thirty second
         if let sensorData = sensorData {
-            if !(sensorData.hasValidHeaderCRC && sensorData.hasValidBodyCRC && sensorData.hasValidFooterCRC) {
-                Timer.scheduledTimer(withTimeInterval: 30, repeats: false, block: {_ in
-                    self.requestData()
-                })
-            }
             // Inform delegate that new data is available
             delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
         }
@@ -396,9 +399,7 @@ extension String {
             let num = UInt8(byteString, radix: 16)!
             data.append(num)
         }
-        
         guard data.count > 0 else { return nil }
-        
         return data
     }
 }
