@@ -151,8 +151,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
             centralManager.stopScan()
             centralManager.connect(p, options: nil)
             state = .Connecting
-            firmware = peripheral?.firmware
-            hardware = peripheral?.hardware
         }
     }
     
@@ -187,16 +185,16 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 let bubblePeripheral = BubblePeripheral()
                 bubblePeripheral.mac = mac
                 bubblePeripheral.peripheral = peripheral
-                if data.count >= 10 {
+                if data.count >= 12 {
                     let fSub1 = Data.init(repeating: data[8], count: 1)
                     let fSub2 = Data.init(repeating: data[9], count: 1)
                     let fVersion = Float("\(fSub1.hexEncodedString()).\(fSub2.hexEncodedString())")
+                    bubblePeripheral.firmware = fVersion?.description
                     
-                    let hSub1 = Data.init(repeating: data[8], count: 1)
-                    let hSub2 = Data.init(repeating: data[9], count: 1)
+                    let hSub1 = Data.init(repeating: data[10], count: 1)
+                    let hSub2 = Data.init(repeating: data[11], count: 1)
                     let hVersion = Float("\(hSub1.hexEncodedString()).\(hSub2.hexEncodedString())")
                     bubblePeripheral.hardware = hVersion?.description
-                    bubblePeripheral.firmware = fVersion?.description
                 }
                 
                 delegate?.BubbleBluetoothManagerDidFound(peripheral: bubblePeripheral)
@@ -296,8 +294,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         state = .Notifying
     }
     
-    var hardware: String?
-    var firmware: String?
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         os_log("Did update value for characteristic: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: characteristic.debugDescription))
         
@@ -310,8 +306,8 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                         switch bubbleResponseState {
                         case .bubbleInfo:
                             let battery = Int(value[4])
-                            bubble = Bubble(hardware: hardware ?? "0",
-                                            firmware: firmware ?? "0",
+                            bubble = Bubble(hardware: self.peripheral?.hardware ?? "0",
+                                            firmware: self.peripheral?.firmware ?? "0",
                                             battery: battery)
                             if let writeCharacteristic = writeCharacteristic {
                                 print("-----set: ", writeCharacteristic)
