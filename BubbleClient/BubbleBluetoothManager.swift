@@ -63,7 +63,14 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     var list = [BubblePeripheral]()
     // MARK: - Properties
     private var wantsToTerminate = false
-    private var lastConnectedIdentifier : String?
+    private var lastConnectedIdentifier: String? {
+        set {
+            UserDefaults.standard.set(newValue, forKey: "lastConnectedIdentifier")
+        }
+        get {
+            UserDefaults.standard.value(forKey: "lastConnectedIdentifier") as? String
+        }
+    }
     
     static let bt_log = OSLog(subsystem: "com.LibreMonitor", category: "BubbleManager")
     var bubble: Bubble?
@@ -113,6 +120,10 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
 //        }
 //        RunLoop.current.add(timer, forMode: .commonModes)
         #endif
+        
+        if centralManager.state == .poweredOn {
+            centralManager.scanForPeripherals(withServices: nil, options: nil)
+        }
     }
     
     func test() {
@@ -128,7 +139,9 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         }
     }
     
+    var autoScanning = true
     func scanForBubble() {
+        autoScanning = false
         os_log("Scan for Bubble while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state))
         if centralManager.state == .poweredOn {
             disconnectManually()
@@ -166,7 +179,10 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     // MARK: - CBCentralManagerDelegate
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        
+        if central.state == .poweredOn {
+            autoScanning = true
+            centralManager.scanForPeripherals(withServices: nil, options: nil)
+        }
     }
     
     
@@ -197,6 +213,11 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                     bubblePeripheral.hardware = hVersion?.description
                 }
                 
+                // reconnect
+                if peripheral.identifier.uuidString == lastConnectedIdentifier && autoScanning {
+                    self.peripheral = bubblePeripheral
+                    connect()
+                }
                 delegate?.BubbleBluetoothManagerDidFound(peripheral: bubblePeripheral)
             }
         }

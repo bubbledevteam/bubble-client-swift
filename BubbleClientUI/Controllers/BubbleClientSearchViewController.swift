@@ -21,7 +21,7 @@ class BubbleClientSearchViewController: UITableViewController {
     
     override public func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .white
         cgmManager?.found = {
             [weak self] list in
             self?.list = list
