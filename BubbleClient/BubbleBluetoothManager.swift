@@ -120,10 +120,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
 //        }
 //        RunLoop.current.add(timer, forMode: .commonModes)
         #endif
-        
-        if centralManager.state == .poweredOn {
-            centralManager.scanForPeripherals(withServices: nil, options: nil)
-        }
     }
     
     func test() {
@@ -180,6 +176,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     // MARK: - CBCentralManagerDelegate
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state == .poweredOn {
+            os_log("state poweredOn", log: BubbleBluetoothManager.bt_log)
             autoScanning = true
             centralManager.scanForPeripherals(withServices: nil, options: nil)
         }
@@ -188,7 +185,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         
-        os_log("Did discover peripheral while state %{public}@ with name: %{public}@, wantstoterminate?:  %d", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue), String(describing: peripheral.name), self.wantsToTerminate)
+//        os_log("Did discover peripheral while state %{public}@ with name: %{public}@, wantstoterminate?:  %d", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue), String(describing: peripheral.name), self.wantsToTerminate)
         if peripheral.name == deviceName {
             if let data = advertisementData["kCBAdvDataManufacturerData"] as? Data {
                 var mac = ""
@@ -214,6 +211,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 }
                 
                 // reconnect
+                print(peripheral.identifier.uuidString)
                 if peripheral.identifier.uuidString == lastConnectedIdentifier && autoScanning {
                     self.peripheral = bubblePeripheral
                     connect()
