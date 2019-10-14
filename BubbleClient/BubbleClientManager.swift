@@ -410,6 +410,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         default:
             break
         }
+        reloadData?()
         return
     }
     
