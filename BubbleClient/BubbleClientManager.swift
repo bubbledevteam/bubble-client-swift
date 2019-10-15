@@ -101,13 +101,13 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     public var bubbleService : BubbleService
     
     public func fetchNewDataIfNeeded(_ completion: @escaping (CGMResult) -> Void) {
-        guard BubbleClientManager.proxy != nil else {
-            completion(.noData)
-            return
-        }
+//        guard BubbleClientManager.proxy != nil else {
+//            completion(.noData)
+//            return
+//        }
         NSLog("dabear:: fetchNewDataIfNeeded called but we don't continue")
-        self.autoconnect()
-        completion(.noData)
+//        self.autoconnect()
+//        completion(.noData)
         /*
         self.getLastSensorValues { (error, glucose) in
             if let error = error {
@@ -308,7 +308,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
    
     
-    func autoconnect(){
+    func autoconnect() {
         guard let proxy = BubbleClientManager.proxy else {
             os_log("dabear: could not do autoconnect, proxy was nil")
             return
@@ -328,6 +328,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             proxy.connect()
         }
     }
+    
     private func trendToLibreGlucose(_ measurements: [Measurement]) -> [LibreGlucose]?{
         var origarr = [LibreGlucose]()
         

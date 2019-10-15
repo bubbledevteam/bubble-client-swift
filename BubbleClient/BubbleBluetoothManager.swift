@@ -379,8 +379,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     // Bubble specific commands
     func requestData() {
         if let writeCharacteristic = writeCharacteristic {
-            resetBuffer()
-            peripheral?.peripheral?.writeValue(Data.init(bytes: [0x00, 0x00, 0x01]), for: writeCharacteristic, type: .withoutResponse)
+            peripheral?.peripheral?.writeValue(Data.init(bytes: [0x00, 0x00, 0x05]), for: writeCharacteristic, type: .withoutResponse)
         }
     }
     
