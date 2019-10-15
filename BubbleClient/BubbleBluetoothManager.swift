@@ -336,13 +336,16 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                             guard rxBuffer.count >= 8 else { return }
                             rxBuffer.append(value.suffix(from: 4))
                             if rxBuffer.count >= 352 {
+                                os_log("dabear:: receive 352 bytes")
                                 handleCompleteMessage()
                                 resetBuffer()
                             }
                         case .noSensor:
+                            os_log("dabear:: receive noSensor")
                             delegate?.BubbleBluetoothManagerReceivedMessage(0x0000, txFlags: 0x34, payloadData: rxBuffer)
                             resetBuffer()
                         case .serialNumber:
+                            os_log("dabear:: receive serialNumber")
                             rxBuffer.append(value.subdata(in: 2..<10))
                         }
                     }
@@ -360,7 +363,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     func requestData() {
         if let writeCharacteristic = writeCharacteristic {
             resetBuffer()
-            peripheral?.peripheral?.writeValue(Data.init(bytes: [0x00, 0x00, 0x05]), for: writeCharacteristic, type: .withoutResponse)
+            peripheral?.peripheral?.writeValue(Data.init(bytes: [0x00, 0x00, 0x01]), for: writeCharacteristic, type: .withoutResponse)
         }
     }
     
