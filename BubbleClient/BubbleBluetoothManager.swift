@@ -175,7 +175,13 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     // MARK: - CBCentralManagerDelegate
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        if central.state == .poweredOn {
+        switch central.state {
+        case .poweredOff:
+            state = .powerOff
+        case  .resetting, .unauthorized, .unknown, .unsupported:
+            os_log("Central Manager was either .poweredOff, .resetting, .unauthorized, .unknown, .unsupported: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: central.state))
+            state = .Unassigned
+        case .poweredOn:
             os_log("state poweredOn", log: BubbleBluetoothManager.bt_log)
             autoScanning = true
             centralManager.scanForPeripherals(withServices: nil, options: nil)
@@ -251,12 +257,22 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         if let error = error {
             os_log("Did disconnect peripheral error: %{public}@", log: BubbleBluetoothManager.bt_log, type: .error ,  "\(error.localizedDescription)")
         }
+        
+        
+        switch state {
+        case .DisconnectingDueToButtonPress:
+            state = .Disconnected
+            self.wantsToTerminate = true
+        
+        default:
+            state = .Disconnected
+            connect()
+            //    scanForBubble()
+        }
     }
     
     
     // MARK: - CBPeripheralDelegate
-    
-    
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         
         os_log("Did discover services", log: BubbleBluetoothManager.bt_log, type: .default)
@@ -308,6 +324,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         if let error = error {
             os_log("Peripheral did update notification state for characteristic: %{public}@ with error", log: BubbleBluetoothManager.bt_log, type: .error ,  "\(error.localizedDescription)")
         } else {
+            resetBuffer()
             requestData()
         }
         state = .Notifying
