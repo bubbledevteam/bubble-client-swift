@@ -68,7 +68,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
             UserDefaults.standard.set(newValue, forKey: "lastConnectedIdentifier")
         }
         get {
-            UserDefaults.standard.value(forKey: "lastConnectedIdentifier") as? String
+            return UserDefaults.standard.value(forKey: "lastConnectedIdentifier") as? String
         }
     }
     
