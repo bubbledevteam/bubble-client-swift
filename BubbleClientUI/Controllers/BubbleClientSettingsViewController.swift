@@ -554,9 +554,8 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
                     if manager.peripheralState != .connected {
                         search()
                     } else {
-                        let confirmVC = UIAlertController(cgmDeletionHandler: {
+                        let confirmVC = UIAlertController(cgmDisconnectHandler: {
                             NSLog("dabear:: confirmed: cgmmanagerwantsdisconnect")
-                            manager.disconnect()
                             search()
                         })
                         present(confirmVC, animated: true) {}
