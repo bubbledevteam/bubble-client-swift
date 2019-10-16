@@ -13,6 +13,9 @@
 /* Confirmation message for deleting a CGM */
 "Are you sure you want to delete this CGM?" = "确定删除该血糖数据源?";
 
+/* Confirmation message for deleting a CGM */
+"Are you sure you want to disconnect this CGM?" = "确定断开连接?";
+
 /* Confirmation message for recalibrate sensor */
 "Are you sure you want to recalibrate this sensor?" = "确认重新校准该传感器?";
 
@@ -181,3 +184,5 @@
 
 /* scan bubble */
 "Scan" = "扫描设备";
+
+"Disconnect" = "断开"

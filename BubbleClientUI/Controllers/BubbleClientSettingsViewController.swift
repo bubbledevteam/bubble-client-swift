@@ -544,10 +544,24 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         case .latestBridgeInfo:
             switch LatestBridgeInfoRow(rawValue: indexPath.row)! {
             case .connectionState:
-                tableView.deselectRow(at: indexPath, animated: true)
-                let vc = BubbleClientSearchViewController()
-                vc.cgmManager = cgmManager
-                navigationController?.pushViewController(vc, animated: true)
+                if let manager = cgmManager {
+                    func search() {
+                        tableView.deselectRow(at: indexPath, animated: true)
+                        let vc = BubbleClientSearchViewController()
+                        vc.cgmManager = cgmManager
+                        navigationController?.pushViewController(vc, animated: true)
+                    }
+                    if manager.peripheralState != .connected {
+                        search()
+                    } else {
+                        let confirmVC = UIAlertController(cgmDeletionHandler: {
+                            NSLog("dabear:: confirmed: cgmmanagerwantsdisconnect")
+                            manager.disconnect()
+                            search()
+                        })
+                        present(confirmVC, animated: true) {}
+                    }
+                }
             default:
                 tableView.deselectRow(at: indexPath, animated: true)
             }
@@ -680,6 +694,26 @@ private extension UIAlertController {
         let cancel = NSLocalizedString("Cancel", comment: "The title of the cancel action in an action sheet")
         addAction(UIAlertAction(title: cancel, style: .cancel, handler: nil))
     }
+    
+    convenience init(cgmDisconnectHandler handler: @escaping () -> Void) {
+        self.init(
+            title: nil,
+            message: NSLocalizedString("Are you sure you want to disconnect this CGM?", comment: "Confirmation message for disconnect a CGM"),
+            preferredStyle: .actionSheet
+        )
+        
+        addAction(UIAlertAction(
+            title: NSLocalizedString("Disconnect", comment: "Button title to Disconnect CGM"),
+            style: .destructive,
+            handler: { (_) in
+                handler()
+        }
+        ))
+        
+        let cancel = NSLocalizedString("Cancel", comment: "The title of the cancel action in an action sheet")
+        addAction(UIAlertAction(title: cancel, style: .cancel, handler: nil))
+    }
+    
     convenience init(calibrateHandler handler: @escaping () -> Void) {
         self.init(
             title: nil,

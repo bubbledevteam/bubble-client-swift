@@ -76,6 +76,10 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         )
     }
     
+    public var peripheralState: CBPeripheralState {
+        return BubbleClientManager.proxy?.peripheral?.peripheral?.state ?? .disconnected
+    }
+    
     public var debugDescription: String {
         
         return [

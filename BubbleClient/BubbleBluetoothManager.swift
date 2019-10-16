@@ -169,6 +169,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         stopScan()
         if let p = peripheral?.peripheral {
             centralManager.cancelPeripheralConnection(p)
+            peripheral = nil
         }
     }
     
@@ -242,16 +243,11 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
             os_log("Did fail to connect peripheral error: %{public}@", log: BubbleBluetoothManager.bt_log, type: .error ,  "\(error.localizedDescription)")
         }
         state = .Disconnected
-        // attempt to avoid IOS killing app because of cpu usage.
-        // postpone connecting for 30 seconds
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(30)) {
-            self.connect()
-        }
-        
+        connect()
     }
     
+    
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        
         
         os_log("Did disconnect peripheral while state: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue))
         if let error = error {
@@ -267,7 +263,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         default:
             state = .Disconnected
             connect()
-            //    scanForBubble()
         }
     }
     
