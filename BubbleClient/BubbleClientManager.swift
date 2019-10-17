@@ -412,6 +412,8 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             lastConnected = Date()
         case .powerOff:
             NotificationHelper.sendBluetoothPowerOffNotification()
+        case .Disconnected:
+            NotificationHelper.sendDisconnectNotification()
         default:
             break
         }

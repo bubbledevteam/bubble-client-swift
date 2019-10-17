@@ -17,6 +17,7 @@ class NotificationHelper {
     private enum Identifiers: String {
         case glucocoseNotifications = "no.bjorninge.Bubble.glucose-notification"
         case noSensorDetected = "no.bjorninge.Bubble.nosensordetected-notification"
+        case bluetoothDisconnect = "no.bjorninge.Bubble.bluetoothdisconnect-notification"
         case sensorChange = "no.bjorninge.Bubble.sensorchange-notification"
         case invalidSensor = "no.bjorninge.Bubble.invalidsensor-notification"
         case lowBattery = "no.bjorninge.Bubble.lowbattery-notification"
@@ -240,6 +241,36 @@ class NotificationHelper {
             
             //content.sound = UNNotificationSound.
             let request = UNNotificationRequest(identifier: Identifiers.noSensorDetected.rawValue, content: content, trigger: nil)
+            
+            center.add(request) { (error) in
+                if let error = error {
+                    NSLog("dabear:: unable to add no sensordetected-notification: \(error.localizedDescription)")
+                }
+            }
+            
+        }
+    }
+    
+    public static func sendDisconnectNotification() {
+        
+        ensureCanSendNotification { (ensured) in
+            
+            guard (ensured) else {
+                NSLog("dabear:: not sending noSensorDetected notification")
+                return
+            }
+            NSLog("dabear:: sending disconnectNotification")
+            
+            let content = UNMutableNotificationContent()
+            content.title = "Bluetooth Disconnect"
+            content.body = "Please connect the bubble"
+            
+            let center = UNUserNotificationCenter.current()
+            
+            
+            
+            //content.sound = UNNotificationSound.
+            let request = UNNotificationRequest(identifier: Identifiers.bluetoothDisconnect.rawValue, content: content, trigger: nil)
             
             center.add(request) { (error) in
                 if let error = error {
