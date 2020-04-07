@@ -8,6 +8,34 @@
 
 import Foundation
 
+extension String {
+    //https://stackoverflow.com/questions/39677330/how-does-string-substring-work-in-swift
+    //usage
+    //let s = "hello"
+    //s[0..<3] // "hel"
+    //s[3..<s.count] // "lo"
+    subscript(_ range: CountableRange<Int>) -> String {
+        let idx1 = index(startIndex, offsetBy: max(0, range.lowerBound))
+        let idx2 = index(startIndex, offsetBy: min(self.count, range.upperBound))
+        return String(self[idx1..<idx2])
+    }
+}
+
+extension StringProtocol where Index == String.Index {
+    ///can be used to split a string in array of strings, splitted by other string
+    func indexes(of string: Self, options: String.CompareOptions = []) -> [Index] {
+        var result: [Index] = []
+        var start = startIndex
+        while start < endIndex,
+            let range = self[start..<endIndex].range(of: string, options: options) {
+                result.append(range.lowerBound)
+                start = range.lowerBound < range.upperBound ? range.upperBound :
+                    index(range.lowerBound, offsetBy: 1, limitedBy: endIndex) ?? endIndex
+        }
+        return result
+    }
+}
+
 
 /// Structure for data from Freestyle Libre sensor
 /// To be initialized with the bytes as read via nfc. Provides all derived data.
@@ -60,8 +88,8 @@ public struct SensorData {
     }
     
     /// Sensor state (ready, failure, starting etc.)
-    var state: SensorState {
-        return SensorState(stateByte: header[4])
+    var state: LibreSensorState {
+        return LibreSensorState(stateByte: header[4])
     }
     
     var isLikelyLibre1 : Bool {
@@ -71,6 +99,41 @@ public struct SensorData {
         }
         return false
         
+    }
+    
+    var patchUid: String {
+        uuid.hexEncodedString().uppercased()
+    }
+    
+    var patchInfo: String? {
+        didSet {
+            if let patchInfo = patchInfo, patchInfo.count > 2 {
+                let sub = patchInfo[0 ..< 2]
+                switch sub {
+                case "70":
+                    sensorName = "Libre Pro/H"
+                case "9D":
+                    sensorName = "Libre 2"
+                case "DF":
+                    sensorName = "Libre 1"
+                case "E5":
+                    sensorName = "Libre US 14 Days"
+                default:
+                    sensorName = "Libre"
+                }
+            } else {
+                sensorName = "Libre"
+            }
+        }
+    }
+    var sensorName = "Libre"
+    
+    var isSecondSensor: Bool {
+        return sensorName == "Libre 2" || sensorName == "Libre US 14 Days"
+    }
+    
+    var isFirstSensor: Bool {
+        return sensorName == "Libre" || sensorName == "Libre 1" || sensorName == "Libre Pro/H"
     }
     
     var humanReadableSensorAge : String {
@@ -110,31 +173,6 @@ public struct SensorData {
         guard 0 <= nextTrendBlock && nextTrendBlock < 16 && 0 <= nextHistoryBlock && nextHistoryBlock < 32 else {
             return nil
         }
-    }
-
-    
-    /// Get array of 16 trend glucose measurements. 
-    /// Each array is sorted such that the most recent value is at index 0 and corresponds to the time when the sensor was read, i.e. self.date. The following measurements are each one more minute behind, i.e. -1 minute, -2 mintes, -3 minutes, ... -15 minutes.
-    ///
-    /// - parameter offset: offset in mg/dl that is added (NOT IN USE FOR DERIVEDALGO)
-    /// - parameter slope:  slope in (mg/dl)/ raw (NOT IN USE FOR DERIVEDALGO)
-    ///
-    /// - returns: Array of Measurements
-    func trendMeasurements(_ offset: Double = 0.0, slope: Double = 0.1, derivedAlgorithmParameterSet: DerivedAlgorithmParameters?) -> [Measurement] {
-        var measurements = [Measurement]()
-        // Trend data is stored in body from byte 4 to byte 4+96=100 in units of 6 bytes. Index on data such that most recent block is first.
-        for blockIndex in 0...15 {
-            var index = 4 + (nextTrendBlock - 1 - blockIndex) * 6 // runs backwards
-            if index < 4 {
-                index = index + 96 // if end of ring buffer is reached shift to beginning of ring buffer
-            }
-            let range = index..<index+6
-            let measurementBytes = Array(body[range])
-            let measurementDate = date.addingTimeInterval(Double(-60 * blockIndex))
-            let measurement = Measurement(bytes: measurementBytes, slope: slope, offset: offset, date: measurementDate, derivedAlgorithmParameterSet: derivedAlgorithmParameterSet)
-            measurements.append(measurement)
-        }
-        return measurements
     }
     
     /// Get date of most recent history value.
@@ -176,50 +214,6 @@ public struct SensorData {
             //            print("delay: \(delay), minutesSinceStart: \(minutesSinceStart), result: \(minutesSinceStart-delay-15)")
             return date.addingTimeInterval( 60.0 * -Double(delay - 15))
         }
-    }
-    
-    
-//    func currentTime() -> Int {
-//        
-//        let quotientBy16 = minutesSinceStart / 16
-//        let nominalMinutesSinceStart = nextTrendBlock + quotientBy16 * 16
-//        let correctedQuotientBy16 = minutesSinceStart <= nominalMinutesSinceStart ? quotientBy16 - 1 : quotientBy16
-//        let currentTime = nextTrendBlock + correctedQuotientBy16 * 16
-//        
-//        let mostRecentHistoryCounter = (currentTime / 15) * 15
-//
-//        print("currentTime: \(currentTime), mostRecentHistoryCounter: \(mostRecentHistoryCounter)")
-//        return currentTime
-//    }
-    
-    /// Get array of 32 history glucose measurements.
-    /// Each array is sorted such that the most recent value is at index 0. This most recent value corresponds to -(minutesSinceStart - 3) % 15 + 3. The following measurements are each 15 more minutes behind, i.e. -15 minutes behind, -30 minutes, -45 minutes, ... .
-    ///
-    /// - parameter offset: offset in mg/dl that is added
-    /// - parameter slope:  slope in (mg/dl)/ raw
-    ///
-    /// - returns: Array of Measurements
-    func historyMeasurements(_ offset: Double = 0.0, slope: Double = 0.1) -> [Measurement] {
-                
-        var measurements = [Measurement]()
-        // History data is stored in body from byte 100 to byte 100+192-1=291 in units of 6 bytes. Index on data such that most recent block is first.
-        for blockIndex in 0..<32 {
-            
-            var index = 100 + (nextHistoryBlock - 1 - blockIndex) * 6 // runs backwards
-            if index < 100 {
-                index = index + 192 // if end of ring buffer is reached shift to beginning of ring buffer
-            }
-            
-            let range = index..<index+6
-            let measurementBytes = Array(body[range])
-//            let measurementDate = dateOfMostRecentHistoryValue().addingTimeInterval(Double(-900 * blockIndex)) // 900 = 60 * 15
-//            let measurement = Measurement(bytes: measurementBytes, slope: slope, offset: offset, date: measurementDate)
-            let (date, counter) = dateOfMostRecentHistoryValue()
-            let measurement = Measurement(bytes: measurementBytes, slope: slope, offset: offset, counter: counter - blockIndex * 15, date: date.addingTimeInterval(Double(-900 * blockIndex)), derivedAlgorithmParameterSet: nil) // 900 = 60 * 15
-            
-            measurements.append(measurement)
-        }
-        return measurements
     }
     
     func oopWebInterfaceInput() -> String {

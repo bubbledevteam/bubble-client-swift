@@ -107,12 +107,14 @@
 		43A8EC92210E676500A81379 /* BubbleClientSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A8EC8F210E676500A81379 /* BubbleClientSettingsViewController.swift */; };
 		43A8EC95210E67B000A81379 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43A8EC94210E67B000A81379 /* HealthKit.framework */; };
 		43A8EC97210E680100A81379 /* ShareService+UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A8EC96210E680100A81379 /* ShareService+UI.swift */; };
-		43A8EC99210E682A00A81379 /* BubbleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A8EC98210E682A00A81379 /* BubbleService.swift */; };
 		43A8EC9B210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A8EC9A210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift */; };
 		43AB511B21330D1400B3D58D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 43AB511921330D1400B3D58D /* Localizable.strings */; };
 		43AB5127213315D300B3D58D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 43AB5125213315D300B3D58D /* Localizable.strings */; };
 		43AB51362133177800B3D58D /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB51352133177800B3D58D /* LocalizedString.swift */; };
 		43AB51372133177800B3D58D /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB51352133177800B3D58D /* LocalizedString.swift */; };
+		EE10F6D0243C31E000C5340C /* LibreGlucoseSmoothing.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE10F6CF243C31E000C5340C /* LibreGlucoseSmoothing.swift */; };
+		EE10F6D2243C31F900C5340C /* LibreRawGlucoseData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE10F6D1243C31F900C5340C /* LibreRawGlucoseData.swift */; };
+		EE10F6D4243C320400C5340C /* LibreMeasurement.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE10F6D3243C320400C5340C /* LibreMeasurement.swift */; };
 		EE72B06D230CD6AB00D67B8F /* BubbleClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		EE72B06E230CD6AB00D67B8F /* BubbleClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE72B073230CDDF500D67B8F /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B072230CDDF500D67B8F /* LoopKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -281,7 +283,6 @@
 		43A8EC8F210E676500A81379 /* BubbleClientSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BubbleClientSettingsViewController.swift; sourceTree = "<group>"; };
 		43A8EC94210E67B000A81379 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		43A8EC96210E680100A81379 /* ShareService+UI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ShareService+UI.swift"; sourceTree = "<group>"; };
-		43A8EC98210E682A00A81379 /* BubbleService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BubbleService.swift; sourceTree = "<group>"; };
 		43A8EC9A210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ShareGlucose+GlucoseKit.swift"; sourceTree = "<group>"; };
 		43AB511A21330D1400B3D58D /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		43AB511C21330D6800B3D58D /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -305,6 +306,9 @@
 		43AB51302133161A00B3D58D /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		43AB51352133177800B3D58D /* LocalizedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedString.swift; sourceTree = "<group>"; };
 		43C418AE1CE0488900405B6A /* LibreGlucose.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreGlucose.swift; sourceTree = "<group>"; };
+		EE10F6CF243C31E000C5340C /* LibreGlucoseSmoothing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreGlucoseSmoothing.swift; sourceTree = "<group>"; };
+		EE10F6D1243C31F900C5340C /* LibreRawGlucoseData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreRawGlucoseData.swift; sourceTree = "<group>"; };
+		EE10F6D3243C320400C5340C /* LibreMeasurement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreMeasurement.swift; sourceTree = "<group>"; };
 		EE72B072230CDDF500D67B8F /* LoopKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKit.framework; path = Carthage/Build/iOS/LoopKit.framework; sourceTree = "<group>"; };
 		EE72B074230CDE0200D67B8F /* LoopKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKitUI.framework; path = Carthage/Build/iOS/LoopKitUI.framework; sourceTree = "<group>"; };
 		EE72B080230CE28E00D67B8F /* LoopKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKitUI.framework; path = Carthage/Build/iOS/LoopKitUI.framework; sourceTree = "<group>"; };
@@ -409,6 +413,9 @@
 			children = (
 				27E3C39E222EE9A80036AAC7 /* LibreOOPWebExtensions.swift */,
 				27E3C396222EE9450036AAC7 /* LibreOOPClient.swift */,
+				EE10F6CF243C31E000C5340C /* LibreGlucoseSmoothing.swift */,
+				EE10F6D1243C31F900C5340C /* LibreRawGlucoseData.swift */,
+				EE10F6D3243C320400C5340C /* LibreMeasurement.swift */,
 				27E3C395222EE9450036AAC7 /* LibreOOPDefaults.swift */,
 				27E3C397222EE9450036AAC7 /* LibreOOPResponse.swift */,
 				2729D68F221F44670030E1B8 /* SensorState.swift */,
@@ -562,7 +569,6 @@
 				43C418AE1CE0488900405B6A /* LibreGlucose.swift */,
 				43AB5125213315D300B3D58D /* Localizable.strings */,
 				43A8EC9A210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift */,
-				43A8EC98210E682A00A81379 /* BubbleService.swift */,
 				432B0E8D1CDFC3C50045347B /* Info.plist */,
 				2729D6A722248BDD0030E1B8 /* BubbleClientManager.swift */,
 				275C3DA2229FCED400E27439 /* NotificationHelper.swift */,
@@ -925,11 +931,13 @@
 				270C266F226A5A6E005B27F3 /* GlucoseSchedules.swift in Sources */,
 				2729D677221F421C0030E1B8 /* Bubble.swift in Sources */,
 				2729D6A822248BDD0030E1B8 /* BubbleClientManager.swift in Sources */,
+				EE10F6D0243C31E000C5340C /* LibreGlucoseSmoothing.swift in Sources */,
 				43A8EC9B210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift in Sources */,
-				43A8EC99210E682A00A81379 /* BubbleService.swift in Sources */,
 				275C3DA3229FCED400E27439 /* NotificationHelper.swift in Sources */,
 				2729D699221F44670030E1B8 /* CRC.swift in Sources */,
 				2729D6A3221F44C80030E1B8 /* Data.swift in Sources */,
+				EE10F6D4243C320400C5340C /* LibreMeasurement.swift in Sources */,
+				EE10F6D2243C31F900C5340C /* LibreRawGlucoseData.swift in Sources */,
 				2729D687221F43150030E1B8 /* SensorData.swift in Sources */,
 				277DAD14226CACF300422ADA /* MessagePassing.swift in Sources */,
 				27E3C39C222EE9450036AAC7 /* LibreOOPResponse.swift in Sources */,

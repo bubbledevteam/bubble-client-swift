@@ -15,8 +15,6 @@ extension BubbleClientManager: CGMManagerUI {
         return nil
     }
     
-   
-
     public func settingsViewController(for glucoseUnit: HKUnit) -> (UIViewController & CompletionNotifying & CompletionNotifying) {
         let settings =  BubbleClientSettingsViewController(cgmManager: self, glucoseUnit: glucoseUnit, allowsDeletion: true)
         let nav = SettingsNavigationViewController(rootViewController: settings)
@@ -24,6 +22,6 @@ extension BubbleClientManager: CGMManagerUI {
     }
 
     public var smallImage: UIImage? {
-        return UIImage.init(named: "bubble")
+        return nil
     }
 }

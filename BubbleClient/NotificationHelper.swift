@@ -77,7 +77,7 @@ class NotificationHelper {
     
     
     private static var glucoseNotifyCalledCount = 0
-    public static func sendGlucoseNotitifcationIfNeeded(glucose: LibreGlucose, oldValue: LibreGlucose?){
+    public static func sendGlucoseNotitifcationIfNeeded(glucose: GlucoseData, oldValue: GlucoseData?){
         glucoseNotifyCalledCount &+= 1
         
         
@@ -88,7 +88,7 @@ class NotificationHelper {
         let schedules = UserDefaults.standard.glucoseSchedules
         
         
-        let alarm = schedules?.getActiveAlarms(glucose.glucoseDouble) ?? GlucoseScheduleAlarmResult.none
+        let alarm = schedules?.getActiveAlarms(glucose.glucoseLevelRaw) ?? GlucoseScheduleAlarmResult.none
         let isSnoozed = GlucoseScheduleList.isSnoozed()
         
         NSLog("dabear:: glucose alarmtype is \(alarm)")
@@ -107,7 +107,7 @@ class NotificationHelper {
     
     
     
-    static private func sendGlucoseNotitifcation(glucose: LibreGlucose, oldValue: LibreGlucose?, alarm : GlucoseScheduleAlarmResult = .none, isSnoozed: Bool = false){
+    static private func sendGlucoseNotitifcation(glucose: GlucoseData, oldValue: GlucoseData?, alarm : GlucoseScheduleAlarmResult = .none, isSnoozed: Bool = false){
         
         
         guard let glucoseUnit = UserDefaults.standard.mmGlucoseUnit, glucoseUnit == HKUnit.milligramsPerDeciliter || glucoseUnit == HKUnit.millimolesPerLiter else {
@@ -172,7 +172,7 @@ class NotificationHelper {
                 
                 
                 //these are just calculations so I can use the convenience of the glucoseformatter
-                var diff = glucose.glucoseDouble - oldValue.glucoseDouble
+                var diff = glucose.glucoseLevelRaw - oldValue.glucoseLevelRaw
                 
                 if diff == 0 {
                     content.body += ", + 0"

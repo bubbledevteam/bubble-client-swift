@@ -544,23 +544,23 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         case .latestBridgeInfo:
             switch LatestBridgeInfoRow(rawValue: indexPath.row)! {
             case .connectionState:
-                if let manager = cgmManager {
-                    func search() {
-                        tableView.deselectRow(at: indexPath, animated: true)
-                        let vc = BubbleClientSearchViewController()
-                        vc.cgmManager = cgmManager
-                        navigationController?.pushViewController(vc, animated: true)
-                    }
-                    if manager.peripheralState != .connected {
-                        search()
-                    } else {
-                        let confirmVC = UIAlertController(cgmDisconnectHandler: {
-                            NSLog("dabear:: confirmed: cgmmanagerwantsdisconnect")
-                            search()
-                        })
-                        present(confirmVC, animated: true) {}
-                    }
-                }
+//                if let manager = cgmManager {
+//                    func search() {
+//                        tableView.deselectRow(at: indexPath, animated: true)
+//                        let vc = BubbleClientSearchViewController()
+//                        vc.cgmManager = cgmManager
+//                        navigationController?.pushViewController(vc, animated: true)
+//                    }
+//                    if manager.peripheralState != .connected {
+//                        search()
+//                    } else {
+//                        let confirmVC = UIAlertController(cgmDisconnectHandler: {
+//                            NSLog("dabear:: confirmed: cgmmanagerwantsdisconnect")
+//                            search()
+//                        })
+//                        present(confirmVC, animated: true) {}
+//                    }
+//                }
             default:
                 tableView.deselectRow(at: indexPath, animated: true)
             }

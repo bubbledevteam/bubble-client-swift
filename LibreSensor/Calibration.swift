@@ -15,14 +15,14 @@ private let LibreUsername = "LibreUsername"
 
 
 extension KeychainManager {
-    public func setLibreCalibrationData(_ calibrationData: DerivedAlgorithmParameters) throws {
+    public func setLibreCalibrationData(_ calibrationData: LibreDerivedAlgorithmParameters) throws {
         let credentials: InternetCredentials?
         credentials = InternetCredentials(username: LibreUsername, password: serializeAlgorithmParameters(calibrationData), url: LibreCalibrationUrl)
         NSLog("dabear: Setting calibrationdata to \(String(describing: calibrationData))")
         try replaceInternetCredentials(credentials, forLabel: LibreCalibrationLabel)
     }
     
-    public func getLibreCalibrationData() -> DerivedAlgorithmParameters? {
+    public func getLibreCalibrationData() -> LibreDerivedAlgorithmParameters? {
         do { // Silence all errors and return nil
             let credentials = try getInternetCredentials(label: LibreCalibrationLabel)
             NSLog("dabear:: credentials.password was retrieved: \(credentials.password)")
@@ -64,18 +64,11 @@ func post(bytes: [UInt8],_ completion:@escaping (( _ data_: Data, _ response: St
     }
 }
 
-public func calibrateSensor(sensordata: SensorData,  callback: @escaping (DerivedAlgorithmParameters?) -> Void) {
-    let url = URL.init(fileURLWithPath: filePath)
-    let decoder = JSONDecoder()
-    do {
-        let data = try Data.init(contentsOf: url)
-        let response = try decoder.decode(DerivedAlgorithmParameters.self, from: data)
-        if response.serialNumber == sensordata.serialNumber {
-            callback(response)
-            return
-        }
-    } catch {
-        print("decoder error:", error)
+public let keychain = KeychainManager()
+public func calibrateSensor(sensordata: SensorData,  callback: @escaping (LibreDerivedAlgorithmParameters?) -> Void) {
+    if let response = keychain.getLibreCalibrationData(), response.serialNumber == sensordata.serialNumber {
+        callback(response)
+        return
     }
     
     post(bytes: sensordata.bytes, { (data, str, can) in
@@ -84,13 +77,12 @@ public func calibrateSensor(sensordata: SensorData,  callback: @escaping (Derive
             let response = try decoder.decode(GetCalibrationStatus.self, from: data)
             print(response)
             if let slope = response.slope {
-                var para = DerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope ?? 0, slope_offset: slope.slopeOffset ?? 0, offset_slope: slope.offsetSlope ?? 0, offset_offset: slope.offsetOffset ?? 0, isValidForFooterWithReverseCRCs: Int(slope.isValidForFooterWithReverseCRCs ?? 1), extraSlope: 1.0, extraOffset: 0.0)
+                var para = LibreDerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope ?? 0, slope_offset: slope.slopeOffset ?? 0, offset_slope: slope.offsetSlope ?? 0, offset_offset: slope.offsetOffset ?? 0, isValidForFooterWithReverseCRCs: Int(slope.isValidForFooterWithReverseCRCs ?? 1), extraSlope: 1.0, extraOffset: 0.0)
                 para.serialNumber = sensordata.serialNumber
                 do {
-                    let data = try JSONEncoder().encode(para)
-                    save(data: data)
+                    try keychain.setLibreCalibrationData(para)
                 } catch {
-                    print("encoder error:", error)
+                    NSLog("dabear:: could not save calibrationdata")
                 }
                 callback(para)
             } else {
@@ -103,17 +95,7 @@ public func calibrateSensor(sensordata: SensorData,  callback: @escaping (Derive
     })
 }
 
-let filePath: String = NSHomeDirectory() + "/Documents/paras"
-func save(data: Data) {
-    let url = URL.init(fileURLWithPath: filePath)
-    do {
-        try data.write(to: url)
-    } catch {
-        print("write error:", error)
-    }
-}
-
-private func serializeAlgorithmParameters(_ params: DerivedAlgorithmParameters) -> String {
+private func serializeAlgorithmParameters(_ params: LibreDerivedAlgorithmParameters) -> String {
     let encoder = JSONEncoder()
     encoder.outputFormatting = .prettyPrinted
     
@@ -130,13 +112,13 @@ private func serializeAlgorithmParameters(_ params: DerivedAlgorithmParameters) 
     return aString
 }
 
-private func deserializeAlgorithmParameters(text: String) -> DerivedAlgorithmParameters? {
+private func deserializeAlgorithmParameters(text: String) -> LibreDerivedAlgorithmParameters? {
     
     if let jsonData = text.data(using: .utf8) {
         let decoder = JSONDecoder()
         
         do {
-            return try decoder.decode(DerivedAlgorithmParameters.self, from: jsonData)
+            return try decoder.decode(LibreDerivedAlgorithmParameters.self, from: jsonData)
             
         } catch {
             print("Could not create instance: \(error.localizedDescription)")

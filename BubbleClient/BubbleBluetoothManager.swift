@@ -13,13 +13,6 @@ import UIKit
 import CoreBluetooth
 import os.log
 
-public class BubblePeripheral: NSObject {
-    public var mac: String?
-    public var peripheral: CBPeripheral?
-    public var hardware: String?
-    public var firmware: String?
-}
-
 public enum BubbleManagerState: String {
     case Unassigned = "Unassigned"
     case Scanning = "Scanning"
@@ -56,11 +49,9 @@ protocol BubbleBluetoothManagerDelegate {
     func BubbleBluetoothManagerPeripheralStateChanged(_ state: BubbleManagerState)
     func BubbleBluetoothManagerReceivedMessage(_ messageIdentifier:UInt16, txFlags:UInt8, payloadData:Data)
     func BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: SensorData, Bubble: Bubble) -> Void
-    func BubbleBluetoothManagerDidFound(peripheral: BubblePeripheral)
 }
 
 final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
-    var list = [BubblePeripheral]()
     // MARK: - Properties
     private var wantsToTerminate = false
     private var lastConnectedIdentifier: String? {
@@ -76,17 +67,18 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     var bubble: Bubble?
     var BubbleResponseState: BubbleResponseState?
     var centralManager: CBCentralManager!
-    var peripheral: BubblePeripheral?
+    var peripheral: CBPeripheral?
     //    var slipBuffer = SLIPBuffer()
     var writeCharacteristic: CBCharacteristic?
     
     var rxBuffer = Data()
     var sensorData: SensorData?
+    var patchInfo: String?
     
     //    fileprivate let serviceUUIDs:[CBUUID]? = [CBUUID(string: "6E400001B5A3F393E0A9E50E24DCCA9E")]
     fileprivate let deviceName = "Bubble"
-    fileprivate let serviceUUIDs:[CBUUID]? = [CBUUID(string: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E")]
-    
+    fileprivate let serviceUUIDs:[CBUUID] = [CBUUID(string: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E")]
+
     var delegate: BubbleBluetoothManagerDelegate? {
         didSet {
             // Help delegate initialize by sending current state directly after delegate assignment
@@ -110,15 +102,15 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         os_log("Bubblemanager init called ", log: BubbleBluetoothManager.bt_log)
         
         #if DEBUG
-//        DispatchQueue.global().async {
-//            sleep(3)
-//            self.test()
-//        }
-//        
-//        let timer = Timer.init(timeInterval: 60 * 5, repeats: true) { (_) in
-//            self.test()
-//        }
-//        RunLoop.current.add(timer, forMode: .commonModes)
+        DispatchQueue.global().async {
+            sleep(3)
+            self.test()
+        }
+        
+        let timer = Timer.init(timeInterval: 60 * 5, repeats: true) { (_) in
+            self.test()
+        }
+        RunLoop.current.add(timer, forMode: .commonModes)
         #endif
     }
     
@@ -135,39 +127,46 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         }
     }
     
-    var autoScanning = true
-    func scanForBubble() {
-        autoScanning = false
-        os_log("Scan for Bubble while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state))
-        if centralManager.state == .poweredOn {
-            disconnectManually()
-            os_log("Before scan for Bubble while central manager state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: centralManager.state.rawValue))
-            centralManager.scanForPeripherals(withServices: nil, options: nil)
-            
-            state = .Scanning
-        }
-    }
-    
-    func stopScan() {
-        centralManager.stopScan()
-        list = []
-    }
+//    func scanForBubble() {
+//        autoScanning = false
+//        os_log("Scan for Bubble while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state))
+//        if centralManager.state == .poweredOn {
+//            disconnectManually()
+//            os_log("Before scan for Bubble while central manager state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: centralManager.state.rawValue))
+//            centralManager.scanForPeripherals(withServices: nil, options: nil)
+//
+//            state = .Scanning
+//        }
+//    }
     
     func connect() {
         os_log("Connect while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue))
-        if let p = peripheral?.peripheral {
+        if let p = peripheral {
             p.delegate = self
-            centralManager.stopScan()
             centralManager.connect(p, options: nil)
             state = .Connecting
+        }
+    }
+    
+    func retrievePeripherals() {
+        if let uuidString = lastConnectedIdentifier,
+            let uuid = UUID(uuidString: uuidString),
+            let peripheral = centralManager.retrievePeripherals(withIdentifiers: [uuid]).first
+        {
+            self.peripheral = peripheral
+            centralManager.connect(peripheral, options: [:])
+        } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: serviceUUIDs).first,
+            peripheral.name == deviceName
+        {
+            self.peripheral = peripheral
+            centralManager.connect(peripheral, options: [:])
         }
     }
     
     func disconnectManually() {
         os_log("Disconnect manually while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue))
 
-        stopScan()
-        if let p = peripheral?.peripheral {
+        if let p = peripheral {
             centralManager.cancelPeripheralConnection(p)
             peripheral = nil
         }
@@ -184,8 +183,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
             state = .Unassigned
         case .poweredOn:
             os_log("state poweredOn", log: BubbleBluetoothManager.bt_log)
-            autoScanning = true
-            centralManager.scanForPeripherals(withServices: nil, options: nil)
+            retrievePeripherals()
         }
     }
     
@@ -193,39 +191,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         
 //        os_log("Did discover peripheral while state %{public}@ with name: %{public}@, wantstoterminate?:  %d", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue), String(describing: peripheral.name), self.wantsToTerminate)
-        if peripheral.name == deviceName {
-            if let data = advertisementData["kCBAdvDataManufacturerData"] as? Data {
-                var mac = ""
-                for i in 0 ..< 6 {
-                    mac += data.subdata(in: (7 - i)..<(8 - i)).hexEncodedString().uppercased()
-                    if i != 5 {
-                        mac += ":"
-                    }
-                }
-                let bubblePeripheral = BubblePeripheral()
-                bubblePeripheral.mac = mac
-                bubblePeripheral.peripheral = peripheral
-                if data.count >= 12 {
-                    let fSub1 = Data.init(repeating: data[8], count: 1)
-                    let fSub2 = Data.init(repeating: data[9], count: 1)
-                    let fVersion = Float("\(fSub1.hexEncodedString()).\(fSub2.hexEncodedString())")
-                    bubblePeripheral.firmware = fVersion?.description
-                    
-                    let hSub1 = Data.init(repeating: data[10], count: 1)
-                    let hSub2 = Data.init(repeating: data[11], count: 1)
-                    let hVersion = Float("\(hSub1.hexEncodedString()).\(hSub2.hexEncodedString())")
-                    bubblePeripheral.hardware = hVersion?.description
-                }
-                
-                // reconnect
-                print(peripheral.identifier.uuidString)
-                if peripheral.identifier.uuidString == lastConnectedIdentifier && autoScanning {
-                    self.peripheral = bubblePeripheral
-                    connect()
-                }
-                delegate?.BubbleBluetoothManagerDidFound(peripheral: bubblePeripheral)
-            }
-        }
+        
     }
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
@@ -337,9 +303,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                         switch bubbleResponseState {
                         case .bubbleInfo:
                             let battery = Int(value[4])
-                            bubble = Bubble(hardware: self.peripheral?.hardware ?? "0",
-                                            firmware: self.peripheral?.firmware ?? "0",
-                                            battery: battery)
+                            bubble = Bubble(hardware: "0", firmware: "0", battery: battery)
                             if let writeCharacteristic = writeCharacteristic {
                                 print("-----set: ", writeCharacteristic)
                                 peripheral.writeValue(Data([0x02, 0x00, 0x00, 0x00, 0x00, 0x2B]), for: writeCharacteristic, type: .withoutResponse)
@@ -359,6 +323,19 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                         case .serialNumber:
                             os_log("dabear:: receive serialNumber")
                             rxBuffer.append(value.subdata(in: 2..<10))
+                        case .patchInfo:
+                            let firmware = bubble?.firmware
+                            // version = 1.34 patchInfo range 3 ..< 9
+                            if firmware == "1.34" {
+                                if value.count >= 8 {
+                                    patchInfo = value.subdata(in: 3 ..< 9).hexEncodedString().uppercased()
+                                }
+                            } else if (Float(firmware ?? "0") ?? 0) > 1.34 {
+                                // version > 1.34 patchInfo range 3 ..< 9
+                                if value.count >= 10 {
+                                    patchInfo = value.subdata(in: 5 ..< 11).hexEncodedString().uppercased()
+                                }
+                            }
                         }
                     }
                 }
@@ -374,7 +351,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     // Bubble specific commands
     func requestData() {
         if let writeCharacteristic = writeCharacteristic {
-            peripheral?.peripheral?.writeValue(Data.init(bytes: [0x00, 0x00, 0x05]), for: writeCharacteristic, type: .withoutResponse)
+            peripheral?.writeValue(Data.init(bytes: [0x00, 0x00, 0x05]), for: writeCharacteristic, type: .withoutResponse)
         }
     }
     
@@ -389,6 +366,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         }
         let data = rxBuffer.subdata(in: 8..<352)
         sensorData = SensorData(uuid: rxBuffer.subdata(in: 0..<8), bytes: [UInt8](data), date: Date(), derivedAlgorithmParameterSet: nil)
+        sensorData?.patchInfo = patchInfo
         
         if bubble.battery < 20 {
             NotificationHelper.sendLowBatteryNotificationIfNeeded(device: bubble)
@@ -413,6 +391,7 @@ fileprivate enum BubbleResponseType: UInt8 {
     case bubbleInfo = 128
     case noSensor = 191
     case serialNumber = 192
+    case patchInfo = 193
 }
 
 

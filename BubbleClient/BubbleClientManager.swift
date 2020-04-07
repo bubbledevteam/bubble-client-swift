@@ -16,54 +16,13 @@ import os.log
 import HealthKit
 
 public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelegate {
-    func BubbleBluetoothManagerDidFound(peripheral: BubblePeripheral) {
-        if let manager = BubbleClientManager.proxy {
-            var insert = true
-            if let mac = peripheral.mac {
-                for temp in manager.list{
-                    if temp.mac == mac {
-                        insert = false
-                        break
-                    }
-                }
-                if insert {
-                    manager.list.append(peripheral)
-                }
-            }
-            
-            found?(manager.list)
-        }
-    }
-    
-    public func stopScan() {
-        BubbleClientManager.proxy?.stopScan()
-    }
-    
-    public func reScan() {
-        BubbleClientManager.proxy?.list = []
-        BubbleClientManager.proxy?.scanForBubble()
-    }
-    
-    public var list: [BubblePeripheral] {
-        return BubbleClientManager.proxy?.list ?? []
-    }
-    
-    public func connect(peripheral: BubblePeripheral?) {
-        BubbleClientManager.proxy?.peripheral = peripheral
-        BubbleClientManager.proxy?.connect()
-    }
-    
-    public var found: (([BubblePeripheral]) -> Void)?
-    
     public var sensorState: SensorDisplayable? {
         return latestBackfill
     }
     
     public var managedDataInterval: TimeInterval?
     
-    
     public var device: HKDevice? {
-        
         return HKDevice(
             name: "BubbleClient",
             manufacturer: "Bubble",
@@ -77,7 +36,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     }
     
     public var peripheralState: CBPeripheralState {
-        return BubbleClientManager.proxy?.peripheral?.peripheral?.state ?? .disconnected
+        return BubbleClientManager.proxy?.peripheral?.state ?? .disconnected
     }
     
     public var debugDescription: String {
@@ -97,61 +56,54 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             ].joined(separator: "\n")
     }
     
-    
-    
-    
-
-    
-    public var bubbleService : BubbleService
-    
     public func fetchNewDataIfNeeded(_ completion: @escaping (CGMResult) -> Void) {
-//        guard BubbleClientManager.proxy != nil else {
-//            completion(.noData)
-//            return
-//        }
+        //        guard BubbleClientManager.proxy != nil else {
+        //            completion(.noData)
+        //            return
+        //        }
         NSLog("dabear:: fetchNewDataIfNeeded called but we don't continue")
-//        self.autoconnect()
-//        completion(.noData)
+        //        self.autoconnect()
+        //        completion(.noData)
         /*
-        self.getLastSensorValues { (error, glucose) in
-            if let error = error {
-                NSLog("dabear:: getLastSensorValues returned with error")
-                completion(.error(error))
-                return
-            }
-            
-            guard let glucose = glucose else {
-                NSLog("dabear:: getLastSensorValues returned with no data")
-                completion(.noData)
-                return
-            }
-            
-            let startDate = self.latestBackfill?.startDate
-            let newGlucose = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).map {
-                return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
-            }
-            
-            self.latestBackfill = glucose.first
-            
-            if newGlucose.count > 0 {
-                completion(.newData(newGlucose))
-            } else {
-                completion(.noData)
-            }
-            
-        } */
+         self.getLastSensorValues { (error, glucose) in
+         if let error = error {
+         NSLog("dabear:: getLastSensorValues returned with error")
+         completion(.error(error))
+         return
+         }
+         
+         guard let glucose = glucose else {
+         NSLog("dabear:: getLastSensorValues returned with no data")
+         completion(.noData)
+         return
+         }
+         
+         let startDate = self.latestBackfill?.startDate
+         let newGlucose = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).map {
+         return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
+         }
+         
+         self.latestBackfill = glucose.first
+         
+         if newGlucose.count > 0 {
+         completion(.newData(newGlucose))
+         } else {
+         completion(.noData)
+         }
+         
+         } */
     }
     
     
     
     public private(set) var lastConnected : Date?
-   
+    
     // This tighly tracks latestBackfill,
     // and is defined here so that the ui can have a way to fetch the latest
     // glucose value
-    public static var latestGlucose : LibreGlucose?
+    public static var latestGlucose : GlucoseData?
     
-    public private(set) var latestBackfill: LibreGlucose? {
+    public private(set) var latestBackfill: GlucoseData? {
         didSet(oldValue) {
             NSLog("dabear:: latestBackfill set, newvalue is \(latestBackfill )")
             if let latestBackfill = latestBackfill {
@@ -187,7 +139,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     public let providesBLEHeartbeat = true
     
     public let shouldSyncToRemoteService = true
-
+    
     
     private(set) public var lastValidSensorData : SensorData? = nil
     
@@ -196,13 +148,11 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     public init(){
         lastConnected = nil
-        //let isui = (self is CGMManagerUI)
-        self.bubbleService = BubbleService(keychainManager: keychain)
         
         os_log("dabear: BubbleClientManager will be created now")
         //proxy = BubbleBluetoothManager()
         BubbleClientManager.proxy?.delegate = self
-            //proxy?.connect()
+        //proxy?.connect()
         
         BubbleClientManager.instanceCount += 1   
     }
@@ -220,7 +170,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         guard let data =  BubbleClientManager.proxy?.sensorData else {
             return "n/a"
         }
-     
+        
         let sensorStart = Calendar.current.date(byAdding: .minute, value: -data.minutesSinceStart, to: data.date)!
         
         return  sensorStart.timeIntervalSinceNow.stringDaysFromTimeInterval() +  " day(s)"
@@ -254,12 +204,12 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         return "n/a"
     }
     
-    public var calibrationData : DerivedAlgorithmParameters? {
+    public var calibrationData : LibreDerivedAlgorithmParameters? {
         return keychain.getLibreCalibrationData()
     }
     
     public func disconnect(){
-       NSLog("dabear:: BubbleClientManager disconnect called")
+        NSLog("dabear:: BubbleClientManager disconnect called")
         
         
         BubbleClientManager.proxy?.disconnectManually()
@@ -276,7 +226,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         disconnect()
         BubbleClientManager.instanceCount -= 1
     }
-
+    
     
     private static var instanceCount = 0 {
         didSet {
@@ -310,7 +260,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         return sharedProxy
     }
     
-   
+    
     
     func autoconnect() {
         guard let proxy = BubbleClientManager.proxy else {
@@ -323,7 +273,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         switch (proxy.state) {
         case .Unassigned, .powerOff:
             break
-            //proxy.scanForBubble()
+        //proxy.scanForBubble()
         case .Scanning:
             break
         case .Connected, .Connecting, .Notifying:
@@ -368,41 +318,30 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             return arr
         }
         
-//        var filtered = [LibreGlucose]()
-//        for elm in arr.enumerated() where elm.offset % 5 == 0 {
-//            filtered.append(elm.element)
-//        }
-//
-//        //NSLog("dabear:: glucose samples after smoothing: \(String(describing: arr))")
-//        return filtered
+        //        var filtered = [LibreGlucose]()
+        //        for elm in arr.enumerated() where elm.offset % 5 == 0 {
+        //            filtered.append(elm.element)
+        //        }
+        //
+        //        //NSLog("dabear:: glucose samples after smoothing: \(String(describing: arr))")
+        //        return filtered
     }
     
-    public func handleGoodReading(data: SensorData?,_ callback: @escaping (LibreError?, [LibreGlucose]?) -> Void) {
+    public func handleGoodReading(data: SensorData?,_ callback: @escaping (LibreError?, [GlucoseData]?) -> Void) {
         //only care about the once per minute readings here, historical data will not be considered
         
-        guard let data=data else {
+        guard let data = data else {
             callback(LibreError.noSensorData, nil)
             return
         }
         
-        calibrateSensor(sensordata: data) { [weak self] (calibrationparams)  in
-            guard let params = calibrationparams else {
-                NSLog("dabear:: could not calibrate sensor, check libreoopweb permissions and internet connection")
-                callback(LibreError.noCalibrationData, nil)
+        LibreOOPClient.handleLibreData(sensorData: data) { result in
+            guard let glucose = result?.glucoseData, !glucose.isEmpty else {
+                callback(LibreError.noSensorData, nil)
                 return
             }
             
-            do {
-                try self?.keychain.setLibreCalibrationData(params)
-            } catch {
-                NSLog("dabear:: could not save calibrationdata")
-                callback(LibreError.invalidCalibrationData, nil)
-                return
-            }
-            //here we assume success, data is not changed,
-            //and we trust that the remote endpoint returns correct data for the sensor
-            let last16 = data.trendMeasurements(derivedAlgorithmParameterSet: params)
-            callback(nil, self?.trendToLibreGlucose(last16) )
+            callback(nil, glucose)
         }
     }
     
@@ -444,7 +383,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         case .frequencyChangedResponse:
             NSLog("dabear:: Bubble readout interval has changed!")
             break
-        
+            
         default:
             //we don't care about the rest!
             break
@@ -457,56 +396,51 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     public var reloadData: (() -> ())?
     public func BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: SensorData, Bubble: Bubble) {
         
-        
         NotificationHelper.sendLowBatteryNotificationIfNeeded(device: Bubble)
-//        NotificationHelper.sendInvalidSensorNotificationIfNeeded(sensorData: sensorData)
+        //        NotificationHelper.sendInvalidSensorNotificationIfNeeded(sensorData: sensorData)
         NotificationHelper.sendSensorExpireAlertIfNeeded(sensorData: sensorData)
         
-        if sensorData.hasValidCRCs {
+        if sensorData.isFirstSensor && sensorData.state != .ready { return }
         
-            if sensorData.state == .ready ||  sensorData.state == .starting {
-                NSLog("dabear:: got sensordata with valid crcs, sensor was ready")
-                self.lastValidSensorData = sensorData
-
-                self.handleGoodReading(data: sensorData) { (error, glucose) in
-                    if let error = error {
-                        NSLog("dabear:: handleGoodReading returned with error: \(error)")
-                        
-                        self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(error))
-                        self.reloadData?()
-                        return
-                    }
+        if sensorData.hasValidCRCs || sensorData.isSecondSensor {
+            NSLog("dabear:: got sensordata with valid crcs, sensor was ready")
+            self.lastValidSensorData = sensorData
+            
+            self.handleGoodReading(data: sensorData) { (error, glucose) in
+                if let error = error {
+                    NSLog("dabear:: handleGoodReading returned with error: \(error)")
                     
-                    guard let glucose = glucose else {
-                        NSLog("dabear:: handleGoodReading returned with no data")
-                        self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .noData)
-                        self.reloadData?()
-                        return
-                    }
+                    self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(error))
+                    self.reloadData?()
+                    return
+                }
+                
+                guard let glucose = glucose else {
+                    NSLog("dabear:: handleGoodReading returned with no data")
+                    self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .noData)
+                    self.reloadData?()
+                    return
+                }
+                
+                let startDate = self.latestBackfill?.startDate
+                let newGlucose = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).map {
+                    return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
+                }
+                
+                self.latestBackfill = glucose.first
+                
+                if newGlucose.count > 0 {
+                    NSLog("dabear:: handleGoodReading returned with \(newGlucose.count) new glucose samples")
+                    self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .newData(newGlucose))
                     
-                    let startDate = self.latestBackfill?.startDate
-                    let newGlucose = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).map {
-                        return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
-                    }
-                    
-                    self.latestBackfill = glucose.first
-                    
-                    if newGlucose.count > 0 {
-                        NSLog("dabear:: handleGoodReading returned with \(newGlucose.count) new glucose samples")
-                        self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .newData(newGlucose))
-                        
-                    } else {
-                        NSLog("dabear:: handleGoodReading returned with no new data")
-                        self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .noData)
-                        
-                    }
+                } else {
+                    NSLog("dabear:: handleGoodReading returned with no new data")
+                    self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .noData)
                     
                 }
                 
-            } else {
-                os_log("dabear:: got sensordata with valid crcs, but sensor is either expired or failed")
-                self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.expiredSensor))
             }
+            
         } else {
             self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
             os_log("dit not get sensordata with valid crcs")

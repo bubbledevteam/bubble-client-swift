@@ -17,7 +17,8 @@ import Foundation
 /// - expired:       0x05 sensor is expired
 /// - failure:       0x06 sensor has an error
 /// - unknown:       any other state
-enum SensorState {
+
+enum LibreSensorState {
     case notYetStarted
     case starting
     case ready
@@ -48,12 +49,31 @@ enum SensorState {
         }
     }
     
+    var identify: String {
+        switch self {
+        case .notYetStarted:
+            return "Not Started"
+        case .starting:
+            return "Starting"
+        case .ready:
+            return "Ready"
+        case .expired:
+            return "Expired"
+        case .shutdown:
+            return "Shutdown"
+        case .failure:
+            return "Sensor Error"
+        default:
+            return "Unknown"
+        }
+    }
+    
     var description: String {
         switch self {
         case .notYetStarted:
             return "Sensor not yet startet"
         case .starting:
-            return "Sensor in starting phase"
+            return "Sensor in starting"
         case .ready:
             return "Sensor is ready"
         case .expired:
@@ -65,5 +85,28 @@ enum SensorState {
         default:
             return "Unknown sensor state"
         }
+    }
+}
+
+extension String {
+    var sensorState: LibreSensorState {
+        if self == "Not Started" {
+            return .notYetStarted
+        } else if self == "Starting" {
+            return .starting
+        } else if self == "Ready" {
+            return .ready
+        } else if self == "Expired" {
+            return .expired
+        } else if self == "Shutdown" {
+            return .shutdown
+        } else if self == "Sensor Error" {
+            return .failure
+        }
+        return .unknown
+    }
+    
+    var sensorIsEnd: Bool {
+        return sensorState == .expired
     }
 }

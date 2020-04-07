@@ -47,6 +47,10 @@ public extension Date {
         return DateFormatter.dateFormat(fromTemplate: "j", options:0, locale:NSLocale.current)!.contains("a")
     }
     
+    /// returns Date in milliseconds as Int64
+    func toMillisecondsAsInt64() -> Int64 {
+        return Int64((self.timeIntervalSince1970 * 1000.0).rounded())
+    }
 }
 
 extension DateComponents {
