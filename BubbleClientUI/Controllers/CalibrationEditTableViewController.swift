@@ -27,7 +27,7 @@ public class CalibrationEditTableViewController: UITableViewController , mmTextF
    
     
   
-    private var newParams : DerivedAlgorithmParameters?
+    private var newParams : LibreDerivedAlgorithmParameters?
     
 
     

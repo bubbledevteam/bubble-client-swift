@@ -106,7 +106,6 @@
 		43A8EC91210E676500A81379 /* BubbleClientManager+UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A8EC8E210E676500A81379 /* BubbleClientManager+UI.swift */; };
 		43A8EC92210E676500A81379 /* BubbleClientSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A8EC8F210E676500A81379 /* BubbleClientSettingsViewController.swift */; };
 		43A8EC95210E67B000A81379 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43A8EC94210E67B000A81379 /* HealthKit.framework */; };
-		43A8EC97210E680100A81379 /* ShareService+UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A8EC96210E680100A81379 /* ShareService+UI.swift */; };
 		43A8EC9B210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A8EC9A210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift */; };
 		43AB511B21330D1400B3D58D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 43AB511921330D1400B3D58D /* Localizable.strings */; };
 		43AB5127213315D300B3D58D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 43AB5125213315D300B3D58D /* Localizable.strings */; };
@@ -282,7 +281,6 @@
 		43A8EC8E210E676500A81379 /* BubbleClientManager+UI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BubbleClientManager+UI.swift"; sourceTree = "<group>"; };
 		43A8EC8F210E676500A81379 /* BubbleClientSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BubbleClientSettingsViewController.swift; sourceTree = "<group>"; };
 		43A8EC94210E67B000A81379 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
-		43A8EC96210E680100A81379 /* ShareService+UI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ShareService+UI.swift"; sourceTree = "<group>"; };
 		43A8EC9A210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ShareGlucose+GlucoseKit.swift"; sourceTree = "<group>"; };
 		43AB511A21330D1400B3D58D /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		43AB511C21330D6800B3D58D /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -605,7 +603,6 @@
 				43AB511921330D1400B3D58D /* Localizable.strings */,
 				4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */,
 				43A8EC8E210E676500A81379 /* BubbleClientManager+UI.swift */,
-				43A8EC96210E680100A81379 /* ShareService+UI.swift */,
 				4325E9D4210E6B4300969CE5 /* UIColor.swift */,
 				43A8EC85210E664300A81379 /* Info.plist */,
 				27E0968C22A9806200B3164D /* CGFLoat+Double.swift */,
@@ -962,7 +959,6 @@
 				27E0968622A6F64800B3164D /* SnoozeViewController.swift in Sources */,
 				27E0969B22B94D4400B3164D /* CustomDatePickerViewController.swift in Sources */,
 				27E0968422A6EFCD00B3164D /* SnoozeView.swift in Sources */,
-				43A8EC97210E680100A81379 /* ShareService+UI.swift in Sources */,
 				2C75834622E89D800002448E /* BubbleClientSearchViewController.swift in Sources */,
 				275C3D99229AA88200E27439 /* mmSwitchTableViewCell.swift in Sources */,
 				27E0969822B94CAD00B3164D /* CustomDatePicker.swift in Sources */,

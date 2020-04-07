@@ -7,10 +7,10 @@ public class GlucoseData {
     
     // TODO: is there ever a difference between raw and filtered ? why not remove one ?
     
-    var timeStamp: Date
-    var glucoseLevelRaw: Double
-    var glucoseLevelFiltered: Double
-    var trend: UInt8
+    public var timeStamp: Date
+    public var glucoseLevelRaw: Double
+    public var glucoseLevelFiltered: Double
+    public var trend: UInt8
     
     init(timeStamp:Date, glucoseLevelRaw:Double, glucoseLevelFiltered:Double, trend: UInt8 = 0) {
         self.timeStamp = timeStamp

@@ -263,7 +263,7 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             case .date:
                 cell.textLabel?.text = NSLocalizedString("Date", comment: "Title describing glucose date")
 
-                if let date = glucose?.timestamp {
+                if let date = glucose?.timeStamp {
                     cell.detailTextLabel?.text = dateFormatter.string(from: date)
                 } else {
                     cell.detailTextLabel?.text = SettingsTableViewCell.NoValueString
@@ -544,6 +544,7 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         case .latestBridgeInfo:
             switch LatestBridgeInfoRow(rawValue: indexPath.row)! {
             case .connectionState:
+                break
 //                if let manager = cgmManager {
 //                    func search() {
 //                        tableView.deselectRow(at: indexPath, animated: true)
