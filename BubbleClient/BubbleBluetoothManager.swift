@@ -49,6 +49,7 @@ protocol BubbleBluetoothManagerDelegate {
     func BubbleBluetoothManagerPeripheralStateChanged(_ state: BubbleManagerState)
     func BubbleBluetoothManagerReceivedMessage(_ messageIdentifier:UInt16, txFlags:UInt8, payloadData:Data)
     func BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: SensorData, Bubble: Bubble) -> Void
+    func BubbleBluetoothManagerMessageChanged()
 }
 
 final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
@@ -149,15 +150,9 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     }
     
     func retrievePeripherals() {
-        if let uuidString = lastConnectedIdentifier,
-            let uuid = UUID(uuidString: uuidString),
-            let peripheral = centralManager.retrievePeripherals(withIdentifiers: [uuid]).first
-        {
-            self.peripheral = peripheral
-            centralManager.connect(peripheral, options: [:])
-        } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: serviceUUIDs).first,
-            peripheral.name == deviceName
-        {
+        guard peripheral?.state  != .connected else { return }
+        if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: serviceUUIDs).first,
+            peripheral.name == deviceName {
             self.peripheral = peripheral
             centralManager.connect(peripheral, options: [:])
         }
@@ -313,6 +308,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                         case .bubbleInfo:
                             let battery = Int(value[4])
                             bubble = Bubble(hardware: "0", firmware: "0", battery: battery)
+                            delegate?.BubbleBluetoothManagerMessageChanged()
                             if let writeCharacteristic = writeCharacteristic {
                                 print("-----set: ", writeCharacteristic)
                                 peripheral.writeValue(Data([0x02, 0x00, 0x00, 0x00, 0x00, 0x2B]), for: writeCharacteristic, type: .withoutResponse)

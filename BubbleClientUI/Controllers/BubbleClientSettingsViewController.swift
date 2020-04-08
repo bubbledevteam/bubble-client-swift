@@ -69,6 +69,12 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         }
         
     }
+    
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        cgmManager?.retrievePeripherals()
+    }
+    
     override public func viewDidLoad() {
         super.viewDidLoad()
 

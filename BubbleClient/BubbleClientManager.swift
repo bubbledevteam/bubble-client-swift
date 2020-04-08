@@ -133,6 +133,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             
         }
     }
+    
     public static var managerIdentifier = "DexBubbleClient1"
     
     required convenience public init?(rawState: CGMManager.RawStateValue) {
@@ -159,9 +160,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     
     private(set) public var lastValidSensorData : SensorData? = nil
-    
-    
-    
     
     public init(){
         lastConnected = nil
@@ -232,6 +230,10 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         BubbleClientManager.proxy?.disconnectManually()
         BubbleClientManager.proxy?.delegate = nil
         //BubbleClientManager.proxy = nil
+    }
+    
+    public func retrievePeripherals() {
+        BubbleClientManager.proxy?.retrievePeripherals()
     }
     
     deinit {
@@ -374,7 +376,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             break
         }
         reloadData?()
-        return
     }
     
     public func BubbleBluetoothManagerReceivedMessage(_ messageIdentifier: UInt16, txFlags: UInt8, payloadData: Data) {
@@ -412,7 +413,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     public var reloadData: (() -> ())?
     public func BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: SensorData, Bubble: Bubble) {
-        
+        reloadData?()
         NotificationHelper.sendLowBatteryNotificationIfNeeded(device: Bubble)
         //        NotificationHelper.sendInvalidSensorNotificationIfNeeded(sensorData: sensorData)
         NotificationHelper.sendSensorExpireAlertIfNeeded(sensorData: sensorData)
@@ -462,11 +463,11 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
             os_log("dit not get sensordata with valid crcs")
         }
-        self.reloadData?()
-        return
     }
     
     
-    
+    func BubbleBluetoothManagerMessageChanged() {
+        reloadData?()
+    }
     
 }
