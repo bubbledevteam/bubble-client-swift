@@ -199,6 +199,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         state = .Connected
         self.lastConnectedIdentifier = peripheral.identifier.uuidString
         // Discover all Services. This might be helpful if writing is needed some time
+        peripheral.delegate = self
         if peripheral.services != nil {
             self.peripheral(peripheral, didDiscoverServices: nil)
         } else {

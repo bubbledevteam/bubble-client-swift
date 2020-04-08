@@ -528,21 +528,18 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             tableView.deselectRow(at: indexPath, animated: true)
         case .delete:
             let confirmVC = UIAlertController(cgmDeletionHandler: {
+                [weak self] in
                 NSLog("dabear:: confirmed: cgmmanagerwantsdeletion")
-                let confirmVC = UIAlertController(cgmDeletionHandler: {
-                    [weak self] in
-                    NSLog("dabear:: confirmed: cgmmanagerwantsdeletion")
-                    self?.cgmManager?.disconnect()
-                    self?.cgmManager?.notifyDelegateOfDeletion {
-                        DispatchQueue.main.async {
-                            if let `self` = self {
-                                self.completionDelegate?.completionNotifyingDidComplete(self)
-                            }
-                            self?.complete()
-                            self?.dismiss(animated: true)
+                self?.cgmManager?.disconnect()
+                self?.cgmManager?.notifyDelegateOfDeletion {
+                    DispatchQueue.main.async {
+                        if let `self` = self {
+                            self.completionDelegate?.completionNotifyingDidComplete(self)
                         }
+                        self?.complete()
+                        self?.dismiss(animated: true)
                     }
-                })
+                }
             })
 
             present(confirmVC, animated: true) {
