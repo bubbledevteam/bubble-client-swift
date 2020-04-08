@@ -120,11 +120,8 @@
 		EE72B075230CDE0200D67B8F /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B074230CDE0200D67B8F /* LoopKitUI.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		EE72B076230CE02000D67B8F /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B072230CDDF500D67B8F /* LoopKit.framework */; };
 		EE72B077230CE02C00D67B8F /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B074230CDE0200D67B8F /* LoopKitUI.framework */; };
-		EE72B083230CE28E00D67B8F /* LoopKitUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B080230CE28E00D67B8F /* LoopKitUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EE72B084230CE28E00D67B8F /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B081230CE28E00D67B8F /* LoopKit.framework */; };
-		EE72B085230CE28E00D67B8F /* LoopKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B081230CE28E00D67B8F /* LoopKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EE72B086230CE2A900D67B8F /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B080230CE28E00D67B8F /* LoopKitUI.framework */; };
 		EED7E06E22E6BC8700E03BAE /* bubble.png in Resources */ = {isa = PBXBuildFile; fileRef = EED7E06D22E6BC8700E03BAE /* bubble.png */; };
+		EEEFD06C243D669900D82782 /* copy-frameworks.sh in Resources */ = {isa = PBXBuildFile; fileRef = EEEFD06B243D669900D82782 /* copy-frameworks.sh */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,20 +138,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 27C335DD21667C7A00CF0868;
 			remoteInfo = singleviewtesterapp2;
-		};
-		4325E9D6210E714B00969CE5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 432B0E7F1CDFC3C50045347B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 43A8EC75210E653B00A81379;
-			remoteInfo = Cartfile;
-		};
-		4325E9D8210E715200969CE5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 432B0E7F1CDFC3C50045347B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 43A8EC75210E653B00A81379;
-			remoteInfo = Cartfile;
 		};
 		432B0E941CDFC3C50045347B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -189,8 +172,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				EE72B06E230CD6AB00D67B8F /* BubbleClient.framework in Embed Frameworks */,
-				EE72B085230CE28E00D67B8F /* LoopKit.framework in Embed Frameworks */,
-				EE72B083230CE28E00D67B8F /* LoopKitUI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -309,9 +290,8 @@
 		EE10F6D3243C320400C5340C /* LibreMeasurement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreMeasurement.swift; sourceTree = "<group>"; };
 		EE72B072230CDDF500D67B8F /* LoopKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKit.framework; path = Carthage/Build/iOS/LoopKit.framework; sourceTree = "<group>"; };
 		EE72B074230CDE0200D67B8F /* LoopKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKitUI.framework; path = Carthage/Build/iOS/LoopKitUI.framework; sourceTree = "<group>"; };
-		EE72B080230CE28E00D67B8F /* LoopKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKitUI.framework; path = Carthage/Build/iOS/LoopKitUI.framework; sourceTree = "<group>"; };
-		EE72B081230CE28E00D67B8F /* LoopKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKit.framework; path = Carthage/Build/iOS/LoopKit.framework; sourceTree = "<group>"; };
 		EED7E06D22E6BC8700E03BAE /* bubble.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bubble.png; sourceTree = "<group>"; };
+		EEEFD06B243D669900D82782 /* copy-frameworks.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "copy-frameworks.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -327,9 +307,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE72B086230CE2A900D67B8F /* LoopKitUI.framework in Frameworks */,
 				EE72B06D230CD6AB00D67B8F /* BubbleClient.framework in Frameworks */,
-				EE72B084230CE28E00D67B8F /* LoopKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -533,14 +511,13 @@
 		432B0E7E1CDFC3C50045347B = {
 			isa = PBXGroup;
 			children = (
-				EE72B081230CE28E00D67B8F /* LoopKit.framework */,
-				EE72B080230CE28E00D67B8F /* LoopKitUI.framework */,
+				EEEFD06A243D669900D82782 /* Scripts */,
 				2729D6A62220C1030030E1B8 /* LibreSensor */,
 				2729D671221F42070030E1B8 /* Bluetooth */,
 				432B0E8A1CDFC3C50045347B /* BubbleClient */,
+				43A8EC83210E664300A81379 /* BubbleClientUI */,
 				43AB51342133176B00B3D58D /* Common */,
 				432B0E961CDFC3C50045347B /* BubbleClientTests */,
-				43A8EC83210E664300A81379 /* BubbleClientUI */,
 				2795404D2165502600D657E5 /* clitester */,
 				27C335DF21667C7A00CF0868 /* singleviewtesterapp2 */,
 				432B0E891CDFC3C50045347B /* Products */,
@@ -627,6 +604,14 @@
 			path = Common;
 			sourceTree = "<group>";
 		};
+		EEEFD06A243D669900D82782 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				EEEFD06B243D669900D82782 /* copy-frameworks.sh */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -692,11 +677,11 @@
 				432B0E841CDFC3C50045347B /* Frameworks */,
 				432B0E851CDFC3C50045347B /* Headers */,
 				432B0E861CDFC3C50045347B /* Resources */,
+				EEEFD069243D628D00D82782 /* Copy Frameworks with Carthage */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				4325E9D7210E714B00969CE5 /* PBXTargetDependency */,
 			);
 			name = BubbleClient;
 			productName = BubbleClient;
@@ -734,7 +719,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				4325E9D9210E715200969CE5 /* PBXTargetDependency */,
 			);
 			name = BubbleClientUI;
 			productName = BubbleClientUI;
@@ -763,7 +747,6 @@
 					};
 					432B0E871CDFC3C50045347B = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = T4JY56P443;
 						LastSwiftMigration = 0900;
 					};
 					432B0E911CDFC3C50045347B = {
@@ -777,7 +760,6 @@
 					};
 					43A8EC81210E664300A81379 = {
 						CreatedOnToolsVersion = 9.4.1;
-						DevelopmentTeam = EG7BNV2CC4;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -830,6 +812,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEEFD06C243D669900D82782 /* copy-frameworks.sh in Resources */,
 				43AB5127213315D300B3D58D /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -878,6 +861,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ -f $PROJECT_DIR/.gitmodules ]; then\n    echo \"Skipping checkout due to presence of .gitmodules file\"\n    if [ $ACTION = \"install\" ]; then\n        echo \"You're installing: Make sure to keep all submodules up-to-date and run carthage build after changes.\"\n    fi\nelse\n    echo \"Bootstrapping carthage dependencies\"\n    /usr/local/bin/carthage bootstrap --project-directory \"$SRCROOT\" --cache-builds\nfi\n";
+		};
+		EEEFD069243D628D00D82782 /* Copy Frameworks with Carthage */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/LoopKit.framework",
+				"$(BUILT_PRODUCTS_DIR)/LoopKitUI.framework",
+			);
+			name = "Copy Frameworks with Carthage";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/LoopKit.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/LoopKitUI.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${SRCROOT}/Scripts/copy-frameworks.sh\"\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1001,16 +1006,6 @@
 			isa = PBXTargetDependency;
 			target = 27C335DD21667C7A00CF0868 /* singleviewtesterapp2 */;
 			targetProxy = 27C335F521667D1600CF0868 /* PBXContainerItemProxy */;
-		};
-		4325E9D7210E714B00969CE5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 43A8EC75210E653B00A81379 /* Cartfile */;
-			targetProxy = 4325E9D6210E714B00969CE5 /* PBXContainerItemProxy */;
-		};
-		4325E9D9210E715200969CE5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 43A8EC75210E653B00A81379 /* Cartfile */;
-			targetProxy = 4325E9D8210E715200969CE5 /* PBXContainerItemProxy */;
 		};
 		432B0E951CDFC3C50045347B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1316,7 +1311,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = T4JY56P443;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 2;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1347,7 +1342,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = T4JY56P443;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 2;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1424,7 +1419,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = EG7BNV2CC4;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1460,7 +1455,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = EG7BNV2CC4;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

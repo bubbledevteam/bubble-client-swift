@@ -226,7 +226,11 @@ extension DailyValueSchedule: RawRepresentable, CustomDebugStringConvertible whe
             timeZone = TimeZone(secondsFromGMT: offset)
         }
 
-        self.init(dailyItems: rawItems.compactMap { RepeatingScheduleValue(rawValue: $0) }, timeZone: timeZone)
+        let validScheduleItems = rawItems.compactMap(RepeatingScheduleValue<T>.init(rawValue:))
+        guard validScheduleItems.count == rawItems.count else {
+            return nil
+        }
+        self.init(dailyItems: validScheduleItems, timeZone: timeZone)
     }
 
     public var rawValue: RawValue {

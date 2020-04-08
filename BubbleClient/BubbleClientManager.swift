@@ -16,6 +16,25 @@ import os.log
 import HealthKit
 
 public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelegate {
+    public let delegate = WeakSynchronizedDelegate<CGMManagerDelegate>()
+    public var cgmManagerDelegate: CGMManagerDelegate? {
+        get {
+            return delegate.delegate
+        }
+        set {
+            delegate.delegate = newValue
+        }
+    }
+
+    public var delegateQueue: DispatchQueue! {
+        get {
+            return delegate.queue
+        }
+        set {
+            delegate.queue = newValue
+        }
+    }
+    
     public var sensorState: SensorDisplayable? {
         return latestBackfill
     }
@@ -133,8 +152,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     public static let localizedTitle = LocalizedString("Bubble", comment: "Title for the CGMManager option")
     
     public let appURL: URL? = nil //URL(string: "spikeapp://")
-    
-    weak public var cgmManagerDelegate: CGMManagerDelegate?
     
     public let providesBLEHeartbeat = true
     

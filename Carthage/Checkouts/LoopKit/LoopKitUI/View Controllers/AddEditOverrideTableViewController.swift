@@ -78,6 +78,8 @@ public final class AddEditOverrideTableViewController: UITableViewController {
                 configure(with: override.settings)
                 startDate = override.startDate
                 duration = override.duration
+                syncIdentifier = override.syncIdentifier
+                enactTrigger = override.enactTrigger
             }
         }
     }
@@ -96,11 +98,15 @@ public final class AddEditOverrideTableViewController: UITableViewController {
 
     private var targetRange: DoubleRange? { didSet { updateSaveButtonEnabled() } }
 
-    private var insulinNeedsScaleFactor = 1.0
+    private var insulinNeedsScaleFactor = 1.0 { didSet { updateSaveButtonEnabled() }}
 
     private var startDate = Date()
 
     private var duration: TemporaryScheduleOverride.Duration = .finite(.defaultOverrideDuration)
+    
+    private var syncIdentifier = UUID()
+    
+    private var enactTrigger: TemporaryScheduleOverride.EnactTrigger = .local
 
     private var isConfiguringPreset: Bool {
         switch inputMode {
@@ -112,7 +118,11 @@ public final class AddEditOverrideTableViewController: UITableViewController {
     }
 
     private func configure(with settings: TemporaryScheduleOverrideSettings) {
-        targetRange = settings.targetRange
+        if let targetRange = settings.targetRange {
+            self.targetRange = DoubleRange(minValue: targetRange.lowerBound.doubleValue(for: glucoseUnit), maxValue: targetRange.upperBound.doubleValue(for: glucoseUnit))
+        } else {
+            targetRange = nil
+        }
         insulinNeedsScaleFactor = settings.effectiveInsulinNeedsScaleFactor
     }
 
@@ -138,7 +148,7 @@ public final class AddEditOverrideTableViewController: UITableViewController {
         tableView.register(DecimalTextFieldTableViewCell.nib(), forCellReuseIdentifier: DecimalTextFieldTableViewCell.className)
         tableView.register(InsulinSensitivityScalingTableViewCell.nib(), forCellReuseIdentifier: InsulinSensitivityScalingTableViewCell.className)
         tableView.register(DateAndDurationTableViewCell.nib(), forCellReuseIdentifier: DateAndDurationTableViewCell.className)
-        tableView.register(SwitchTableViewCell.nib(), forCellReuseIdentifier: SwitchTableViewCell.className)
+        tableView.register(SwitchTableViewCell.self, forCellReuseIdentifier: SwitchTableViewCell.className)
         tableView.register(TextButtonTableViewCell.self, forCellReuseIdentifier: TextButtonTableViewCell.className)
     }
 
@@ -181,7 +191,7 @@ public final class AddEditOverrideTableViewController: UITableViewController {
     }
 
     private func indexPath(for row: PropertyRow) -> IndexPath? {
-        guard let rowIndex = propertyRows.index(of: row) else {
+        guard let rowIndex = propertyRows.firstIndex(of: row) else {
             return nil
         }
         return IndexPath(row: rowIndex, section: 0)
@@ -226,6 +236,7 @@ public final class AddEditOverrideTableViewController: UITableViewController {
                 cell.titleLabel.text = NSLocalizedString("Symbol", comment: "The text for the override preset symbol setting")
                 cell.textField.text = symbol
                 cell.textField.placeholder = SettingsTableViewCell.NoValueString
+                cell.maximumTextLength = 2
                 cell.customInput = overrideSymbolKeyboard
                 cell.delegate = self
                 return cell
@@ -254,13 +265,13 @@ public final class AddEditOverrideTableViewController: UITableViewController {
                 cell.titleLabel.text = NSLocalizedString("Start Time", comment: "The text for the override start time")
                 cell.datePicker.datePickerMode = .dateAndTime
                 cell.datePicker.minimumDate = min(startDate, Date())
-                cell.datePicker.maximumDate = Date() + CarbStore.defaultMaximumAbsorptionTimeInterval
                 cell.date = startDate
                 cell.delegate = self
                 return cell
             case .durationFiniteness:
                 let cell = tableView.dequeueReusableCell(withIdentifier: SwitchTableViewCell.className, for: indexPath) as! SwitchTableViewCell
-                cell.titleLabel?.text = NSLocalizedString("Enable Indefinitely", comment: "The text for the indefinite override duration setting")
+                cell.selectionStyle = .none
+                cell.textLabel?.text = NSLocalizedString("Enable Indefinitely", comment: "The text for the indefinite override duration setting")
                 cell.switch?.isOn = !duration.isFinite
                 cell.switch?.addTarget(self, action: #selector(durationFinitenessChanged), for: .valueChanged)
                 return cell
@@ -335,6 +346,24 @@ public final class AddEditOverrideTableViewController: UITableViewController {
         tableView.insertRows(at: [durationIndexPath], with: .automatic)
     }
 
+    public override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        guard section == 0 else {
+            return nil
+        }
+
+        switch inputMode {
+        case .customizePresetOverride(let preset):
+            return String(format: NSLocalizedString("Changes will only apply this time you enable the override. The default settings of %@ will not be affected.", comment: "Footer text for customizing an override from a preset (1: preset name)"), preset.name)
+        case .editOverride(let override):
+            guard case .preset(let preset) = override.context else {
+                return nil
+            }
+            return String(format: NSLocalizedString("Editing affects only the active override. The default settings of %@ will not be affected.", comment: "Footer text for editing an active override (1: preset name)"), preset.name)
+        default:
+            return nil
+        }
+    }
+
     // MARK: - UITableViewDelegate
 
     public override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
@@ -342,7 +371,7 @@ public final class AddEditOverrideTableViewController: UITableViewController {
         case .properties:
             tableView.endEditing(false)
             tableView.beginUpdates()
-            hideDatePickerCells(excluding: indexPath)
+            collapseExpandableCells(excluding: indexPath)
         case .cancel:
             break
         }
@@ -355,6 +384,10 @@ public final class AddEditOverrideTableViewController: UITableViewController {
         case .properties:
             tableView.endUpdates()
             tableView.deselectRow(at: indexPath, animated: true)
+
+            if let cell = tableView.cellForRow(at: indexPath) as? LabeledTextFieldTableViewCell, !cell.isFirstResponder {
+                cell.textField.becomeFirstResponder()
+            }
         case .cancel:
             guard case .editOverride(let override) = inputMode else {
                 assertionFailure("Only an already-set override can be canceled")
@@ -365,9 +398,10 @@ public final class AddEditOverrideTableViewController: UITableViewController {
         }
     }
 
-    private func collapseDurationDatePicker() {
+    private func collapseExpandableCells(excluding indexPath: IndexPath? = nil) {
         tableView.beginUpdates()
-        hideDatePickerCells()
+        hideDatePickerCells(excluding: indexPath)
+        collapseInsulinSensitivityScalingCells(excluding: indexPath)
         tableView.endUpdates()
     }
 }
@@ -394,7 +428,13 @@ extension AddEditOverrideTableViewController {
     }
 
     private func setupBarButtonItems() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(save))
+        switch inputMode {
+        case .newPreset, .editPreset, .editOverride:
+            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(save))
+        case .customizePresetOverride, .customOverride:
+            navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Enable", comment: "The button text for enabling a temporary override"), style: .done, target: self, action: #selector(save))
+        }
+
         updateSaveButtonEnabled()
 
         switch inputMode {
@@ -417,6 +457,7 @@ extension AddEditOverrideTableViewController {
         }
 
         return TemporaryScheduleOverrideSettings(
+            unit: glucoseUnit,
             targetRange: targetRange,
             insulinNeedsScaleFactor: insulinNeedsScaleFactor == 1.0 ? nil : insulinNeedsScaleFactor
         )
@@ -431,7 +472,14 @@ extension AddEditOverrideTableViewController {
             return nil
         }
 
-        return TemporaryScheduleOverridePreset(symbol: symbol, name: name, settings: settings, duration: duration)
+        let id: UUID
+        if case .editPreset(let preset) = inputMode {
+            id = preset.id
+        } else {
+            id = UUID()
+        }
+
+        return TemporaryScheduleOverridePreset(id: id, symbol: symbol, name: name, settings: settings, duration: duration)
     }
 
     private var configuredOverride: TemporaryScheduleOverride? {
@@ -458,7 +506,7 @@ extension AddEditOverrideTableViewController {
             return nil
         }
 
-        return TemporaryScheduleOverride(context: context, settings: settings, startDate: startDate, duration: duration)
+        return TemporaryScheduleOverride(context: context, settings: settings, startDate: startDate, duration: duration, enactTrigger: enactTrigger, syncIdentifier: syncIdentifier)
     }
 
     private func updateSaveButtonEnabled() {
@@ -522,7 +570,7 @@ extension AddEditOverrideTableViewController {
 
 extension AddEditOverrideTableViewController: TextFieldTableViewCellDelegate {
     public func textFieldTableViewCellDidBeginEditing(_ cell: TextFieldTableViewCell) {
-        collapseDurationDatePicker()
+        collapseExpandableCells()
     }
 
     public func textFieldTableViewCellDidEndEditing(_ cell: TextFieldTableViewCell) {
@@ -550,7 +598,7 @@ extension AddEditOverrideTableViewController: TextFieldTableViewCellDelegate {
 }
 
 extension AddEditOverrideTableViewController: EmojiInputControllerDelegate {
-    func emojiInputControllerDidAdvanceToStandardInputMode(_ controller: EmojiInputController) {
+    public func emojiInputControllerDidAdvanceToStandardInputMode(_ controller: EmojiInputController) {
         guard
             let indexPath = indexPath(for: .symbol),
             let cell = tableView.cellForRow(at: indexPath) as? LabeledTextFieldTableViewCell,
@@ -589,7 +637,7 @@ extension AddEditOverrideTableViewController: DatePickerTableViewCellDelegate {
 
 extension AddEditOverrideTableViewController: DoubleRangeTableViewCellDelegate {
     func doubleRangeTableViewCellDidBeginEditing(_ cell: DoubleRangeTableViewCell) {
-        collapseDurationDatePicker()
+        collapseExpandableCells()
     }
 
     func doubleRangeTableViewCellDidUpdateRange(_ cell: DoubleRangeTableViewCell) {

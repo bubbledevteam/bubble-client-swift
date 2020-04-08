@@ -1,1 +1,3 @@
-github "kdisimone/LoopKit" "42d3afac724aab4d9b5ff17bead2f3cef68c30ba"
+github "LoopKit/CGMBLEKit" "edcf503ef8fe260b69ca98eae508e679dfd9ad69"
+github "LoopKit/LoopKit" "0bdd536a1ecd0e0d5a948f73d743f95d70686bed"
+github "LoopKit/dexcom-share-client-swift" "c37d87fcf121c44721e87c9e6d2bea94e48728cc"

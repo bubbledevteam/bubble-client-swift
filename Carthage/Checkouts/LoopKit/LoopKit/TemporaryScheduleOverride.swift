@@ -10,14 +10,20 @@ import Foundation
 import HealthKit
 
 
-public struct TemporaryScheduleOverride: Equatable {
-    public enum Context: Equatable {
+public struct TemporaryScheduleOverride: Hashable {
+    public enum Context: Hashable {
         case preMeal
+        case legacyWorkout
         case preset(TemporaryScheduleOverridePreset)
         case custom
     }
+    
+    public enum EnactTrigger: Hashable {
+        case local
+        case remote(String)
+    }
 
-    public enum Duration: Comparable {
+    public enum Duration: Hashable, Comparable {
         case finite(TimeInterval)
         case indefinite
 
@@ -42,6 +48,8 @@ public struct TemporaryScheduleOverride: Equatable {
     public var context: Context
     public var settings: TemporaryScheduleOverrideSettings
     public var startDate: Date
+    public let syncIdentifier: UUID
+    public let enactTrigger: EnactTrigger
 
     public var duration: Duration {
         didSet {
@@ -77,14 +85,16 @@ public struct TemporaryScheduleOverride: Equatable {
         return date > endDate
     }
 
-    public init(context: Context, settings: TemporaryScheduleOverrideSettings, startDate: Date, duration: Duration) {
+    public init(context: Context, settings: TemporaryScheduleOverrideSettings, startDate: Date, duration: Duration, enactTrigger: EnactTrigger, syncIdentifier: UUID) {
         precondition(duration.timeInterval > 0)
         self.context = context
         self.settings = settings
         self.startDate = startDate
         self.duration = duration
+        self.enactTrigger = enactTrigger
+        self.syncIdentifier = syncIdentifier
     }
-
+    
     public func isActive(at date: Date = Date()) -> Bool {
         return activeInterval.contains(date)
     }
@@ -105,9 +115,27 @@ extension TemporaryScheduleOverride: RawRepresentable {
         else {
             return nil
         }
-
+        
         let startDate = Date(timeIntervalSince1970: startDateSeconds)
-        self.init(context: context, settings: settings, startDate: startDate, duration: duration)
+
+        let syncIdentifier: UUID
+        if let syncIdentifierRaw = rawValue["syncIdentifier"] as? String,
+            let storedSyncIdentifier = UUID(uuidString: syncIdentifierRaw) {
+            syncIdentifier = storedSyncIdentifier
+        } else {
+            syncIdentifier = UUID()
+        }
+        
+        let enactTrigger: EnactTrigger
+        if let enactTriggerRaw = rawValue["enactTrigger"] as? EnactTrigger.RawValue,
+            let storedEnactTrigger = EnactTrigger(rawValue: enactTriggerRaw)
+        {
+            enactTrigger = storedEnactTrigger
+        } else {
+            enactTrigger = .local
+        }
+        
+        self.init(context: context, settings: settings, startDate: startDate, duration: duration, enactTrigger: enactTrigger, syncIdentifier: syncIdentifier)
     }
 
     public var rawValue: RawValue {
@@ -115,7 +143,8 @@ extension TemporaryScheduleOverride: RawRepresentable {
             "context": context.rawValue,
             "settings": settings.rawValue,
             "startDate": startDate.timeIntervalSince1970,
-            "duration": duration.rawValue
+            "duration": duration.rawValue,
+            "syncIdentifier": syncIdentifier.uuidString,
         ]
     }
 }
@@ -131,6 +160,8 @@ extension TemporaryScheduleOverride.Context: RawRepresentable {
         switch context {
         case "premeal":
             self = .preMeal
+        case "legacyWorkout":
+            self = .legacyWorkout
         case "preset":
             guard
                 let presetRawValue = rawValue["preset"] as? TemporaryScheduleOverridePreset.RawValue,
@@ -150,6 +181,8 @@ extension TemporaryScheduleOverride.Context: RawRepresentable {
         switch self {
         case .preMeal:
             return ["context": "premeal"]
+        case .legacyWorkout:
+            return ["context": "legacyWorkout"]
         case .preset(let preset):
             return [
                 "context": "preset",
@@ -194,3 +227,38 @@ extension TemporaryScheduleOverride.Duration: RawRepresentable {
         }
     }
 }
+
+extension TemporaryScheduleOverride.EnactTrigger: RawRepresentable {
+    public typealias RawValue = [String: Any]
+
+    public init?(rawValue: RawValue) {
+        guard let trigger = rawValue["trigger"] as? String else {
+            return nil
+        }
+        
+        switch trigger {
+        case "local":
+            self = .local
+        case "remote":
+            guard let remoteAddress = rawValue["remoteAddress"] as? String else {
+                return nil
+            }
+            self = .remote(remoteAddress)
+        default:
+            return nil
+        }
+    }
+
+    public var rawValue: RawValue {
+        switch self {
+        case .local:
+            return ["trigger": "local"]
+        case .remote(let remoteAddress):
+            return [
+                "trigger": "remote",
+                "remoteAddress": remoteAddress
+            ]
+        }
+    }
+}
+

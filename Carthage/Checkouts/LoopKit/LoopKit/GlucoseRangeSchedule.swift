@@ -50,12 +50,51 @@ extension DoubleRange: Equatable {
     }
 }
 
+extension DoubleRange: Hashable {}
+
 
 /// Defines a daily schedule of glucose ranges
 public struct GlucoseRangeSchedule: DailySchedule, Equatable {
     public typealias RawValue = [String: Any]
 
+    /// A time-based value overriding the rangeSchedule
+    public struct Override: Equatable {
+
+        public let start: Date
+        public let end: Date
+        public let value: DoubleRange
+
+        /// Initializes a new override
+        ///
+        /// - Parameters:
+        ///   - start: The date at which the override starts
+        ///   - end: The date at which the override ends, or nil for an indefinite override
+        ///   - value: The value to return when active
+        public init(start: Date, end: Date?, value: DoubleRange) {
+            self.start = start
+            self.end = end ?? .distantFuture
+            self.value = value
+        }
+
+        public var activeDates: DateInterval {
+            return DateInterval(start: start, end: end)
+        }
+
+        public func isActive(at date: Date = Date()) -> Bool {
+            return activeDates.contains(date) && !value.isZero
+        }
+    }
+
+    /// An enabled override of the range schedule; only "active" between start and end, but when
+    /// active, it overrides the entire schedule. Not persisted
+    public private(set) var override: Override?
+
     var rangeSchedule: DailyQuantitySchedule<DoubleRange>
+
+    public init(rangeSchedule: DailyQuantitySchedule<DoubleRange>, override: Override? = nil) {
+        self.rangeSchedule = rangeSchedule
+        self.override = override
+    }
 
     public init?(unit: HKUnit, dailyItems: [RepeatingScheduleValue<DoubleRange>], timeZone: TimeZone? = nil) {
         guard let rangeSchedule = DailyQuantitySchedule<DoubleRange>(unit: unit, dailyItems: dailyItems, timeZone: timeZone) else {
@@ -77,8 +116,8 @@ public struct GlucoseRangeSchedule: DailySchedule, Equatable {
         return rangeSchedule.between(start: startDate, end: endDate)
     }
 
-    public func quantityBetween(start: Date, end: Date) -> [AbsoluteScheduleValue<Range<HKQuantity>>] {
-        var quantitySchedule = [AbsoluteScheduleValue<Range<HKQuantity>>]()
+    public func quantityBetween(start: Date, end: Date) -> [AbsoluteScheduleValue<ClosedRange<HKQuantity>>] {
+        var quantitySchedule = [AbsoluteScheduleValue<ClosedRange<HKQuantity>>]()
 
         for schedule in between(start: start, end: end) {
             quantitySchedule.append(AbsoluteScheduleValue(
@@ -94,10 +133,14 @@ public struct GlucoseRangeSchedule: DailySchedule, Equatable {
     /// Returns the underlying values in `unit`
     /// Consider using quantity(at:) instead
     public func value(at time: Date) -> DoubleRange {
+        if let override = override, time >= override.start && Date() < override.end {
+            return override.value
+        }
+
         return rangeSchedule.value(at: time)
     }
 
-    public func quantityRange(at time: Date) -> Range<HKQuantity> {
+    public func quantityRange(at time: Date) -> ClosedRange<HKQuantity> {
         return value(at: time).quantityRange(for: unit)
     }
 
@@ -123,11 +166,16 @@ public struct GlucoseRangeSchedule: DailySchedule, Equatable {
     }
 }
 
-
-fileprivate extension DoubleRange {
-    func quantityRange(for unit: HKUnit) -> Range<HKQuantity> {
+extension DoubleRange {
+    public func quantityRange(for unit: HKUnit) -> ClosedRange<HKQuantity> {
         let lowerBound = HKQuantity(unit: unit, doubleValue: minValue)
         let upperBound = HKQuantity(unit: unit, doubleValue: maxValue)
-        return lowerBound..<upperBound
+        return lowerBound...upperBound
+    }
+}
+
+extension ClosedRange where Bound == HKQuantity {
+    func doubleRange(for unit: HKUnit) -> DoubleRange {
+        return DoubleRange(minValue: lowerBound.doubleValue(for: unit), maxValue: upperBound.doubleValue(for: unit))
     }
 }

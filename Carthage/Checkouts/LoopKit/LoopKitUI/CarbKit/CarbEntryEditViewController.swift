@@ -46,6 +46,8 @@ public final class CarbEntryEditViewController: UITableViewController {
 
                 absorptionTimeWasEdited = true
                 usesCustomFoodType = true
+
+                shouldBeginEditingQuantity = false
             }
         }
     }
@@ -61,6 +63,10 @@ public final class CarbEntryEditViewController: UITableViewController {
     fileprivate var absorptionTimeWasEdited = false
 
     fileprivate var usesCustomFoodType = false
+
+    private var shouldBeginEditingQuantity = true
+
+    private var shouldBeginEditingFoodType = false
 
     public var updatedCarbEntry: NewCarbEntry? {
         if  let quantity = quantity,
@@ -94,9 +100,18 @@ public final class CarbEntryEditViewController: UITableViewController {
         tableView.register(DateAndDurationTableViewCell.nib(), forCellReuseIdentifier: DateAndDurationTableViewCell.className)
 
         if originalCarbEntry != nil {
-            title = LocalizedString("carb-entry-title-edit", value: "Edit Carb Entry", comment: "The title of the view controller to edit an existing carb entry")
+            title = LocalizedString("Edit Carb Entry", value: "Edit Carb Entry", comment: "The title of the view controller to edit an existing carb entry")
         } else {
-            title = LocalizedString("carb-entry-title-add", value: "Add Carb Entry", comment: "The title of the view controller to create a new carb entry")
+            title = LocalizedString("Add Carb Entry", value: "Add Carb Entry", comment: "The title of the view controller to create a new carb entry")
+        }
+    }
+
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if shouldBeginEditingQuantity, let cell = tableView.cellForRow(at: IndexPath(row: Row.value.rawValue, section: 0)) as? DecimalTextFieldTableViewCell {
+            shouldBeginEditingQuantity = false
+            cell.textField.becomeFirstResponder()
         }
     }
 
@@ -133,11 +148,6 @@ public final class CarbEntryEditViewController: UITableViewController {
             }
             cell.textField.isEnabled = isSampleEditable
             cell.unitLabel?.text = String(describing: preferredUnit)
-
-            if originalCarbEntry == nil {
-                cell.textField.becomeFirstResponder()
-            }
-
             cell.delegate = self
 
             return cell
@@ -167,10 +177,6 @@ public final class CarbEntryEditViewController: UITableViewController {
                     }
 
                     textField.customInput = foodKeyboard
-                }
-
-                if originalCarbEntry == nil {
-                    cell.textField.becomeFirstResponder()
                 }
 
                 return cell
@@ -204,6 +210,20 @@ public final class CarbEntryEditViewController: UITableViewController {
         }
     }
 
+    public override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        switch Row(rawValue: indexPath.row)! {
+        case .value, .date:
+            break
+        case .foodType:
+            if usesCustomFoodType, shouldBeginEditingFoodType, let cell = cell as? TextFieldTableViewCell {
+                shouldBeginEditingFoodType = false
+                cell.textField.becomeFirstResponder()
+            }
+        case .absorptionTime:
+            break
+        }
+    }
+
     public override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         return LocalizedString("Choose a longer absorption time for larger meals, or those containing fats and proteins. This is only guidance to the algorithm and need not be exact.", comment: "Carb entry section footer text explaining absorption time")
     }
@@ -221,6 +241,7 @@ public final class CarbEntryEditViewController: UITableViewController {
         switch tableView.cellForRow(at: indexPath) {
         case is FoodTypeShortcutCell:
             usesCustomFoodType = true
+            shouldBeginEditingFoodType = true
             tableView.reloadRows(at: [IndexPath(row: Row.foodType.rawValue, section: 0)], with: .none)
         default:
             break
@@ -321,7 +342,7 @@ extension CarbEntryEditViewController: DatePickerTableViewCellDelegate {
 
 
 extension CarbEntryEditViewController: FoodTypeShortcutCellDelegate {
-    func foodTypeShortcutCellDidUpdateSelection(_ cell: FoodTypeShortcutCell) {
+    public func foodTypeShortcutCellDidUpdateSelection(_ cell: FoodTypeShortcutCell) {
         var absorptionTime: TimeInterval?
 
         switch cell.selectionState {
@@ -334,6 +355,7 @@ extension CarbEntryEditViewController: FoodTypeShortcutCellDelegate {
         case .custom:
             tableView.beginUpdates()
             usesCustomFoodType = true
+            shouldBeginEditingFoodType = true
             tableView.reloadRows(at: [IndexPath(row: Row.foodType.rawValue, section: 0)], with: .fade)
             tableView.endUpdates()
         }
@@ -350,7 +372,7 @@ extension CarbEntryEditViewController: FoodTypeShortcutCellDelegate {
 
 
 extension CarbEntryEditViewController: EmojiInputControllerDelegate {
-    func emojiInputControllerDidAdvanceToStandardInputMode(_ controller: EmojiInputController) {
+    public func emojiInputControllerDidAdvanceToStandardInputMode(_ controller: EmojiInputController) {
         if let cell = tableView.cellForRow(at: IndexPath(row: Row.foodType.rawValue, section: 0)) as? TextFieldTableViewCell, let textField = cell.textField as? CustomInputTextField, textField.customInput != nil {
             let customInput = textField.customInput
             textField.customInput = nil
@@ -360,7 +382,7 @@ extension CarbEntryEditViewController: EmojiInputControllerDelegate {
         }
     }
 
-    func emojiInputControllerDidSelectItemInSection(_ section: Int) {
+    public func emojiInputControllerDidSelectItemInSection(_ section: Int) {
         guard !absorptionTimeWasEdited, section < orderedAbsorptionTimes.count else {
             return
         }

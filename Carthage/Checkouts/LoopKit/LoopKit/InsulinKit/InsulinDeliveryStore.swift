@@ -14,7 +14,6 @@ enum InsulinDeliveryStoreResult<T> {
     case failure(Error)
 }
 
-
 /// Manages insulin dose data from HealthKit
 ///
 /// Scheduled doses (e.g. a bolus or temporary basal) shouldn't be written to HealthKit until they've
@@ -24,6 +23,10 @@ enum InsulinDeliveryStoreResult<T> {
 /// HealthKit data isn't a substitute for an insulin pump's diagnostic event history, but doses fetched
 /// from HealthKit can reduce the amount of repeated communication with an insulin pump.
 public class InsulinDeliveryStore: HealthKitSampleStore {
+    
+    /// Notification posted when cached data was modifed.
+    static let cacheDidChange = NSNotification.Name(rawValue: "com.loopkit.InsulinDeliveryStore.cacheDidChange")
+
     private let insulinType = HKQuantityType.quantityType(forIdentifier: .insulinDelivery)!
 
     private let queue = DispatchQueue(label: "com.loopkit.InsulinKit.InsulinDeliveryStore.queue", qos: .utility)
@@ -44,6 +47,8 @@ public class InsulinDeliveryStore: HealthKitSampleStore {
     public let cacheLength: TimeInterval
 
     public let cacheStore: PersistenceController
+    
+    static let queryAnchorMetadataKey = "com.loopkit.InsulinDeliveryStore.queryAnchor"
 
     public init(
         healthStore: HKHealthStore,
@@ -64,8 +69,22 @@ public class InsulinDeliveryStore: HealthKitSampleStore {
         )
 
         cacheStore.onReady { (error) in
-            // Should we do something here?
+            cacheStore.fetchAnchor(key: InsulinDeliveryStore.queryAnchorMetadataKey) { (anchor) in
+                self.queue.async {
+                    self.queryAnchor = anchor
+
+                    if !self.authorizationRequired {
+                        self.createQuery()
+                    }
+                }
+            }
         }
+    }
+    
+    // MARK: - HealthKitSampleStore
+
+    override func queryAnchorDidChange() {
+        cacheStore.storeAnchor(queryAnchor, key: InsulinDeliveryStore.queryAnchorMetadataKey)
     }
 
     public override func processResults(from query: HKAnchoredObjectQuery, added: [HKSample], deleted: [HKDeletedObject], error: Error?) {
@@ -83,10 +102,13 @@ public class InsulinDeliveryStore: HealthKitSampleStore {
             }
 
             // Deleted samples
-            for sample in deleted {
-                if self.deleteCachedObject(forSampleUUID: sample.uuid) {
+            if deleted.count > 0 {
+                self.log.debug("Starting deletion of %d samples", deleted.count)
+                let cacheDeletedCount = self.deleteCachedObjects(forSampleUUIDs: deleted.map { $0.uuid })
+                if cacheDeletedCount > 0 {
                     cacheChanged = true
                 }
+                self.log.debug("Finished deletion: HK delete count = %d, cache delete count = %d", deleted.count, cacheDeletedCount)
             }
 
             let cachePredicate = NSPredicate(format: "startDate < %@", self.earliestCacheDate as NSDate)
@@ -99,6 +121,9 @@ public class InsulinDeliveryStore: HealthKitSampleStore {
             // New data not written by LoopKit (see `MetadataKeyHasLoopKitOrigin`) should be assumed external to what could be fetched as PumpEvent data.
             // That external data could be factored into dose computation with some modification:
             // An example might be supplemental injections in cases of extended exercise periods without a pump
+            if cacheChanged {
+                NotificationCenter.default.post(name: InsulinDeliveryStore.cacheDidChange, object: self)
+            }
         }
     }
 
@@ -367,6 +392,27 @@ extension InsulinDeliveryStore {
     ///
     /// - Parameter uuid: The UUID of the sample to delete
     /// - Returns: Whether the deletion was made
+    private func deleteCachedObjects(forSampleUUIDs uuids: [UUID], batchSize: Int = 500) -> Int {
+        dispatchPrecondition(condition: .onQueue(queue))
+
+        var deleted = 0
+
+        cacheStore.managedObjectContext.performAndWait {
+
+            for batch in uuids.chunked(into: batchSize) {
+                let predicate = NSPredicate(format: "uuid IN %@", batch.map { $0 as NSUUID })
+                if let count = try? cacheStore.managedObjectContext.purgeObjects(of: CachedInsulinDeliveryObject.self, matching: predicate) {
+                    deleted += count
+                }
+            }
+        }
+        return deleted
+    }
+
+    /// Deletes objects from the cache that match the given sample UUID
+    ///
+    /// - Parameter uuid: The UUID of the sample to delete
+    /// - Returns: Whether the deletion was made
     private func deleteCachedObject(forSampleUUID uuid: UUID) -> Bool {
         dispatchPrecondition(condition: .onQueue(queue))
 
@@ -433,7 +479,7 @@ extension InsulinDeliveryStore {
 
 // MARK: - Unit Testing
 extension InsulinDeliveryStore {
-    internal var test_lastBasalEndDate: Date? {
+    public var test_lastBasalEndDate: Date? {
         get {
             var date: Date?
             queue.sync {

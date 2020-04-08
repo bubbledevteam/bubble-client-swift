@@ -24,7 +24,11 @@ final class InsulinSensitivityScalingTableViewCell: UITableViewCell {
 
     @IBOutlet weak var gaugeBar: SegmentedGaugeBarView! {
         didSet {
-            gaugeBar.backgroundColor = .white
+            if #available(iOSApplicationExtension 13.0, *) {
+                gaugeBar.backgroundColor = .systemGray6
+            } else {
+                gaugeBar.backgroundColor = .white
+            }
         }
     }
 
@@ -45,6 +49,13 @@ final class InsulinSensitivityScalingTableViewCell: UITableViewCell {
     
     @IBOutlet private weak var footerLabel: UILabel!
 
+    private lazy var percentFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .percent
+        formatter.maximumFractionDigits = 0
+        return formatter
+    }()
+
     var isPickerHidden: Bool {
         get {
             return scaleFactorPicker.isHidden
@@ -54,7 +65,7 @@ final class InsulinSensitivityScalingTableViewCell: UITableViewCell {
             scaleFactorPickerHeightConstraint.constant = newValue ? 0 : pickerExpandedHeight
 
             if !newValue {
-                guard let selectedRow = allScaleFactorPercentages.index(of: selectedPercentage) else {
+                guard let selectedRow = allScaleFactorPercentages.firstIndex(of: selectedPercentage) else {
                     fatalError("selectedPercentage should always be validated against all possible scale factors")
                 }
                 scaleFactorPicker.selectRow(selectedRow, inComponent: 0, animated: false)
@@ -86,7 +97,7 @@ final class InsulinSensitivityScalingTableViewCell: UITableViewCell {
                 selectedPercentage = allScaleFactorPercentages
                     .adjacentPairs()
                     .first(where: { lower, upper in
-                        (lower...upper).contains(percentage)
+                        (lower..<upper).contains(percentage)
                     })?.0 ?? 100
             }
         }
@@ -104,6 +115,7 @@ final class InsulinSensitivityScalingTableViewCell: UITableViewCell {
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
+        // Save and reassign the background color to avoid propagated transparency during the animation.
         let gaugeBarBackgroundColor = gaugeBar.backgroundColor
         super.setSelected(selected, animated: animated)
 
@@ -114,6 +126,7 @@ final class InsulinSensitivityScalingTableViewCell: UITableViewCell {
     }
 
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        // Save and reassign the background color to avoid propagated transparency during the animation.
         let gaugeBarBackgroundColor = gaugeBar.backgroundColor
         super.setHighlighted(highlighted, animated: animated)
 
@@ -143,8 +156,8 @@ final class InsulinSensitivityScalingTableViewCell: UITableViewCell {
         footerLabel.text = footerText
     }
 
-    private func percentageString(from percentage: Int) -> String {
-        return String(format: NSLocalizedString("%@%%", comment: "Format string for percentage value"), String(percentage))
+    private func percentageString(from percentage: Int) -> String? {
+        return percentFormatter.string(from: Double(percentage) / 100)
     }
 }
 
@@ -165,5 +178,13 @@ extension InsulinSensitivityScalingTableViewCell: UIPickerViewDelegate {
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         selectedPercentage = allScaleFactorPercentages[row]
+    }
+}
+
+extension InsulinSensitivityScalingTableViewCellDelegate where Self: UITableViewController {
+    func collapseInsulinSensitivityScalingCells(excluding indexPath: IndexPath? = nil) {
+        for case let cell as InsulinSensitivityScalingTableViewCell in tableView.visibleCells where tableView.indexPath(for: cell) != indexPath && !cell.isPickerHidden {
+            cell.isPickerHidden = true
+        }
     }
 }
