@@ -199,7 +199,11 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         state = .Connected
         self.lastConnectedIdentifier = peripheral.identifier.uuidString
         // Discover all Services. This might be helpful if writing is needed some time
-        peripheral.discoverServices(nil)
+        if peripheral.services != nil {
+            self.peripheral(peripheral, didDiscoverServices: nil)
+        } else {
+            peripheral.discoverServices(nil)
+        }
     }
     
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
@@ -245,7 +249,11 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         if let services = peripheral.services {
             
             for service in services {
-                peripheral.discoverCharacteristics(nil, for: service)
+                if service.characteristics != nil {
+                    self.peripheral(peripheral, didDiscoverCharacteristicsFor: service, error: nil)
+                } else {
+                    peripheral.discoverCharacteristics(nil, for: service)
+                }
                 
                 os_log("Did discover service: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: service.debugDescription))
             }
