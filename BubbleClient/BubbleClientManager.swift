@@ -69,7 +69,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             "Bridge battery: \(battery)",
             //"Notification glucoseunit: \(glucoseUnit)",
             //"shouldSendGlucoseNotifications: \(shouldSendGlucoseNotifications)",
-            //"latestBackfill: \(String(describing: "latestBackfill))",
+            "latestBackfill: \(String(describing: latestBackfill))",
             //"latestCollector: \(String(describing: latestSpikeCollector))",
             ""
             ].joined(separator: "\n")

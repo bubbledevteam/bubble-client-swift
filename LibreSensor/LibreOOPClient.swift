@@ -168,10 +168,21 @@ class LibreOOPClient {
         var ptime = endTime
         while ptime >= startTime {
             let value = (frameS.sample(atTime: CGFloat(ptime)) as? Double) ?? 0
-            let item = LibreRawGlucoseData.init(timeStamp: Date.init(timeIntervalSince1970: ptime / 1000), glucoseLevelRaw: value)
+            let item = LibreRawGlucoseData.init(timeStamp: Date.init(timeIntervalSince1970: ptime / 1000), glucoseLevelRaw: value, unsmoothedGlucose: value)
             items.append(item)
             ptime -= 300000
         }
+        
+        for i in 0 ..< items.count {
+            let trend = items[i]
+            //we know that the array "always" (almost) will contain 16 entries
+            //the last five entries will get a trend arrow of flat, because it's not computable when we don't have
+            //more entries in the array to base it on
+            let arrow = GetGlucoseDirection(current: trend, last: items[safe: i+1])
+            items[i].trend = UInt8(arrow.rawValue)
+            NSLog("Date: \(trend.timeStamp), before: \(trend.unsmoothedGlucose), after: \(trend.glucoseLevelRaw), arrow: \(trend.trend)")
+        }
+        
         return items
     }
     
@@ -319,7 +330,9 @@ class LibreOOPClient {
         
         var origarr = [LibreRawGlucoseData]()
         for trend in measurements {
-            let glucose = LibreRawGlucoseData(timeStamp: trend.date, unsmoothedGlucose: trend.temperatureAlgorithmGlucose)
+            let glucose = LibreRawGlucoseData(timeStamp: trend.date,
+                                              glucoseLevelRaw: trend.temperatureAlgorithmGlucose,
+                                              unsmoothedGlucose: trend.temperatureAlgorithmGlucose)
             origarr.append(glucose)
         }
         

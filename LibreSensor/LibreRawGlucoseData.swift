@@ -28,7 +28,7 @@ public class GlucoseData {
     }
     
     var description: String {
-        return "timeStamp = " + timeStamp.description(with: .current) + ", glucoseLevelRaw = " + glucoseLevelRaw.description
+        return "timeStamp = \(timeStamp.description(with: .current)) glucoseLevelRaw = \(glucoseLevelRaw.description) trend = \(trend)"
     }
     
     
@@ -74,7 +74,7 @@ class LibreRawGlucoseData: GlucoseData {
         self.init(timeStamp: timeStamp, glucoseLevelRaw: glucoseLevelRaw, glucoseLevelFiltered: glucoseLevelRaw)
     }
     
-    convenience init(timeStamp:Date, unsmoothedGlucose: Double) {
+    convenience init(timeStamp:Date, glucoseLevelRaw:Double, unsmoothedGlucose: Double) {
         self.init(timeStamp: timeStamp, glucoseLevelRaw: 0.0, glucoseLevelFiltered: 0.0, unsmoothedGlucose: unsmoothedGlucose)
     }
 
