@@ -148,7 +148,7 @@ class NotificationHelper {
                      content.title = "LOWALERT (Snoozed) \(formatted)"
                 } else {
                     content.title = "LOWALERT \(formatted)"
-                    content.sound = .default()
+                    content.sound = .default
                     vibrateIfNeeded()
                 }
                 
@@ -158,7 +158,7 @@ class NotificationHelper {
                     content.title = "HIGHALERT (Snoozed)! \(formatted)"
                 } else {
                     content.title = "HIGHALERT! \(formatted)"
-                    content.sound = .default()
+                    content.sound = .default
                     vibrateIfNeeded()
                     
                 }
@@ -390,7 +390,7 @@ class NotificationHelper {
             }
            
             
-            content.sound = .default()
+            content.sound = .default
             
             //content.sound = UNNotificationSound.
             let request = UNNotificationRequest(identifier: Identifiers.invalidSensor.rawValue, content: content, trigger: nil)
@@ -454,7 +454,7 @@ class NotificationHelper {
             content.title = "Low Battery"
             content.body = "Battery is running low (\(batteryPercentage)), consider charging your Bubble device as soon as possible"
             
-            content.sound = .default()
+            content.sound = .default
             
             //content.sound = UNNotificationSound.
             let request = UNNotificationRequest(identifier: Identifiers.lowBattery.rawValue, content: content, trigger: nil)
@@ -516,7 +516,7 @@ class NotificationHelper {
             content.title = "Sensor Ending Soon"
             content.body = "Current Sensor is Ending soon! Sensor Age: \(sensorData.humanReadableSensorAge)"
             
-            //content.sound = .default()
+            //content.sound = .default
             
             //content.sound = UNNotificationSound.
             let request = UNNotificationRequest(identifier: Identifiers.sensorExpire.rawValue, content: content, trigger: nil)
