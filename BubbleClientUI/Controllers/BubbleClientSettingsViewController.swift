@@ -55,7 +55,7 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
     }
 
     override public func tableView(_ tableView: UITableView, heightForRowAt index: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        return UITableView.automaticDimension
         
     }
     
@@ -69,10 +69,10 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
 
         title = cgmManager?.localizedTitle
 
-        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 44
 
-        tableView.sectionHeaderHeight = UITableViewAutomaticDimension
+        tableView.sectionHeaderHeight = UITableView.automaticDimension
         tableView.estimatedSectionHeaderHeight = 55
 
         tableView.register(SettingsTableViewCell.self, forCellReuseIdentifier: SettingsTableViewCell.className)
