@@ -152,7 +152,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     public static let localizedTitle = LocalizedString("Bubble", comment: "Title for the CGMManager option")
     
-    public let appURL: URL? = nil //URL(string: "spikeapp://")
+    public let appURL: URL? = URL(string: "diabox://")
     
     public let providesBLEHeartbeat = true
     
