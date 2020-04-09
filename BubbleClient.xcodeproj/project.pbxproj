@@ -6,20 +6,6 @@
 	objectVersion = 46;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		43A8EC75210E653B00A81379 /* Cartfile */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 43A8EC76210E653C00A81379 /* Build configuration list for PBXAggregateTarget "Cartfile" */;
-			buildPhases = (
-				43A8EC79210E654300A81379 /* Build Carthage Dependencies */,
-			);
-			dependencies = (
-			);
-			name = Cartfile;
-			productName = Cartfile;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		2701478D2281FA4A0013C9E3 /* NotificationsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2701478C2281FA4A0013C9E3 /* NotificationsSettingsTableViewController.swift */; };
 		270C265B22691253005B27F3 /* GlucoseAlarmInputCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 270C265922691253005B27F3 /* GlucoseAlarmInputCell.xib */; };
@@ -58,9 +44,7 @@
 		277DAD12226C9FA800422ADA /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D0DA6A2231CBB7007BBB2C /* DateExtensions.swift */; };
 		277DAD14226CACF300422ADA /* MessagePassing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277DAD13226CACF300422ADA /* MessagePassing.swift */; };
 		277DAD15226CACF700422ADA /* MessagePassing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277DAD13226CACF300422ADA /* MessagePassing.swift */; };
-		2795404F2165502600D657E5 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2795404E2165502600D657E5 /* main.swift */; };
 		27C335B82165667300CF0868 /* LibreGlucose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43C418AE1CE0488900405B6A /* LibreGlucose.swift */; };
-		27C335B9216566C500CF0868 /* BubbleClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; };
 		27C335E121667C7A00CF0868 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C335E021667C7A00CF0868 /* AppDelegate.swift */; };
 		27C335E321667C7B00CF0868 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C335E221667C7B00CF0868 /* ViewController.swift */; };
 		27C335E621667C7B00CF0868 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 27C335E421667C7B00CF0868 /* Main.storyboard */; };
@@ -124,13 +108,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		277FE8E02165606D001ACE55 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 432B0E7F1CDFC3C50045347B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 432B0E871CDFC3C50045347B;
-			remoteInfo = BubbleClient;
-		};
 		27C335F521667D1600CF0868 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 432B0E7F1CDFC3C50045347B /* Project object */;
@@ -155,15 +132,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		2795404A2165502600D657E5 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 		EE72B071230CD6AB00D67B8F /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -210,7 +178,6 @@
 		277DAD0C226B970300422ADA /* UserDefaults+Alarmsettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Alarmsettings.swift"; sourceTree = "<group>"; };
 		277DAD0F226C93D000422ADA /* GlucoseAlarmType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlucoseAlarmType.swift; sourceTree = "<group>"; };
 		277DAD13226CACF300422ADA /* MessagePassing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePassing.swift; sourceTree = "<group>"; };
-		2795404C2165502600D657E5 /* clitester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = clitester; sourceTree = BUILT_PRODUCTS_DIR; };
 		2795404E2165502600D657E5 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		27C335DE21667C7A00CF0868 /* singleviewtesterapp2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = singleviewtesterapp2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		27C335E021667C7A00CF0868 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -294,14 +261,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		279540492165502600D657E5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				27C335B9216566C500CF0868 /* BubbleClient.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		27C335DB21667C7A00CF0868 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -530,7 +489,6 @@
 				432B0E881CDFC3C50045347B /* BubbleClient.framework */,
 				432B0E921CDFC3C50045347B /* BubbleClientTests.xctest */,
 				43A8EC82210E664300A81379 /* BubbleClientUI.framework */,
-				2795404C2165502600D657E5 /* clitester */,
 				27C335DE21667C7A00CF0868 /* singleviewtesterapp2.app */,
 			);
 			name = Products;
@@ -631,24 +589,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		2795404B2165502600D657E5 /* clitester */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 279540502165502600D657E5 /* Build configuration list for PBXNativeTarget "clitester" */;
-			buildPhases = (
-				279540482165502600D657E5 /* Sources */,
-				279540492165502600D657E5 /* Frameworks */,
-				2795404A2165502600D657E5 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				277FE8E12165606D001ACE55 /* PBXTargetDependency */,
-			);
-			name = clitester;
-			productName = clitester;
-			productReference = 2795404C2165502600D657E5 /* clitester */;
-			productType = "com.apple.product-type.tool";
-		};
 		27C335DD21667C7A00CF0868 /* singleviewtesterapp2 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 27C335ED21667C7C00CF0868 /* Build configuration list for PBXNativeTarget "singleviewtesterapp2" */;
@@ -734,11 +674,6 @@
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Mark Wilson";
 				TargetAttributes = {
-					2795404B2165502600D657E5 = {
-						CreatedOnToolsVersion = 9.4.1;
-						DevelopmentTeam = L28K36YETG;
-						ProvisioningStyle = Automatic;
-					};
 					27C335DD21667C7A00CF0868 = {
 						CreatedOnToolsVersion = 9.4.1;
 						DevelopmentTeam = W4JY5996A9;
@@ -753,10 +688,6 @@
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = L28K36YETG;
 						LastSwiftMigration = 0900;
-					};
-					43A8EC75210E653B00A81379 = {
-						CreatedOnToolsVersion = 9.4.1;
-						ProvisioningStyle = Automatic;
 					};
 					43A8EC81210E664300A81379 = {
 						CreatedOnToolsVersion = 9.4.1;
@@ -790,8 +721,6 @@
 				432B0E871CDFC3C50045347B /* BubbleClient */,
 				432B0E911CDFC3C50045347B /* BubbleClientTests */,
 				43A8EC81210E664300A81379 /* BubbleClientUI */,
-				43A8EC75210E653B00A81379 /* Cartfile */,
-				2795404B2165502600D657E5 /* clitester */,
 				27C335DD21667C7A00CF0868 /* singleviewtesterapp2 */,
 			);
 		};
@@ -847,20 +776,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		43A8EC79210E654300A81379 /* Build Carthage Dependencies */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Build Carthage Dependencies";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ -f $PROJECT_DIR/.gitmodules ]; then\n    echo \"Skipping checkout due to presence of .gitmodules file\"\n    if [ $ACTION = \"install\" ]; then\n        echo \"You're installing: Make sure to keep all submodules up-to-date and run carthage build after changes.\"\n    fi\nelse\n    echo \"Bootstrapping carthage dependencies\"\n    /usr/local/bin/carthage bootstrap --project-directory \"$SRCROOT\" --cache-builds\nfi\n";
-		};
 		EEEFD069243D628D00D82782 /* Copy Frameworks with Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -886,14 +801,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		279540482165502600D657E5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2795404F2165502600D657E5 /* main.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		27C335DA21667C7A00CF0868 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -996,11 +903,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		277FE8E12165606D001ACE55 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 432B0E871CDFC3C50045347B /* BubbleClient */;
-			targetProxy = 277FE8E02165606D001ACE55 /* PBXContainerItemProxy */;
-		};
 		27C335F621667D1600CF0868 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 27C335DD21667C7A00CF0868 /* singleviewtesterapp2 */;
@@ -1072,45 +974,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		279540512165502600D657E5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = L28K36YETG;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 4.0;
-			};
-			name = Debug;
-		};
-		279540522165502600D657E5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = L28K36YETG;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 4.0;
-			};
-			name = Release;
-		};
 		27C335EE21667C7C00CF0868 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1396,22 +1259,6 @@
 			};
 			name = Release;
 		};
-		43A8EC77210E653C00A81379 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		43A8EC78210E653C00A81379 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		43A8EC88210E664300A81379 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1486,15 +1333,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		279540502165502600D657E5 /* Build configuration list for PBXNativeTarget "clitester" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				279540512165502600D657E5 /* Debug */,
-				279540522165502600D657E5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		27C335ED21667C7C00CF0868 /* Build configuration list for PBXNativeTarget "singleviewtesterapp2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1527,15 +1365,6 @@
 			buildConfigurations = (
 				432B0EA01CDFC3C50045347B /* Debug */,
 				432B0EA11CDFC3C50045347B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		43A8EC76210E653C00A81379 /* Build configuration list for PBXAggregateTarget "Cartfile" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				43A8EC77210E653C00A81379 /* Debug */,
-				43A8EC78210E653C00A81379 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
