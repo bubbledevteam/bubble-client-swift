@@ -53,6 +53,7 @@ class NotificationHelper {
     
     
     static func ensureCanSendNotification(_ completion: @escaping (_ canSend: Bool) -> Void ) -> Void{
+        completion(false)
         UNUserNotificationCenter.current().getNotificationSettings { (settings) in
             if #available(iOSApplicationExtension 12.0, *) {
                 guard (settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional) else {
