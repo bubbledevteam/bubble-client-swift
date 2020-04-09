@@ -25,7 +25,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             delegate.delegate = newValue
         }
     }
-
+    
     public var delegateQueue: DispatchQueue! {
         get {
             return delegate.queue
@@ -425,38 +425,39 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             self.lastValidSensorData = sensorData
             
             self.handleGoodReading(data: sensorData) { (error, glucose) in
-                if let error = error {
-                    NSLog("dabear:: handleGoodReading returned with error: \(error)")
+                self.delegateQueue.async {
+                    if let error = error {
+                        NSLog("dabear:: handleGoodReading returned with error: \(error)")
+                        
+                        self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(error))
+                        self.reloadData?()
+                        return
+                    }
                     
-                    self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(error))
-                    self.reloadData?()
-                    return
-                }
-                
-                guard let glucose = glucose else {
-                    NSLog("dabear:: handleGoodReading returned with no data")
-                    self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .noData)
-                    self.reloadData?()
-                    return
-                }
-                
-                let startDate = self.latestBackfill?.startDate
-                let newGlucose = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).map {
-                    return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
-                }
-                
-                self.latestBackfill = glucose.first
-                
-                if newGlucose.count > 0 {
-                    NSLog("dabear:: handleGoodReading returned with \(newGlucose.count) new glucose samples")
-                    self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .newData(newGlucose))
+                    guard let glucose = glucose else {
+                        NSLog("dabear:: handleGoodReading returned with no data")
+                        self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .noData)
+                        self.reloadData?()
+                        return
+                    }
                     
-                } else {
-                    NSLog("dabear:: handleGoodReading returned with no new data")
-                    self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .noData)
+                    let startDate = self.latestBackfill?.startDate
+                    let newGlucose = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).map {
+                        return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
+                    }
                     
+                    self.latestBackfill = glucose.first
+                    
+                    if newGlucose.count > 0 {
+                        NSLog("dabear:: handleGoodReading returned with \(newGlucose.count) new glucose samples")
+                        self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .newData(newGlucose))
+                        
+                    } else {
+                        NSLog("dabear:: handleGoodReading returned with no new data")
+                        self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .noData)
+                        
+                    }
                 }
-                
             }
             
         } else {

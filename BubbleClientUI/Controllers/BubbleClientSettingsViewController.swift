@@ -44,7 +44,9 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         super.init(style: .grouped)
         self.cgmManager?.reloadData = {
             [weak self] in
-            self?.tableView?.reloadData()
+            DispatchQueue.main.async {
+                self?.tableView?.reloadData()
+            }
         }
     }
 
