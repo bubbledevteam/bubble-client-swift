@@ -309,10 +309,10 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                             let battery = Int(value[4])
                             bubble = Bubble(hardware: "0", firmware: "0", battery: battery)
                             delegate?.BubbleBluetoothManagerMessageChanged()
-                            if let writeCharacteristic = writeCharacteristic {
-                                print("-----set: ", writeCharacteristic)
-                                peripheral.writeValue(Data([0x02, 0x00, 0x00, 0x00, 0x00, 0x2B]), for: writeCharacteristic, type: .withoutResponse)
-                            }
+//                            if let writeCharacteristic = writeCharacteristic {
+//                                print("-----set: ", writeCharacteristic)
+//                                peripheral.writeValue(Data([0x02, 0x00, 0x00, 0x00, 0x00, 0x2B]), for: writeCharacteristic, type: .withoutResponse)
+//                            }
                         case .dataPacket:
                             guard rxBuffer.count >= 8 else { return }
                             rxBuffer.append(value.suffix(from: 4))
@@ -355,9 +355,9 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     // Bubble specific commands
     func requestData() {
-        if let writeCharacteristic = writeCharacteristic {
-            peripheral?.writeValue(Data.init(bytes: [0x00, 0x00, 0x05]), for: writeCharacteristic, type: .withoutResponse)
-        }
+//        if let writeCharacteristic = writeCharacteristic {
+//            peripheral?.writeValue(Data.init(bytes: [0x00, 0x00, 0x05]), for: writeCharacteristic, type: .withoutResponse)
+//        }
     }
     
     
@@ -365,7 +365,10 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         rxBuffer = Data()
     }
     
+    var latestUpdateDate = Date(timeIntervalSince1970: 0)
+    
     func handleCompleteMessage() {
+        guard latestUpdateDate.addingTimeInterval(60 * 4) < Date() else { return }
         guard rxBuffer.count >= 352, let bubble = bubble else {
             return
         }
