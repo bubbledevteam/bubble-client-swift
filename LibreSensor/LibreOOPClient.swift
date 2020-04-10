@@ -35,7 +35,6 @@ class LibreOOPClient {
                     callback?(nil)
                     return
                 }
-                
                 let decoder = JSONDecoder.init()
                 if let oopValue = try? decoder.decode(LibreRawGlucoseOOPData.self, from: data) {
                     callback?(oopValue)
@@ -83,8 +82,9 @@ class LibreOOPClient {
             }
         }
         
-        let patchUid = sensorData.patchUid
-        guard let patchInfo = sensorData.patchInfo else {
+        
+        guard let patchUid = sensorData.patchUid,
+            let patchInfo = sensorData.patchInfo else {
             oop()
             return
         }
@@ -197,7 +197,7 @@ class LibreOOPClient {
             do {
                 let response = try decoder.decode(GetCalibrationStatus.self, from: data)
                 if let slope = response.slope {
-                    var p = LibreDerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope ?? 0, slope_offset: slope.slopeOffset ?? 0, offset_slope: slope.offsetSlope ?? 0, offset_offset: slope.offsetOffset ?? 0, isValidForFooterWithReverseCRCs: Int(slope.isValidForFooterWithReverseCRCs ?? 1), extraSlope: 1.0, extraOffset: 0.0)
+                    var p = LibreDerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope?.toDouble() ?? 0, slope_offset: slope.slopeOffset?.toDouble() ?? 0, offset_slope: slope.offsetSlope?.toDouble() ?? 0, offset_offset: slope.offsetOffset?.toDouble() ?? 0, isValidForFooterWithReverseCRCs: Int(slope.isValidForFooterWithReverseCRCs ?? 1), extraSlope: 1.0, extraOffset: 0.0)
                     p.serialNumber = serialNumber
                     if p.slope_slope != 0 ||
                         p.slope_offset != 0 ||
@@ -398,5 +398,39 @@ class LibreOOPClient {
             return GlucoseTrend.flat
         }
         
+    }
+}
+
+extension String {
+    func startsWith(_ prefix: String) -> Bool {
+        return lowercased().hasPrefix(prefix.lowercased())
+    }
+}
+
+extension String {
+    /// converts String to Double, works with decimal seperator . or , - if conversion fails then returns nil
+    func toDouble() -> Double? {
+        
+        // if string is empty then no further processing needed, return nil
+        if self.count == 0 {
+            return nil
+        }
+        
+        let returnValue:Double? = Double(self)
+        if let returnValue = returnValue  {
+            // Double value is correctly created, return it
+            return returnValue
+        } else {
+            // first check if it has ',', replace by '.' and try again
+            // else replace '.' by ',' and try again
+            if self.indexes(of: ",").count > 0 {
+                let newString = self.replacingOccurrences(of: ",", with: ".")
+                return Double(newString)
+            } else if self.indexes(of: ".").count > 0 {
+                let newString = self.replacingOccurrences(of: ".", with: ",")
+                return Double(newString)
+            }
+        }
+        return nil
     }
 }

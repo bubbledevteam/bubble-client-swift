@@ -101,10 +101,7 @@ public struct SensorData {
         
     }
     
-    var patchUid: String {
-        uuid.hexEncodedString().uppercased()
-    }
-    
+    var patchUid: String?
     var patchInfo: String? {
         didSet {
             if let patchInfo = patchInfo, patchInfo.count > 2 {
@@ -167,7 +164,7 @@ public struct SensorData {
 
         self.uuid = uuid
         self.serialNumber = SensorSerialNumber(withUID: uuid)?.serialNumber ?? "-"
-        
+        self.patchUid = uuid.hexEncodedString().uppercased()
         //self.temperatureAlgorithmParameterSet = derivedAlgorithmParameterSet
 
         guard 0 <= nextTrendBlock && nextTrendBlock < 16 && 0 <= nextHistoryBlock && nextHistoryBlock < 32 else {

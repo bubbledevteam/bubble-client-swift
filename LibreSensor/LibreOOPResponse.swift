@@ -222,17 +222,28 @@ class JSONNull: Codable {
 }
 
 struct GetCalibrationStatus: Codable {
-    let error: Bool?
-    let command: String?
-    let slope: GetCalibrationStatusResult?
-    let result: GetCalibrationStatusResult?
+    var error: Bool?
+    var command: String?
+    var slope: GetCalibrationStatusResult?
+    
+    var description: String {
+        return """
+        slope_slope = \(slope?.slopeSlope ?? "")
+        slope_offset = \(slope?.slopeOffset ?? "")
+        offset_slope = \(slope?.offsetSlope ?? "")
+        offset_offset = \(slope?.offsetOffset ?? "")
+        """
+    }
 }
 
 struct GetCalibrationStatusResult: Codable, CustomStringConvertible{
-    let status: String?
-    let slopeSlope, slopeOffset, offsetOffset, offsetSlope: Double?
-    let uuid: String?
-    let isValidForFooterWithReverseCRCs: Double?
+    var status: String?
+    var slopeSlope: String?
+    var slopeOffset: String?
+    var offsetOffset: String?
+    var offsetSlope: String?
+    var uuid: String?
+    var isValidForFooterWithReverseCRCs: Double?
     
     enum CodingKeys: String, CodingKey {
         case status
