@@ -336,18 +336,16 @@ class LibreOOPClient {
             origarr.append(glucose)
         }
         
-        var arr : [LibreRawGlucoseData]
-        arr = LibreGlucoseSmoothing.CalculateSmothedData5Points(origtrends: origarr)
-        for i in 0 ..< arr.count {
-            let trend = arr[i]
+        for i in 0 ..< origarr.count {
+            let trend = origarr[i]
             //we know that the array "always" (almost) will contain 16 entries
             //the last five entries will get a trend arrow of flat, because it's not computable when we don't have
             //more entries in the array to base it on
-            let arrow = GetGlucoseDirection(current: trend, last: arr[safe: i+5])
-            arr[i].trend = UInt8(arrow.rawValue)
+            let arrow = GetGlucoseDirection(current: trend, last: origarr[safe: i+1])
+            origarr[i].trend = UInt8(arrow.rawValue)
             NSLog("Date: \(trend.timeStamp), before: \(trend.unsmoothedGlucose), after: \(trend.glucoseLevelRaw), arrow: \(trend.trend)")
         }
-        return arr
+        return origarr
     }
     
     static func calculateSlope(current: LibreRawGlucoseData, last: LibreRawGlucoseData) -> Double

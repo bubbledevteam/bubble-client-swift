@@ -57,7 +57,6 @@
 		27CFAB52223EA0B2006DEFE3 /* BubbleClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; };
 		27CFAB5522496C7A006DEFE3 /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFAB5422496C7A006DEFE3 /* DoubleExtensions.swift */; };
 		27CFAB5622496CBB006DEFE3 /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFAB5422496C7A006DEFE3 /* DoubleExtensions.swift */; };
-		27CFAB59224977B9006DEFE3 /* GlucoseSmoothing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFAB5722497744006DEFE3 /* GlucoseSmoothing.swift */; };
 		27CFAB5C224AA93E006DEFE3 /* TrendArrowCalculations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFAB5A224AA8D1006DEFE3 /* TrendArrowCalculations.swift */; };
 		27CFAB5E224AB265006DEFE3 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFAB5D224AB265006DEFE3 /* CollectionExtensions.swift */; };
 		27CFAB5F224AB27B006DEFE3 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFAB5D224AB265006DEFE3 /* CollectionExtensions.swift */; };
@@ -95,7 +94,6 @@
 		43AB5127213315D300B3D58D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 43AB5125213315D300B3D58D /* Localizable.strings */; };
 		43AB51362133177800B3D58D /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB51352133177800B3D58D /* LocalizedString.swift */; };
 		43AB51372133177800B3D58D /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB51352133177800B3D58D /* LocalizedString.swift */; };
-		EE10F6D0243C31E000C5340C /* LibreGlucoseSmoothing.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE10F6CF243C31E000C5340C /* LibreGlucoseSmoothing.swift */; };
 		EE10F6D2243C31F900C5340C /* LibreRawGlucoseData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE10F6D1243C31F900C5340C /* LibreRawGlucoseData.swift */; };
 		EE10F6D4243C320400C5340C /* LibreMeasurement.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE10F6D3243C320400C5340C /* LibreMeasurement.swift */; };
 		EE72B06D230CD6AB00D67B8F /* BubbleClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -192,7 +190,6 @@
 		27CBEB542261DF9C004F7BF5 /* AlarmTimeInputRangeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmTimeInputRangeCell.swift; sourceTree = "<group>"; };
 		27CBEB5B2261E1E0004F7BF5 /* AlarmTimeInputRangeCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AlarmTimeInputRangeCell.xib; sourceTree = "<group>"; };
 		27CFAB5422496C7A006DEFE3 /* DoubleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
-		27CFAB5722497744006DEFE3 /* GlucoseSmoothing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlucoseSmoothing.swift; sourceTree = "<group>"; };
 		27CFAB5A224AA8D1006DEFE3 /* TrendArrowCalculations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendArrowCalculations.swift; sourceTree = "<group>"; };
 		27CFAB5D224AB265006DEFE3 /* CollectionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensions.swift; sourceTree = "<group>"; };
 		27D0DA6A2231CBB7007BBB2C /* DateExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtensions.swift; sourceTree = "<group>"; };
@@ -252,7 +249,6 @@
 		43AB51302133161A00B3D58D /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		43AB51352133177800B3D58D /* LocalizedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedString.swift; sourceTree = "<group>"; };
 		43C418AE1CE0488900405B6A /* LibreGlucose.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreGlucose.swift; sourceTree = "<group>"; };
-		EE10F6CF243C31E000C5340C /* LibreGlucoseSmoothing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreGlucoseSmoothing.swift; sourceTree = "<group>"; };
 		EE10F6D1243C31F900C5340C /* LibreRawGlucoseData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreRawGlucoseData.swift; sourceTree = "<group>"; };
 		EE10F6D3243C320400C5340C /* LibreMeasurement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreMeasurement.swift; sourceTree = "<group>"; };
 		EE72B072230CDDF500D67B8F /* LoopKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKit.framework; path = Carthage/Build/iOS/LoopKit.framework; sourceTree = "<group>"; };
@@ -349,7 +345,6 @@
 			children = (
 				27E3C39E222EE9A80036AAC7 /* LibreOOPWebExtensions.swift */,
 				27E3C396222EE9450036AAC7 /* LibreOOPClient.swift */,
-				EE10F6CF243C31E000C5340C /* LibreGlucoseSmoothing.swift */,
 				EE10F6D1243C31F900C5340C /* LibreRawGlucoseData.swift */,
 				EE10F6D3243C320400C5340C /* LibreMeasurement.swift */,
 				27E3C395222EE9450036AAC7 /* LibreOOPDefaults.swift */,
@@ -363,7 +358,6 @@
 				27E3C38F222EDF560036AAC7 /* LibreError.swift */,
 				27E3C392222EE2EC0036AAC7 /* Calibration.swift */,
 				27E3C3A1222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift */,
-				27CFAB5722497744006DEFE3 /* GlucoseSmoothing.swift */,
 				27CFAB5A224AA8D1006DEFE3 /* TrendArrowCalculations.swift */,
 			);
 			path = LibreSensor;
@@ -796,7 +790,6 @@
 				27CFAB5F224AB27B006DEFE3 /* CollectionExtensions.swift in Sources */,
 				27E3C390222EDF560036AAC7 /* LibreError.swift in Sources */,
 				4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */,
-				27CFAB59224977B9006DEFE3 /* GlucoseSmoothing.swift in Sources */,
 				27E3C39A222EE9450036AAC7 /* LibreOOPClient.swift in Sources */,
 				27CFAB5C224AA93E006DEFE3 /* TrendArrowCalculations.swift in Sources */,
 				2729D69F221F44670030E1B8 /* SensorState.swift in Sources */,
@@ -816,7 +809,6 @@
 				270C266F226A5A6E005B27F3 /* GlucoseSchedules.swift in Sources */,
 				2729D677221F421C0030E1B8 /* Bubble.swift in Sources */,
 				2729D6A822248BDD0030E1B8 /* BubbleClientManager.swift in Sources */,
-				EE10F6D0243C31E000C5340C /* LibreGlucoseSmoothing.swift in Sources */,
 				43A8EC9B210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift in Sources */,
 				EEC805EC244016BD0092C718 /* UserDefaults.swift in Sources */,
 				275C3DA3229FCED400E27439 /* NotificationHelper.swift in Sources */,

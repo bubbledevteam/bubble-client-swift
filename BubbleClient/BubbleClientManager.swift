@@ -275,36 +275,18 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             let glucose = LibreGlucose(unsmoothedGlucose: trend.temperatureAlgorithmGlucose, glucoseDouble: 0.0, trend: UInt8(GlucoseTrend.flat.rawValue), timestamp: trend.date, collector: "Bubble")
             origarr.append(glucose)
         }
-        //NSLog("dabear:: glucose samples before smoothing: \(String(describing: origarr))")
-        var arr : [LibreGlucose]
-        arr = CalculateSmothedData5Points(origtrends: origarr)
         
-        
-        
-        for i in 0 ..< arr.count {
-            let trend = arr[i]
+        for i in 0 ..< origarr.count {
+            let trend = origarr[i]
             //we know that the array "always" (almost) will contain 16 entries
             //the last five entries will get a trend arrow of flat, because it's not computable when we don't have
             //more entries in the array to base it on
-            let arrow = TrendArrowCalculation.GetGlucoseDirection(current: trend, last: arr[safe: i+5])
-            arr[i].trend = UInt8(arrow.rawValue)
+            let arrow = TrendArrowCalculation.GetGlucoseDirection(current: trend, last: origarr[safe: i+1])
+            origarr[i].trend = UInt8(arrow.rawValue)
             NSLog("Date: \(trend.timestamp), before: \(trend.unsmoothedGlucose), after: \(trend.glucose), arrow: \(trend.trend)")
         }
         
-        
-        
-        
-        if returnAllTrends {
-            return arr
-        }
-        
-        //        var filtered = [LibreGlucose]()
-        //        for elm in arr.enumerated() where elm.offset % 5 == 0 {
-        //            filtered.append(elm.element)
-        //        }
-        //
-        //        //NSLog("dabear:: glucose samples after smoothing: \(String(describing: arr))")
-        //        return filtered
+        return origarr
     }
     
     public func handleGoodReading(data: SensorData?,_ callback: @escaping (LibreError?, [GlucoseData]?) -> Void) {
