@@ -159,13 +159,13 @@ public class SnoozeTableViewController: UITableViewController, UIPickerViewDataS
         
         switch SnoozeRow(rawValue: indexPath.row)! {
         case .snoozeButton:
-            let cell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "DefaultCell")
+            let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "DefaultCell")
             
             cell.textLabel?.textAlignment = .center
             cell.textLabel?.text = NSLocalizedString("Click to Snooze Alerts", comment: "Title of cell to snooze active alarms")
             return cell
         case .snoozePicker:
-            let cell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "DefaultCell")
+            let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "DefaultCell")
             let height = tableView.rectForRow(at: indexPath).height
             let pickerView = UIPickerView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: height))
             
@@ -186,7 +186,7 @@ public class SnoozeTableViewController: UITableViewController, UIPickerViewDataS
             
             return cell
         case .description:
-            let cell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "DefaultCell")
+            let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "DefaultCell")
             
             cell.textLabel?.textAlignment = .center
             cell.textLabel!.numberOfLines=0;
