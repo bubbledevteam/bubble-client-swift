@@ -143,7 +143,7 @@ class GlucoseScheduleList : Codable, CustomStringConvertible {
     
     public static func getActiveAlarms() -> GlucoseScheduleAlarmResultWithSnooze {
        
-        if let schedules = UserDefaults.standard.glucoseSchedules, let glucose = BubbleClientManager.latestGlucose?.glucoseLevelRaw {
+        if let schedules = UserDefaults.standard.glucoseSchedules, let glucose = UserDefaultsUnit.latestGlucose?.glucoseLevelRaw {
             let isSnoozed = GlucoseScheduleList.isSnoozed()
             switch schedules.getActiveAlarms(glucose) {
             case .high:

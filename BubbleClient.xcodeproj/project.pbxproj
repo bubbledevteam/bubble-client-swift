@@ -104,6 +104,7 @@
 		EE72B075230CDE0200D67B8F /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B074230CDE0200D67B8F /* LoopKitUI.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		EE72B076230CE02000D67B8F /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B072230CDDF500D67B8F /* LoopKit.framework */; };
 		EE72B077230CE02C00D67B8F /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B074230CDE0200D67B8F /* LoopKitUI.framework */; };
+		EEC805EC244016BD0092C718 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC805EB244016BD0092C718 /* UserDefaults.swift */; };
 		EED7E06E22E6BC8700E03BAE /* bubble.png in Resources */ = {isa = PBXBuildFile; fileRef = EED7E06D22E6BC8700E03BAE /* bubble.png */; };
 /* End PBXBuildFile section */
 
@@ -256,6 +257,7 @@
 		EE10F6D3243C320400C5340C /* LibreMeasurement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreMeasurement.swift; sourceTree = "<group>"; };
 		EE72B072230CDDF500D67B8F /* LoopKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKit.framework; path = Carthage/Build/iOS/LoopKit.framework; sourceTree = "<group>"; };
 		EE72B074230CDE0200D67B8F /* LoopKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKitUI.framework; path = Carthage/Build/iOS/LoopKitUI.framework; sourceTree = "<group>"; };
+		EEC805EB244016BD0092C718 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		EED7E06D22E6BC8700E03BAE /* bubble.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bubble.png; sourceTree = "<group>"; };
 		EEEFD06B243D669900D82782 /* copy-frameworks.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "copy-frameworks.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -504,6 +506,7 @@
 				432B0E8D1CDFC3C50045347B /* Info.plist */,
 				2729D6A722248BDD0030E1B8 /* BubbleClientManager.swift */,
 				275C3DA2229FCED400E27439 /* NotificationHelper.swift */,
+				EEC805EB244016BD0092C718 /* UserDefaults.swift */,
 			);
 			path = BubbleClient;
 			sourceTree = "<group>";
@@ -815,6 +818,7 @@
 				2729D6A822248BDD0030E1B8 /* BubbleClientManager.swift in Sources */,
 				EE10F6D0243C31E000C5340C /* LibreGlucoseSmoothing.swift in Sources */,
 				43A8EC9B210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift in Sources */,
+				EEC805EC244016BD0092C718 /* UserDefaults.swift in Sources */,
 				275C3DA3229FCED400E27439 /* NotificationHelper.swift in Sources */,
 				2729D699221F44670030E1B8 /* CRC.swift in Sources */,
 				2729D6A3221F44C80030E1B8 /* Data.swift in Sources */,

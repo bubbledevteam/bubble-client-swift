@@ -3,7 +3,7 @@ import HealthKit
 import LoopKit
 
 /// glucose,
-public class GlucoseData {
+public class GlucoseData: Codable {
     
     // TODO: is there ever a difference between raw and filtered ? why not remove one ?
     
@@ -77,7 +77,11 @@ class LibreRawGlucoseData: GlucoseData {
     convenience init(timeStamp:Date, glucoseLevelRaw:Double, unsmoothedGlucose: Double) {
         self.init(timeStamp: timeStamp, glucoseLevelRaw: 0.0, glucoseLevelFiltered: 0.0, unsmoothedGlucose: unsmoothedGlucose)
     }
-
+    
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
 }
 
 class LibreRawGlucoseOOPData: NSObject, Codable {

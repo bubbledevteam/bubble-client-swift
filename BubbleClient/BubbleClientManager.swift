@@ -76,62 +76,23 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     }
     
     public func fetchNewDataIfNeeded(_ completion: @escaping (CGMResult) -> Void) {
-        //        guard BubbleClientManager.proxy != nil else {
-        //            completion(.noData)
-        //            return
-        //        }
         NSLog("dabear:: fetchNewDataIfNeeded called but we don't continue")
-        //        self.autoconnect()
-        //        completion(.noData)
-        /*
-         self.getLastSensorValues { (error, glucose) in
-         if let error = error {
-         NSLog("dabear:: getLastSensorValues returned with error")
-         completion(.error(error))
-         return
-         }
-         
-         guard let glucose = glucose else {
-         NSLog("dabear:: getLastSensorValues returned with no data")
-         completion(.noData)
-         return
-         }
-         
-         let startDate = self.latestBackfill?.startDate
-         let newGlucose = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).map {
-         return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
-         }
-         
-         self.latestBackfill = glucose.first
-         
-         if newGlucose.count > 0 {
-         completion(.newData(newGlucose))
-         } else {
-         completion(.noData)
-         }
-         
-         } */
+
     }
     
     
     
     public private(set) var lastConnected : Date?
     
-    // This tighly tracks latestBackfill,
-    // and is defined here so that the ui can have a way to fetch the latest
-    // glucose value
-    public static var latestGlucose : GlucoseData?
-    
     public private(set) var latestBackfill: GlucoseData? {
-        didSet(oldValue) {
-            NSLog("dabear:: latestBackfill set, newvalue is \(latestBackfill )")
-            if let latestBackfill = latestBackfill {
-                BubbleClientManager.latestGlucose = latestBackfill
+        set {
+            if let newValue = newValue {
                 NSLog("dabear:: sending glucose notification")
-                NotificationHelper.sendGlucoseNotitifcationIfNeeded(glucose: latestBackfill, oldValue: oldValue)
+                NotificationHelper.sendGlucoseNotitifcationIfNeeded(glucose: newValue, oldValue: latestBackfill)
+                UserDefaultsUnit.latestGlucose = newValue
             }
-            
         }
+        get { UserDefaultsUnit.latestGlucose }
     }
     
     public static var managerIdentifier = "DexBubbleClient1"
