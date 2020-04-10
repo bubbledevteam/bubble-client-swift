@@ -75,7 +75,7 @@ class LibreRawGlucoseData: GlucoseData {
     }
     
     convenience init(timeStamp:Date, glucoseLevelRaw:Double, unsmoothedGlucose: Double) {
-        self.init(timeStamp: timeStamp, glucoseLevelRaw: 0.0, glucoseLevelFiltered: 0.0, unsmoothedGlucose: unsmoothedGlucose)
+        self.init(timeStamp: timeStamp, glucoseLevelRaw: glucoseLevelRaw, glucoseLevelFiltered: 0.0, unsmoothedGlucose: unsmoothedGlucose)
     }
     
     required init(from decoder: Decoder) throws {
