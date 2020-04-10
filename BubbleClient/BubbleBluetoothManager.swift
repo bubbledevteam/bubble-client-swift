@@ -179,6 +179,8 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         case .poweredOn:
             os_log("state poweredOn", log: BubbleBluetoothManager.bt_log)
             retrievePeripherals()
+        @unknown default:
+            break
         }
     }
     

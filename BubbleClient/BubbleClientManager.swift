@@ -71,8 +71,16 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             //"shouldSendGlucoseNotifications: \(shouldSendGlucoseNotifications)",
             "latestBackfill: \(latestBackfill?.description ?? "")",
             //"latestCollector: \(String(describing: latestSpikeCollector))",
+            "logs: \(Self.logs.joined(separator: "\n"))",
             ""
             ].joined(separator: "\n")
+    }
+    
+    static private var logs = [String]()
+    
+    public static func addlog(log: String?) {
+        guard let log = log else { return }
+        logs.append(log)
     }
     
     public func fetchNewDataIfNeeded(_ completion: @escaping (CGMResult) -> Void) {
@@ -224,8 +232,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                 BubbleClientManager.sharedProxy = nil
                 //BubbleClientManager.sharedInstance = nil
             }
-            
-            
         }
     }
     
@@ -296,6 +302,8 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             callback(LibreError.noSensorData, nil)
             return
         }
+        
+        BubbleClientManager.addlog(log: "patchUid: \(data.patchUid ?? ""), patchInfo: \(data.patchInfo ?? "")\n content: \(Data(data.bytes).hexEncodedString())")
         
         LibreOOPClient.handleLibreData(sensorData: data) { result in
             guard let glucose = result?.glucoseData, !glucose.isEmpty else {
@@ -404,7 +412,9 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             }
             
         } else {
-            self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
+            self.delegateQueue.async {
+                self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
+            }
             os_log("dit not get sensordata with valid crcs")
         }
     }

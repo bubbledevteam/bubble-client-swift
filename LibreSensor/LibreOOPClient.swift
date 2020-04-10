@@ -35,6 +35,9 @@ class LibreOOPClient {
                     callback?(nil)
                     return
                 }
+                
+                BubbleClientManager.addlog(log: "server data: \(String.init(data: data, encoding: .utf8) ?? "")")
+                
                 let decoder = JSONDecoder.init()
                 if let oopValue = try? decoder.decode(LibreRawGlucoseOOPData.self, from: data) {
                     callback?(oopValue)
@@ -75,6 +78,7 @@ class LibreOOPClient {
                     let glucose32 = trendToLibreGlucose(last32) ?? []
                     let last96 = split(current: first, glucoseData: glucose32.reversed())
                     glucoseData = last96
+                    BubbleClientManager.addlog(log: "web oop latest: \(first.description)")
                     callback((glucoseData, sensorState, nil))
                 } else {
                     callback(([], sensorState, nil))
@@ -203,7 +207,7 @@ class LibreOOPClient {
                         p.slope_offset != 0 ||
                         p.offset_slope != 0 ||
                         p.offset_offset != 0 {
-                        
+                        BubbleClientManager.addlog(log: "parameters: \(p.description)")
                         try? keychain.setLibreCalibrationData(p)
                         callback(p)
                     } else {
@@ -368,11 +372,11 @@ class LibreOOPClient {
     }
     
     static func GetGlucoseDirection(current: LibreRawGlucoseData?, last: LibreRawGlucoseData?) -> GlucoseTrend {
-        NSLog("GetGlucoseDirection:: current:\(current), last: \(last)")
-        guard let current = current, let last = last else {
-            return GlucoseTrend.flat
-        }
+        NSLog("GetGlucoseDirection:: current:\(String(describing: current)), last: \(String(describing: last))")
         
+        guard let current = current, let last = last else {
+            return .flat
+        }
         
         let  s = calculateSlopeByMinute(current: current, last: last)
         NSLog("Got trendarrow value of \(s))")
