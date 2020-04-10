@@ -331,17 +331,8 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                             os_log("dabear:: receive serialNumber")
                             rxBuffer.append(value.subdata(in: 2..<10))
                         case .patchInfo:
-                            let firmware = bubble?.firmware
-                            // version = 1.34 patchInfo range 3 ..< 9
-                            if firmware == "1.34" {
-                                if value.count >= 8 {
-                                    patchInfo = value.subdata(in: 3 ..< 9).hexEncodedString().uppercased()
-                                }
-                            } else if (Float(firmware ?? "0") ?? 0) > 1.34 {
-                                // version > 1.34 patchInfo range 3 ..< 9
-                                if value.count >= 10 {
-                                    patchInfo = value.subdata(in: 5 ..< 11).hexEncodedString().uppercased()
-                                }
+                            if value.count >= 10 {
+                                patchInfo = value.subdata(in: 5 ..< 11).hexEncodedString().uppercased()
                             }
                         }
                     }
