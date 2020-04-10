@@ -104,14 +104,14 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         
         #if DEBUG
         DispatchQueue.global().async {
-            sleep(3)
+            sleep(10)
             self.test()
         }
         
-        let timer = Timer.init(timeInterval: 60 * 5, repeats: true) { (_) in
+        let timer = Timer.init(timeInterval: 60, repeats: true) { (_) in
             self.test()
         }
-        RunLoop.current.add(timer, forMode: .commonModes)
+        RunLoop.current.add(timer, forMode: .common)
         #endif
     }
     
