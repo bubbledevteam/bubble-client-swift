@@ -20,5 +20,4 @@ extension IdentifiableClass {
     }
 }
 
-extension SnoozeView: IdentifiableClass {}
 extension UITableViewCell: IdentifiableClass { }

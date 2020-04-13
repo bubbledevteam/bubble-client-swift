@@ -141,7 +141,7 @@ public struct SensorData {
         return  sensorStart.timeIntervalSinceNow.stringDaysFromTimeInterval() +  " day(s)"
     }
     
-    init?(uuid: Data, bytes: [UInt8], date: Date = Date(), derivedAlgorithmParameterSet: TemperatureAlgorithmParameters? = nil) {
+    init?(uuid: Data, bytes: [UInt8], date: Date = Date()) {
         guard bytes.count == numberOfBytes else {
             return nil
         }
@@ -165,7 +165,6 @@ public struct SensorData {
         self.uuid = uuid
         self.serialNumber = SensorSerialNumber(withUID: uuid)?.serialNumber ?? "-"
         self.patchUid = uuid.hexEncodedString().uppercased()
-        //self.temperatureAlgorithmParameterSet = derivedAlgorithmParameterSet
 
         guard 0 <= nextTrendBlock && nextTrendBlock < 16 && 0 <= nextHistoryBlock && nextHistoryBlock < 32 else {
             return nil

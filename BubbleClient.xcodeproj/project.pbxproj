@@ -7,14 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2701478D2281FA4A0013C9E3 /* NotificationsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2701478C2281FA4A0013C9E3 /* NotificationsSettingsTableViewController.swift */; };
-		270C265B22691253005B27F3 /* GlucoseAlarmInputCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 270C265922691253005B27F3 /* GlucoseAlarmInputCell.xib */; };
-		270C265C22691253005B27F3 /* GlucoseAlarmInputCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 270C265A22691253005B27F3 /* GlucoseAlarmInputCell.swift */; };
-		270C26602269E51F005B27F3 /* icons8-down-arrow-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 270C265F2269E51F005B27F3 /* icons8-down-arrow-50.png */; };
-		270C26622269E53F005B27F3 /* icons8-up-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 270C26612269E53F005B27F3 /* icons8-up-50.png */; };
-		270C26652269E611005B27F3 /* icons8-drop-down-arrow-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 270C26632269E610005B27F3 /* icons8-drop-down-arrow-50.png */; };
-		270C26662269E611005B27F3 /* icons8-slide-up-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 270C26642269E610005B27F3 /* icons8-slide-up-50.png */; };
-		270C266C226A24AB005B27F3 /* icons8-schedule-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 270C266B226A24AB005B27F3 /* icons8-schedule-50.png */; };
 		270C266D226A2F8E005B27F3 /* HKUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9CE210E6A0A00969CE5 /* HKUnit.swift */; };
 		270C266F226A5A6E005B27F3 /* GlucoseSchedules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 270C266E226A5A6E005B27F3 /* GlucoseSchedules.swift */; };
 		270C2670226A5A6E005B27F3 /* GlucoseSchedules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 270C266E226A5A6E005B27F3 /* GlucoseSchedules.swift */; };
@@ -22,20 +14,11 @@
 		2729D67B221F421F0030E1B8 /* BubbleBluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D67A221F421F0030E1B8 /* BubbleBluetoothManager.swift */; };
 		2729D685221F42760030E1B8 /* BloodSugarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D682221F42760030E1B8 /* BloodSugarController.swift */; };
 		2729D687221F43150030E1B8 /* SensorData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D686221F43150030E1B8 /* SensorData.swift */; };
-		2729D690221F44670030E1B8 /* TemperatureAlgorithmParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D68A221F44660030E1B8 /* TemperatureAlgorithmParameters.swift */; };
-		2729D693221F44670030E1B8 /* Measurement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D68B221F44660030E1B8 /* Measurement.swift */; };
 		2729D699221F44670030E1B8 /* CRC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D68D221F44670030E1B8 /* CRC.swift */; };
 		2729D69C221F44670030E1B8 /* SensorSerialNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D68E221F44670030E1B8 /* SensorSerialNumber.swift */; };
 		2729D69F221F44670030E1B8 /* SensorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D68F221F44670030E1B8 /* SensorState.swift */; };
 		2729D6A3221F44C80030E1B8 /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D6A2221F44C70030E1B8 /* Data.swift */; };
 		2729D6A822248BDD0030E1B8 /* BubbleClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D6A722248BDD0030E1B8 /* BubbleClientManager.swift */; };
-		272FAF08228CA590002D8064 /* SegmentViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272FAF06228CA590002D8064 /* SegmentViewCell.swift */; };
-		272FAF09228CA590002D8064 /* SegmentViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 272FAF07228CA590002D8064 /* SegmentViewCell.xib */; };
-		274DF85222A5AEA400BFAFFE /* AlertControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274DF85122A5AEA400BFAFFE /* AlertControllers.swift */; };
-		275C3D99229AA88200E27439 /* mmSwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 275C3D94229AA69C00E27439 /* mmSwitchTableViewCell.swift */; };
-		275C3D9A229AA88500E27439 /* mmSwitchTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 275C3D95229AA69C00E27439 /* mmSwitchTableViewCell.xib */; };
-		275C3D9F229D9AD500E27439 /* mmTextFieldViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 275C3D9E229D9AD500E27439 /* mmTextFieldViewCell.xib */; };
-		275C3DA1229D9BBB00E27439 /* mmTextFieldViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 275C3DA0229D9BBB00E27439 /* mmTextFieldViewCell.swift */; };
 		275C3DA3229FCED400E27439 /* NotificationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 275C3DA2229FCED400E27439 /* NotificationHelper.swift */; };
 		277DAD0D226B970300422ADA /* UserDefaults+Alarmsettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277DAD0C226B970300422ADA /* UserDefaults+Alarmsettings.swift */; };
 		277DAD0E226B971A00422ADA /* UserDefaults+Alarmsettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277DAD0C226B970300422ADA /* UserDefaults+Alarmsettings.swift */; };
@@ -44,52 +27,34 @@
 		277DAD12226C9FA800422ADA /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D0DA6A2231CBB7007BBB2C /* DateExtensions.swift */; };
 		277DAD14226CACF300422ADA /* MessagePassing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277DAD13226CACF300422ADA /* MessagePassing.swift */; };
 		277DAD15226CACF700422ADA /* MessagePassing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277DAD13226CACF300422ADA /* MessagePassing.swift */; };
-		27C335B82165667300CF0868 /* LibreGlucose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43C418AE1CE0488900405B6A /* LibreGlucose.swift */; };
 		27C335E121667C7A00CF0868 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C335E021667C7A00CF0868 /* AppDelegate.swift */; };
 		27C335E321667C7B00CF0868 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C335E221667C7B00CF0868 /* ViewController.swift */; };
 		27C335E621667C7B00CF0868 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 27C335E421667C7B00CF0868 /* Main.storyboard */; };
 		27C335E821667C7C00CF0868 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 27C335E721667C7C00CF0868 /* Assets.xcassets */; };
 		27C335EB21667C7C00CF0868 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 27C335E921667C7C00CF0868 /* LaunchScreen.storyboard */; };
 		27CBEB3C225FB3A7004F7BF5 /* NibLoadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CBEB3B225FB3A7004F7BF5 /* NibLoadable.swift */; };
-		27CBEB3F225FE5CB004F7BF5 /* AlarmSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CBEB3D225FE5CB004F7BF5 /* AlarmSettingsTableViewController.swift */; };
-		27CBEB552261DF9D004F7BF5 /* AlarmTimeInputRangeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CBEB542261DF9C004F7BF5 /* AlarmTimeInputRangeCell.swift */; };
-		27CBEB5C2261E1E6004F7BF5 /* AlarmTimeInputRangeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 27CBEB5B2261E1E0004F7BF5 /* AlarmTimeInputRangeCell.xib */; };
 		27CFAB52223EA0B2006DEFE3 /* BubbleClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; };
 		27CFAB5522496C7A006DEFE3 /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFAB5422496C7A006DEFE3 /* DoubleExtensions.swift */; };
 		27CFAB5622496CBB006DEFE3 /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFAB5422496C7A006DEFE3 /* DoubleExtensions.swift */; };
-		27CFAB5C224AA93E006DEFE3 /* TrendArrowCalculations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFAB5A224AA8D1006DEFE3 /* TrendArrowCalculations.swift */; };
 		27CFAB5E224AB265006DEFE3 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFAB5D224AB265006DEFE3 /* CollectionExtensions.swift */; };
 		27CFAB5F224AB27B006DEFE3 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CFAB5D224AB265006DEFE3 /* CollectionExtensions.swift */; };
 		27D0DA6B2231CBB7007BBB2C /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D0DA6A2231CBB7007BBB2C /* DateExtensions.swift */; };
-		27E0968122A6E9AB00B3164D /* SnoozeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 27E0968022A6E9AB00B3164D /* SnoozeView.xib */; };
-		27E0968422A6EFCD00B3164D /* SnoozeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E0968322A6EFCD00B3164D /* SnoozeView.swift */; };
-		27E0968622A6F64800B3164D /* SnoozeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E0968522A6F64800B3164D /* SnoozeViewController.swift */; };
-		27E0968A22A9768800B3164D /* SnoozeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E0968822A9768800B3164D /* SnoozeTableViewController.swift */; };
 		27E0968D22A9806200B3164D /* CGFLoat+Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E0968C22A9806200B3164D /* CGFLoat+Double.swift */; };
 		27E0968F22A9AD6F00B3164D /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E0968E22A9AD6F00B3164D /* TimeIntervalExtensions.swift */; };
-		27E0969122B2A89D00B3164D /* CalibrationEditTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E0969022B2A89D00B3164D /* CalibrationEditTableViewController.swift */; };
-		27E0969422B2C4D700B3164D /* mmTextFieldViewCell2.xib in Resources */ = {isa = PBXBuildFile; fileRef = 27E0969222B2C4D700B3164D /* mmTextFieldViewCell2.xib */; };
-		27E0969522B2C4D700B3164D /* mmTextFieldViewCell2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E0969322B2C4D700B3164D /* mmTextFieldViewCell2.swift */; };
-		27E0969822B94CAD00B3164D /* CustomDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E0969722B94CAD00B3164D /* CustomDatePicker.swift */; };
-		27E0969B22B94D4400B3164D /* CustomDatePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E0969922B94D4400B3164D /* CustomDatePickerViewController.swift */; };
 		27E3C390222EDF560036AAC7 /* LibreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E3C38F222EDF560036AAC7 /* LibreError.swift */; };
-		27E3C393222EE2EC0036AAC7 /* Calibration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E3C392222EE2EC0036AAC7 /* Calibration.swift */; };
 		27E3C398222EE9450036AAC7 /* LibreOOPDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E3C395222EE9450036AAC7 /* LibreOOPDefaults.swift */; };
 		27E3C39A222EE9450036AAC7 /* LibreOOPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E3C396222EE9450036AAC7 /* LibreOOPClient.swift */; };
 		27E3C39C222EE9450036AAC7 /* LibreOOPResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E3C397222EE9450036AAC7 /* LibreOOPResponse.swift */; };
 		27E3C39F222EE9A80036AAC7 /* LibreOOPWebExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E3C39E222EE9A80036AAC7 /* LibreOOPWebExtensions.swift */; };
 		27E3C3A2222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E3C3A1222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift */; };
-		2C75834622E89D800002448E /* BubbleClientSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C75834522E89D800002448E /* BubbleClientSearchViewController.swift */; };
 		4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9CE210E6A0A00969CE5 /* HKUnit.swift */; };
 		4325E9D3210E6ADA00969CE5 /* IdentifiableClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */; };
 		4325E9D5210E6B4400969CE5 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D4210E6B4300969CE5 /* UIColor.swift */; };
 		432B0E931CDFC3C50045347B /* BubbleClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; };
 		432B0E981CDFC3C50045347B /* BubbleClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 432B0E971CDFC3C50045347B /* BubbleClientTests.swift */; };
-		43A8EC90210E676500A81379 /* BubbleClientSetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A8EC8D210E676500A81379 /* BubbleClientSetupViewController.swift */; };
 		43A8EC91210E676500A81379 /* BubbleClientManager+UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A8EC8E210E676500A81379 /* BubbleClientManager+UI.swift */; };
 		43A8EC92210E676500A81379 /* BubbleClientSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A8EC8F210E676500A81379 /* BubbleClientSettingsViewController.swift */; };
 		43A8EC95210E67B000A81379 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43A8EC94210E67B000A81379 /* HealthKit.framework */; };
-		43A8EC9B210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A8EC9A210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift */; };
 		43AB511B21330D1400B3D58D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 43AB511921330D1400B3D58D /* Localizable.strings */; };
 		43AB5127213315D300B3D58D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 43AB5125213315D300B3D58D /* Localizable.strings */; };
 		43AB51362133177800B3D58D /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB51352133177800B3D58D /* LocalizedString.swift */; };
@@ -103,7 +68,7 @@
 		EE72B076230CE02000D67B8F /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B072230CDDF500D67B8F /* LoopKit.framework */; };
 		EE72B077230CE02C00D67B8F /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B074230CDE0200D67B8F /* LoopKitUI.framework */; };
 		EEC805EC244016BD0092C718 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC805EB244016BD0092C718 /* UserDefaults.swift */; };
-		EED7E06E22E6BC8700E03BAE /* bubble.png in Resources */ = {isa = PBXBuildFile; fileRef = EED7E06D22E6BC8700E03BAE /* bubble.png */; };
+		EEED17A624444D8800070523 /* Calibration.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED17A524444D8800070523 /* Calibration.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -145,34 +110,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2701478C2281FA4A0013C9E3 /* NotificationsSettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsSettingsTableViewController.swift; sourceTree = "<group>"; };
-		270C265922691253005B27F3 /* GlucoseAlarmInputCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GlucoseAlarmInputCell.xib; sourceTree = "<group>"; };
-		270C265A22691253005B27F3 /* GlucoseAlarmInputCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlucoseAlarmInputCell.swift; sourceTree = "<group>"; };
-		270C265F2269E51F005B27F3 /* icons8-down-arrow-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icons8-down-arrow-50.png"; sourceTree = "<group>"; };
-		270C26612269E53F005B27F3 /* icons8-up-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icons8-up-50.png"; sourceTree = "<group>"; };
-		270C26632269E610005B27F3 /* icons8-drop-down-arrow-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icons8-drop-down-arrow-50.png"; sourceTree = "<group>"; };
-		270C26642269E610005B27F3 /* icons8-slide-up-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icons8-slide-up-50.png"; sourceTree = "<group>"; };
-		270C26682269E6B7005B27F3 /* schedule-icon48.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "schedule-icon48.jpg"; sourceTree = "<group>"; };
-		270C266B226A24AB005B27F3 /* icons8-schedule-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icons8-schedule-50.png"; sourceTree = "<group>"; };
 		270C266E226A5A6E005B27F3 /* GlucoseSchedules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlucoseSchedules.swift; sourceTree = "<group>"; };
 		2729D676221F421C0030E1B8 /* Bubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bubble.swift; sourceTree = "<group>"; };
 		2729D67A221F421F0030E1B8 /* BubbleBluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleBluetoothManager.swift; sourceTree = "<group>"; };
 		2729D682221F42760030E1B8 /* BloodSugarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BloodSugarController.swift; sourceTree = "<group>"; };
 		2729D686221F43150030E1B8 /* SensorData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorData.swift; sourceTree = "<group>"; };
-		2729D68A221F44660030E1B8 /* TemperatureAlgorithmParameters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TemperatureAlgorithmParameters.swift; sourceTree = "<group>"; };
-		2729D68B221F44660030E1B8 /* Measurement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Measurement.swift; sourceTree = "<group>"; };
 		2729D68D221F44670030E1B8 /* CRC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CRC.swift; sourceTree = "<group>"; };
 		2729D68E221F44670030E1B8 /* SensorSerialNumber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorSerialNumber.swift; sourceTree = "<group>"; };
 		2729D68F221F44670030E1B8 /* SensorState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorState.swift; sourceTree = "<group>"; };
 		2729D6A2221F44C70030E1B8 /* Data.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		2729D6A722248BDD0030E1B8 /* BubbleClientManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleClientManager.swift; sourceTree = "<group>"; };
-		272FAF06228CA590002D8064 /* SegmentViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentViewCell.swift; sourceTree = "<group>"; };
-		272FAF07228CA590002D8064 /* SegmentViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SegmentViewCell.xib; sourceTree = "<group>"; };
-		274DF85122A5AEA400BFAFFE /* AlertControllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertControllers.swift; sourceTree = "<group>"; };
-		275C3D94229AA69C00E27439 /* mmSwitchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mmSwitchTableViewCell.swift; sourceTree = "<group>"; };
-		275C3D95229AA69C00E27439 /* mmSwitchTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = mmSwitchTableViewCell.xib; sourceTree = "<group>"; };
-		275C3D9E229D9AD500E27439 /* mmTextFieldViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = mmTextFieldViewCell.xib; sourceTree = "<group>"; };
-		275C3DA0229D9BBB00E27439 /* mmTextFieldViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mmTextFieldViewCell.swift; sourceTree = "<group>"; };
 		275C3DA2229FCED400E27439 /* NotificationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHelper.swift; sourceTree = "<group>"; };
 		277DAD0C226B970300422ADA /* UserDefaults+Alarmsettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Alarmsettings.swift"; sourceTree = "<group>"; };
 		277DAD0F226C93D000422ADA /* GlucoseAlarmType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlucoseAlarmType.swift; sourceTree = "<group>"; };
@@ -186,32 +133,17 @@
 		27C335EA21667C7C00CF0868 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		27C335EC21667C7C00CF0868 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		27CBEB3B225FB3A7004F7BF5 /* NibLoadable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NibLoadable.swift; sourceTree = "<group>"; };
-		27CBEB3D225FE5CB004F7BF5 /* AlarmSettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlarmSettingsTableViewController.swift; sourceTree = "<group>"; };
-		27CBEB542261DF9C004F7BF5 /* AlarmTimeInputRangeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmTimeInputRangeCell.swift; sourceTree = "<group>"; };
-		27CBEB5B2261E1E0004F7BF5 /* AlarmTimeInputRangeCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AlarmTimeInputRangeCell.xib; sourceTree = "<group>"; };
 		27CFAB5422496C7A006DEFE3 /* DoubleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
-		27CFAB5A224AA8D1006DEFE3 /* TrendArrowCalculations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendArrowCalculations.swift; sourceTree = "<group>"; };
 		27CFAB5D224AB265006DEFE3 /* CollectionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensions.swift; sourceTree = "<group>"; };
 		27D0DA6A2231CBB7007BBB2C /* DateExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtensions.swift; sourceTree = "<group>"; };
-		27E0968022A6E9AB00B3164D /* SnoozeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SnoozeView.xib; sourceTree = "<group>"; };
-		27E0968322A6EFCD00B3164D /* SnoozeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnoozeView.swift; sourceTree = "<group>"; };
-		27E0968522A6F64800B3164D /* SnoozeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnoozeViewController.swift; sourceTree = "<group>"; };
-		27E0968822A9768800B3164D /* SnoozeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnoozeTableViewController.swift; sourceTree = "<group>"; };
 		27E0968C22A9806200B3164D /* CGFLoat+Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGFLoat+Double.swift"; sourceTree = "<group>"; };
 		27E0968E22A9AD6F00B3164D /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
-		27E0969022B2A89D00B3164D /* CalibrationEditTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalibrationEditTableViewController.swift; sourceTree = "<group>"; };
-		27E0969222B2C4D700B3164D /* mmTextFieldViewCell2.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = mmTextFieldViewCell2.xib; sourceTree = "<group>"; };
-		27E0969322B2C4D700B3164D /* mmTextFieldViewCell2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mmTextFieldViewCell2.swift; sourceTree = "<group>"; };
-		27E0969722B94CAD00B3164D /* CustomDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDatePicker.swift; sourceTree = "<group>"; };
-		27E0969922B94D4400B3164D /* CustomDatePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDatePickerViewController.swift; sourceTree = "<group>"; };
 		27E3C38F222EDF560036AAC7 /* LibreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibreError.swift; sourceTree = "<group>"; };
-		27E3C392222EE2EC0036AAC7 /* Calibration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calibration.swift; sourceTree = "<group>"; };
 		27E3C395222EE9450036AAC7 /* LibreOOPDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreOOPDefaults.swift; sourceTree = "<group>"; };
 		27E3C396222EE9450036AAC7 /* LibreOOPClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreOOPClient.swift; sourceTree = "<group>"; };
 		27E3C397222EE9450036AAC7 /* LibreOOPResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreOOPResponse.swift; sourceTree = "<group>"; };
 		27E3C39E222EE9A80036AAC7 /* LibreOOPWebExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreOOPWebExtensions.swift; sourceTree = "<group>"; };
 		27E3C3A1222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivedAlgorithmParameters.swift; sourceTree = "<group>"; };
-		2C75834522E89D800002448E /* BubbleClientSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleClientSearchViewController.swift; sourceTree = "<group>"; };
 		4325E9CE210E6A0A00969CE5 /* HKUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKUnit.swift; sourceTree = "<group>"; };
 		4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentifiableClass.swift; sourceTree = "<group>"; };
 		4325E9D4210E6B4300969CE5 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
@@ -222,11 +154,9 @@
 		432B0E991CDFC3C50045347B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		43A8EC82210E664300A81379 /* BubbleClientUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BubbleClientUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43A8EC85210E664300A81379 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		43A8EC8D210E676500A81379 /* BubbleClientSetupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BubbleClientSetupViewController.swift; sourceTree = "<group>"; };
 		43A8EC8E210E676500A81379 /* BubbleClientManager+UI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BubbleClientManager+UI.swift"; sourceTree = "<group>"; };
 		43A8EC8F210E676500A81379 /* BubbleClientSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BubbleClientSettingsViewController.swift; sourceTree = "<group>"; };
 		43A8EC94210E67B000A81379 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
-		43A8EC9A210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ShareGlucose+GlucoseKit.swift"; sourceTree = "<group>"; };
 		43AB511A21330D1400B3D58D /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		43AB511C21330D6800B3D58D /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		43AB511D21330D6B00B3D58D /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -248,13 +178,12 @@
 		43AB512F2133161A00B3D58D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		43AB51302133161A00B3D58D /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		43AB51352133177800B3D58D /* LocalizedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedString.swift; sourceTree = "<group>"; };
-		43C418AE1CE0488900405B6A /* LibreGlucose.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreGlucose.swift; sourceTree = "<group>"; };
 		EE10F6D1243C31F900C5340C /* LibreRawGlucoseData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreRawGlucoseData.swift; sourceTree = "<group>"; };
 		EE10F6D3243C320400C5340C /* LibreMeasurement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreMeasurement.swift; sourceTree = "<group>"; };
 		EE72B072230CDDF500D67B8F /* LoopKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKit.framework; path = Carthage/Build/iOS/LoopKit.framework; sourceTree = "<group>"; };
 		EE72B074230CDE0200D67B8F /* LoopKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKitUI.framework; path = Carthage/Build/iOS/LoopKitUI.framework; sourceTree = "<group>"; };
 		EEC805EB244016BD0092C718 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
-		EED7E06D22E6BC8700E03BAE /* bubble.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bubble.png; sourceTree = "<group>"; };
+		EEED17A524444D8800070523 /* Calibration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Calibration.swift; sourceTree = "<group>"; };
 		EEEFD06B243D669900D82782 /* copy-frameworks.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "copy-frameworks.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -298,42 +227,9 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		270C2657226911BB005B27F3 /* AlarmTimeInputRangeCell */ = {
-			isa = PBXGroup;
-			children = (
-				27CBEB542261DF9C004F7BF5 /* AlarmTimeInputRangeCell.swift */,
-				27CBEB5B2261E1E0004F7BF5 /* AlarmTimeInputRangeCell.xib */,
-			);
-			path = AlarmTimeInputRangeCell;
-			sourceTree = "<group>";
-		};
-		270C2658226911DB005B27F3 /* GlucoseAlarmInputCell */ = {
-			isa = PBXGroup;
-			children = (
-				270C265A22691253005B27F3 /* GlucoseAlarmInputCell.swift */,
-				270C265922691253005B27F3 /* GlucoseAlarmInputCell.xib */,
-			);
-			path = GlucoseAlarmInputCell;
-			sourceTree = "<group>";
-		};
-		270C26672269E67A005B27F3 /* Graphics */ = {
-			isa = PBXGroup;
-			children = (
-				EED7E06D22E6BC8700E03BAE /* bubble.png */,
-				270C266B226A24AB005B27F3 /* icons8-schedule-50.png */,
-				270C26682269E6B7005B27F3 /* schedule-icon48.jpg */,
-				270C26632269E610005B27F3 /* icons8-drop-down-arrow-50.png */,
-				270C26642269E610005B27F3 /* icons8-slide-up-50.png */,
-				270C26612269E53F005B27F3 /* icons8-up-50.png */,
-				270C265F2269E51F005B27F3 /* icons8-down-arrow-50.png */,
-			);
-			path = Graphics;
-			sourceTree = "<group>";
-		};
 		2729D671221F42070030E1B8 /* Bluetooth */ = {
 			isa = PBXGroup;
 			children = (
-				2729D68A221F44660030E1B8 /* TemperatureAlgorithmParameters.swift */,
 				2729D676221F421C0030E1B8 /* Bubble.swift */,
 			);
 			name = Bluetooth;
@@ -353,58 +249,21 @@
 				2729D686221F43150030E1B8 /* SensorData.swift */,
 				2729D6A2221F44C70030E1B8 /* Data.swift */,
 				2729D68E221F44670030E1B8 /* SensorSerialNumber.swift */,
+				EEED17A524444D8800070523 /* Calibration.swift */,
 				2729D68D221F44670030E1B8 /* CRC.swift */,
-				2729D68B221F44660030E1B8 /* Measurement.swift */,
 				27E3C38F222EDF560036AAC7 /* LibreError.swift */,
-				27E3C392222EE2EC0036AAC7 /* Calibration.swift */,
 				27E3C3A1222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift */,
-				27CFAB5A224AA8D1006DEFE3 /* TrendArrowCalculations.swift */,
 			);
 			path = LibreSensor;
-			sourceTree = "<group>";
-		};
-		272FAF05228CA53F002D8064 /* SegmentView */ = {
-			isa = PBXGroup;
-			children = (
-				272FAF06228CA590002D8064 /* SegmentViewCell.swift */,
-				272FAF07228CA590002D8064 /* SegmentViewCell.xib */,
-			);
-			path = SegmentView;
 			sourceTree = "<group>";
 		};
 		274DF85322A6E12B00BFAFFE /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */,
 				27CBEB3B225FB3A7004F7BF5 /* NibLoadable.swift */,
-				275C3D8F229476D600E27439 /* mmSwitchTableViewCell */,
-				272FAF05228CA53F002D8064 /* SegmentView */,
-				270C2658226911DB005B27F3 /* GlucoseAlarmInputCell */,
-				270C2657226911BB005B27F3 /* AlarmTimeInputRangeCell */,
-				2769B5BA2264EDFD006F1935 /* LFTimePickerController */,
 			);
 			path = Cells;
-			sourceTree = "<group>";
-		};
-		275C3D8F229476D600E27439 /* mmSwitchTableViewCell */ = {
-			isa = PBXGroup;
-			children = (
-				27E0969322B2C4D700B3164D /* mmTextFieldViewCell2.swift */,
-				27E0969222B2C4D700B3164D /* mmTextFieldViewCell2.xib */,
-				275C3DA0229D9BBB00E27439 /* mmTextFieldViewCell.swift */,
-				275C3D9E229D9AD500E27439 /* mmTextFieldViewCell.xib */,
-				275C3D94229AA69C00E27439 /* mmSwitchTableViewCell.swift */,
-				275C3D95229AA69C00E27439 /* mmSwitchTableViewCell.xib */,
-			);
-			path = mmSwitchTableViewCell;
-			sourceTree = "<group>";
-		};
-		2769B5BA2264EDFD006F1935 /* LFTimePickerController */ = {
-			isa = PBXGroup;
-			children = (
-				27E0969722B94CAD00B3164D /* CustomDatePicker.swift */,
-				27E0969922B94D4400B3164D /* CustomDatePickerViewController.swift */,
-			);
-			path = LFTimePickerController;
 			sourceTree = "<group>";
 		};
 		2795404D2165502600D657E5 /* clitester */ = {
@@ -432,34 +291,9 @@
 		27E0967F22A6E1C300B3164D /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				27E0969022B2A89D00B3164D /* CalibrationEditTableViewController.swift */,
-				274DF85122A5AEA400BFAFFE /* AlertControllers.swift */,
-				27CBEB3D225FE5CB004F7BF5 /* AlarmSettingsTableViewController.swift */,
-				2701478C2281FA4A0013C9E3 /* NotificationsSettingsTableViewController.swift */,
 				43A8EC8F210E676500A81379 /* BubbleClientSettingsViewController.swift */,
-				2C75834522E89D800002448E /* BubbleClientSearchViewController.swift */,
-				43A8EC8D210E676500A81379 /* BubbleClientSetupViewController.swift */,
 			);
 			path = Controllers;
-			sourceTree = "<group>";
-		};
-		27E0968222A6ED5200B3164D /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				27E0968722A9765300B3164D /* SnoozeTableViewController */,
-				27E0968022A6E9AB00B3164D /* SnoozeView.xib */,
-				27E0968322A6EFCD00B3164D /* SnoozeView.swift */,
-				27E0968522A6F64800B3164D /* SnoozeViewController.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		27E0968722A9765300B3164D /* SnoozeTableViewController */ = {
-			isa = PBXGroup;
-			children = (
-				27E0968822A9768800B3164D /* SnoozeTableViewController.swift */,
-			);
-			path = SnoozeTableViewController;
 			sourceTree = "<group>";
 		};
 		432B0E7E1CDFC3C50045347B = {
@@ -494,13 +328,11 @@
 			isa = PBXGroup;
 			children = (
 				2729D67A221F421F0030E1B8 /* BubbleBluetoothManager.swift */,
-				43C418AE1CE0488900405B6A /* LibreGlucose.swift */,
-				43AB5125213315D300B3D58D /* Localizable.strings */,
-				43A8EC9A210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift */,
-				432B0E8D1CDFC3C50045347B /* Info.plist */,
 				2729D6A722248BDD0030E1B8 /* BubbleClientManager.swift */,
 				275C3DA2229FCED400E27439 /* NotificationHelper.swift */,
 				EEC805EB244016BD0092C718 /* UserDefaults.swift */,
+				432B0E8D1CDFC3C50045347B /* Info.plist */,
+				43AB5125213315D300B3D58D /* Localizable.strings */,
 			);
 			path = BubbleClient;
 			sourceTree = "<group>";
@@ -527,16 +359,13 @@
 		43A8EC83210E664300A81379 /* BubbleClientUI */ = {
 			isa = PBXGroup;
 			children = (
-				27E0968222A6ED5200B3164D /* Views */,
 				27E0967F22A6E1C300B3164D /* Controllers */,
 				274DF85322A6E12B00BFAFFE /* Cells */,
-				270C26672269E67A005B27F3 /* Graphics */,
-				43AB511921330D1400B3D58D /* Localizable.strings */,
-				4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */,
+				27E0968C22A9806200B3164D /* CGFLoat+Double.swift */,
 				43A8EC8E210E676500A81379 /* BubbleClientManager+UI.swift */,
 				4325E9D4210E6B4300969CE5 /* UIColor.swift */,
+				43AB511921330D1400B3D58D /* Localizable.strings */,
 				43A8EC85210E664300A81379 /* Info.plist */,
-				27E0968C22A9806200B3164D /* CGFLoat+Double.swift */,
 			);
 			path = BubbleClientUI;
 			sourceTree = "<group>";
@@ -752,20 +581,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				270C265B22691253005B27F3 /* GlucoseAlarmInputCell.xib in Resources */,
-				270C266C226A24AB005B27F3 /* icons8-schedule-50.png in Resources */,
-				EED7E06E22E6BC8700E03BAE /* bubble.png in Resources */,
-				270C26652269E611005B27F3 /* icons8-drop-down-arrow-50.png in Resources */,
-				272FAF09228CA590002D8064 /* SegmentViewCell.xib in Resources */,
-				270C26602269E51F005B27F3 /* icons8-down-arrow-50.png in Resources */,
-				270C26622269E53F005B27F3 /* icons8-up-50.png in Resources */,
-				275C3D9F229D9AD500E27439 /* mmTextFieldViewCell.xib in Resources */,
-				27CBEB5C2261E1E6004F7BF5 /* AlarmTimeInputRangeCell.xib in Resources */,
 				43AB511B21330D1400B3D58D /* Localizable.strings in Resources */,
-				270C26662269E611005B27F3 /* icons8-slide-up-50.png in Resources */,
-				27E0968122A6E9AB00B3164D /* SnoozeView.xib in Resources */,
-				275C3D9A229AA88500E27439 /* mmSwitchTableViewCell.xib in Resources */,
-				27E0969422B2C4D700B3164D /* mmTextFieldViewCell2.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -791,25 +607,20 @@
 				27E3C390222EDF560036AAC7 /* LibreError.swift in Sources */,
 				4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */,
 				27E3C39A222EE9450036AAC7 /* LibreOOPClient.swift in Sources */,
-				27CFAB5C224AA93E006DEFE3 /* TrendArrowCalculations.swift in Sources */,
 				2729D69F221F44670030E1B8 /* SensorState.swift in Sources */,
 				27D0DA6B2231CBB7007BBB2C /* DateExtensions.swift in Sources */,
-				2729D690221F44670030E1B8 /* TemperatureAlgorithmParameters.swift in Sources */,
 				27E3C398222EE9450036AAC7 /* LibreOOPDefaults.swift in Sources */,
 				277DAD0D226B970300422ADA /* UserDefaults+Alarmsettings.swift in Sources */,
-				27E3C393222EE2EC0036AAC7 /* Calibration.swift in Sources */,
-				27C335B82165667300CF0868 /* LibreGlucose.swift in Sources */,
 				27E3C3A2222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift in Sources */,
 				2729D69C221F44670030E1B8 /* SensorSerialNumber.swift in Sources */,
 				277DAD10226C93D000422ADA /* GlucoseAlarmType.swift in Sources */,
 				27CFAB5622496CBB006DEFE3 /* DoubleExtensions.swift in Sources */,
 				43AB51362133177800B3D58D /* LocalizedString.swift in Sources */,
-				2729D693221F44670030E1B8 /* Measurement.swift in Sources */,
 				2729D67B221F421F0030E1B8 /* BubbleBluetoothManager.swift in Sources */,
 				270C266F226A5A6E005B27F3 /* GlucoseSchedules.swift in Sources */,
 				2729D677221F421C0030E1B8 /* Bubble.swift in Sources */,
 				2729D6A822248BDD0030E1B8 /* BubbleClientManager.swift in Sources */,
-				43A8EC9B210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift in Sources */,
+				EEED17A624444D8800070523 /* Calibration.swift in Sources */,
 				EEC805EC244016BD0092C718 /* UserDefaults.swift in Sources */,
 				275C3DA3229FCED400E27439 /* NotificationHelper.swift in Sources */,
 				2729D699221F44670030E1B8 /* CRC.swift in Sources */,
@@ -836,37 +647,20 @@
 			files = (
 				43A8EC92210E676500A81379 /* BubbleClientSettingsViewController.swift in Sources */,
 				4325E9D5210E6B4400969CE5 /* UIColor.swift in Sources */,
-				27E0969122B2A89D00B3164D /* CalibrationEditTableViewController.swift in Sources */,
-				27E0968622A6F64800B3164D /* SnoozeViewController.swift in Sources */,
-				27E0969B22B94D4400B3164D /* CustomDatePickerViewController.swift in Sources */,
-				27E0968422A6EFCD00B3164D /* SnoozeView.swift in Sources */,
-				2C75834622E89D800002448E /* BubbleClientSearchViewController.swift in Sources */,
-				275C3D99229AA88200E27439 /* mmSwitchTableViewCell.swift in Sources */,
-				27E0969822B94CAD00B3164D /* CustomDatePicker.swift in Sources */,
-				270C265C22691253005B27F3 /* GlucoseAlarmInputCell.swift in Sources */,
 				43AB51372133177800B3D58D /* LocalizedString.swift in Sources */,
 				277DAD11226C986000422ADA /* GlucoseAlarmType.swift in Sources */,
 				27CFAB5E224AB265006DEFE3 /* CollectionExtensions.swift in Sources */,
 				27CBEB3C225FB3A7004F7BF5 /* NibLoadable.swift in Sources */,
 				277DAD15226CACF700422ADA /* MessagePassing.swift in Sources */,
 				27CFAB5522496C7A006DEFE3 /* DoubleExtensions.swift in Sources */,
-				27CBEB3F225FE5CB004F7BF5 /* AlarmSettingsTableViewController.swift in Sources */,
-				27E0968A22A9768800B3164D /* SnoozeTableViewController.swift in Sources */,
-				2701478D2281FA4A0013C9E3 /* NotificationsSettingsTableViewController.swift in Sources */,
-				27E0969522B2C4D700B3164D /* mmTextFieldViewCell2.swift in Sources */,
-				272FAF08228CA590002D8064 /* SegmentViewCell.swift in Sources */,
 				27E0968F22A9AD6F00B3164D /* TimeIntervalExtensions.swift in Sources */,
 				277DAD0E226B971A00422ADA /* UserDefaults+Alarmsettings.swift in Sources */,
 				4325E9D3210E6ADA00969CE5 /* IdentifiableClass.swift in Sources */,
 				27E0968D22A9806200B3164D /* CGFLoat+Double.swift in Sources */,
-				27CBEB552261DF9D004F7BF5 /* AlarmTimeInputRangeCell.swift in Sources */,
-				275C3DA1229D9BBB00E27439 /* mmTextFieldViewCell.swift in Sources */,
-				274DF85222A5AEA400BFAFFE /* AlertControllers.swift in Sources */,
 				277DAD12226C9FA800422ADA /* DateExtensions.swift in Sources */,
 				270C2670226A5A6E005B27F3 /* GlucoseSchedules.swift in Sources */,
 				43A8EC91210E676500A81379 /* BubbleClientManager+UI.swift in Sources */,
 				270C266D226A2F8E005B27F3 /* HKUnit.swift in Sources */,
-				43A8EC90210E676500A81379 /* BubbleClientSetupViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

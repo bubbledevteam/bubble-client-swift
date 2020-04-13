@@ -178,16 +178,14 @@ class NotificationHelper {
                 if diff == 0 {
                     content.body += ", + 0"
                 } else {
-                    let sign = diff < 0 ? "-" : "+"
-                    diff = abs(diff)
-                    
-                    let asObj = LibreGlucose(unsmoothedGlucose: diff, glucoseDouble: diff, trend: 0, timestamp: Date(), collector: nil)
-                    if let formattedDiff = formatter.string(from: asObj.quantity, for: glucoseUnit) {
-                        content.body += ", " + sign + formattedDiff
-                    }
+//                    let sign = diff < 0 ? "-" : "+"
+//                    diff = abs(diff)
+//                    
+//                    let asObj = GlucoseData(unsmoothedGlucose: diff, glucoseDouble: diff, trend: 0, timestamp: Date(), collector: nil)
+//                    if let formattedDiff = formatter.string(from: asObj.quantity, for: glucoseUnit) {
+//                        content.body += ", " + sign + formattedDiff
+//                    }
                 }
-        
-                
             }
             
             if let trend = glucose.trendType?.localizedDescription {

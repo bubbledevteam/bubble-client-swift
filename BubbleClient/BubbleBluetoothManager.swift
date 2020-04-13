@@ -118,8 +118,9 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     func test() {
         var data = "1ef660140300000000000000000000000000000000000000e1400101980ac834d900470ac8f89800440ac8d4d8002d0ac894d8002a0ac86058013a0ac8305801400ac8fc17015a0ac8c45701680ac8a81701710ac89817018d0ac88c57019a0ac87817019f0ac8745701a60ac8f457019a0ac86c1801a30ac8f898009e0ac86c18012603c898d7002503c874d700ff02c83cd700b202c8c459008602c8401b809b02c8f41c80b802c8c41c80c202c8941c808703c8d41c804f04c8805a009004c82c1d806904c8501c800005c83c1c806805c84c1d808f05c8941d807805c8341e809e05c8a01c807705c8c81c800105c8141e80b604c8b81d808904c86c1d804004c8cc1d807804c8b05d80f804c8201d802906c8d01a80a806c8bc1b802107c8041c80ae07c8ec1b808808c8b89900ac09c8601801290ac85c5900f24c0000827600087e083351140796805a00eda6106a1ac804cfb96d".hexadecimal ?? Data()
         data = data.subdata(in: 0..<344)
-        sensorData = SensorData(uuid: Data(), bytes: [UInt8](data), date: Date(), derivedAlgorithmParameterSet: nil)
-        
+        sensorData = SensorData(uuid: Data(), bytes: [UInt8](data), date: Date())
+        sensorData?.patchUid = "1FE0A80400A007E0"
+        sensorData?.patchInfo = "DF000008D306"
         // Check if sensor data is valid and, if this is not the case, request data again after thirty second
         if let sensorData = sensorData {
             let bubble = Bubble(hardware: "0", firmware: "0", battery: 20)
@@ -366,7 +367,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
             return
         }
         let data = rxBuffer.subdata(in: 8..<352)
-        sensorData = SensorData(uuid: rxBuffer.subdata(in: 0..<8), bytes: [UInt8](data), date: Date(), derivedAlgorithmParameterSet: nil)
+        sensorData = SensorData(uuid: rxBuffer.subdata(in: 0..<8), bytes: [UInt8](data), date: Date())
         sensorData?.patchInfo = patchInfo
         
         if bubble.battery < 20 {

@@ -80,7 +80,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     public static func addlog(log: String?) {
         guard let log = log else { return }
-        logs.append(log)
+        logs.insert(log, at: 0)
     }
     
     public func fetchNewDataIfNeeded(_ completion: @escaping (CGMResult) -> Void) {
@@ -269,32 +269,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         }
     }
     
-    private func trendToLibreGlucose(_ measurements: [Measurement]) -> [LibreGlucose]?{
-        var origarr = [LibreGlucose]()
-        
-        //whether or not to return all the 16 latest trends or just every fifth element
-        let returnAllTrends = true
-        
-        
-        
-        for trend in measurements {
-            let glucose = LibreGlucose(unsmoothedGlucose: trend.temperatureAlgorithmGlucose, glucoseDouble: 0.0, trend: UInt8(GlucoseTrend.flat.rawValue), timestamp: trend.date, collector: "Bubble")
-            origarr.append(glucose)
-        }
-        
-        for i in 0 ..< origarr.count {
-            let trend = origarr[i]
-            //we know that the array "always" (almost) will contain 16 entries
-            //the last five entries will get a trend arrow of flat, because it's not computable when we don't have
-            //more entries in the array to base it on
-            let arrow = TrendArrowCalculation.GetGlucoseDirection(current: trend, last: origarr[safe: i+1])
-            origarr[i].trend = UInt8(arrow.rawValue)
-            NSLog("Date: \(trend.timestamp), before: \(trend.unsmoothedGlucose), after: \(trend.glucose), arrow: \(trend.trend)")
-        }
-        
-        return origarr
-    }
-    
     public func handleGoodReading(data: SensorData?,_ callback: @escaping (LibreError?, [GlucoseData]?) -> Void) {
         //only care about the once per minute readings here, historical data will not be considered
         
@@ -395,6 +369,11 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                     let startDate = self.latestBackfill?.startDate
                     let newGlucose = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).map {
                         return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
+                    }
+                    
+                    if let latest = self.latestBackfill, let current = glucose.first {
+                        let arrow = LibreOOPClient.GetGlucoseDirection(current: current, last: latest)
+                        glucose.first?.trend = UInt8(arrow.rawValue)
                     }
                     
                     self.latestBackfill = glucose.first

@@ -176,17 +176,6 @@ class LibreOOPClient {
             items.append(item)
             ptime -= 300000
         }
-        
-        for i in 0 ..< items.count {
-            let trend = items[i]
-            //we know that the array "always" (almost) will contain 16 entries
-            //the last five entries will get a trend arrow of flat, because it's not computable when we don't have
-            //more entries in the array to base it on
-            let arrow = GetGlucoseDirection(current: trend, last: items[safe: i+1])
-            items[i].trend = UInt8(arrow.rawValue)
-            print("dabear::Date: \(trend.timeStamp), value: \(trend.unsmoothedGlucose), arrow: \(trend.trend)")
-        }
-        
         return items
     }
     
@@ -342,7 +331,7 @@ class LibreOOPClient {
         return origarr
     }
     
-    static func calculateSlope(current: LibreRawGlucoseData, last: LibreRawGlucoseData) -> Double
+    static func calculateSlope(current: GlucoseData, last: GlucoseData) -> Double
     {
         if current.timeStamp == last.timeStamp {
             return 0.0
@@ -353,15 +342,15 @@ class LibreOOPClient {
         
         
         
-        return (Double(last.unsmoothedGlucose) - Double(current.unsmoothedGlucose)) / (_last - _curr)
+        return (Double(last.glucoseLevelRaw) - Double(current.glucoseLevelRaw)) / (_last - _curr)
     }
     
-    static func calculateSlopeByMinute(current: LibreRawGlucoseData, last: LibreRawGlucoseData) -> Double
+    static func calculateSlopeByMinute(current: GlucoseData, last: GlucoseData) -> Double
     {
         return calculateSlope(current: current, last: last) * 60000;
     }
     
-    static func GetGlucoseDirection(current: LibreRawGlucoseData?, last: LibreRawGlucoseData?) -> GlucoseTrend {
+    static func GetGlucoseDirection(current: GlucoseData?, last: GlucoseData?) -> GlucoseTrend {
         
         guard let current = current, let last = last else {
             return .flat

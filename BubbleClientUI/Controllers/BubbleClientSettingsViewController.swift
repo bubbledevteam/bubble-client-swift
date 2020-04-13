@@ -11,7 +11,9 @@ import LoopKit
 import LoopKitUI
 import BubbleClient
 
-
+public protocol SubViewControllerWillDisappear: class {
+    func onDisappear() -> Void
+}
 
 public class BubbleClientSettingsViewController: UITableViewController, SubViewControllerWillDisappear, CompletionNotifying { //, CompletionNotifying{
     //public weak var completionDelegate: CompletionDelegate?
