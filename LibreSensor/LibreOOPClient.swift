@@ -362,14 +362,12 @@ class LibreOOPClient {
     }
     
     static func GetGlucoseDirection(current: LibreRawGlucoseData?, last: LibreRawGlucoseData?) -> GlucoseTrend {
-        NSLog("GetGlucoseDirection:: current:\(String(describing: current)), last: \(String(describing: last))")
         
         guard let current = current, let last = last else {
             return .flat
         }
         
         let  s = calculateSlopeByMinute(current: current, last: last)
-        NSLog("Got trendarrow value of \(s))")
         
         switch s {
         case _ where s <= (-3.5):
