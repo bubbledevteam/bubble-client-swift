@@ -184,7 +184,7 @@ class LibreOOPClient {
             //more entries in the array to base it on
             let arrow = GetGlucoseDirection(current: trend, last: items[safe: i+1])
             items[i].trend = UInt8(arrow.rawValue)
-            NSLog("Date: \(trend.timeStamp), before: \(trend.unsmoothedGlucose), after: \(trend.glucoseLevelRaw), arrow: \(trend.trend)")
+            print("dabear::Date: \(trend.timeStamp), value: \(trend.unsmoothedGlucose), arrow: \(trend.trend)")
         }
         
         return items
@@ -338,16 +338,6 @@ class LibreOOPClient {
                                               glucoseLevelRaw: trend.temperatureAlgorithmGlucose,
                                               unsmoothedGlucose: trend.temperatureAlgorithmGlucose)
             origarr.append(glucose)
-        }
-        
-        for i in 0 ..< origarr.count {
-            let trend = origarr[i]
-            //we know that the array "always" (almost) will contain 16 entries
-            //the last five entries will get a trend arrow of flat, because it's not computable when we don't have
-            //more entries in the array to base it on
-            let arrow = GetGlucoseDirection(current: trend, last: origarr[safe: i+1])
-            origarr[i].trend = UInt8(arrow.rawValue)
-            NSLog("Date: \(trend.timeStamp), before: \(trend.unsmoothedGlucose), after: \(trend.glucoseLevelRaw), arrow: \(trend.trend)")
         }
         return origarr
     }
