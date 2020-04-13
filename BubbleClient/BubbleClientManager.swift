@@ -43,8 +43,8 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     public var device: HKDevice? {
         return HKDevice(
-            name: "BubbleClient",
-            manufacturer: "Bubble",
+            name: "DiaBoxClient",
+            manufacturer: "DiaBox",
             model: nil, //latestSpikeCollector,
             hardwareVersion: hardwareVersion,
             firmwareVersion: firmwareVersion,
@@ -119,7 +119,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     //public var BubbleService: BubbleService
     
-    public static let localizedTitle = LocalizedString("Bubble", comment: "Title for the CGMManager option")
+    public static let localizedTitle = LocalizedString("DiaBox", comment: "Title for the CGMManager option")
     
     public let appURL: URL? = URL(string: "diabox://")
     
