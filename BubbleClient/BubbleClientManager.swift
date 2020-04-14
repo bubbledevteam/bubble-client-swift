@@ -366,7 +366,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                         return
                     }
                     
-                    let startDate = self.latestBackfill?.startDate
+                    let startDate = self.latestBackfill?.startDate.addingTimeInterval(4 * 60)
                     let newGlucose = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).map {
                         return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
                     }
