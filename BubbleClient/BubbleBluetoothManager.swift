@@ -100,7 +100,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         super.init()
         centralManager = CBCentralManager(delegate: self, queue: nil, options: nil)
         //        slipBuffer.delegate = self
-        os_log("Bubblemanager init called ", log: BubbleBluetoothManager.bt_log)
         
         #if DEBUG
         DispatchQueue.global().async {
@@ -138,7 +137,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     }
     
     func connect() {
-        os_log("Connect while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue))
         if let p = peripheral {
             p.delegate = self
             centralManager.connect(p, options: nil)
@@ -151,13 +149,13 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: serviceUUIDs).first,
             peripheral.name == deviceName {
             self.peripheral = peripheral
+            self.peripheral?.delegate = self
             centralManager.connect(peripheral, options: [:])
+            state = .Connecting
         }
     }
     
     func disconnectManually() {
-        os_log("Disconnect manually while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue))
-
         if let p = peripheral {
             centralManager.cancelPeripheralConnection(p)
             peripheral = nil
@@ -171,10 +169,8 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         case .poweredOff:
             state = .powerOff
         case  .resetting, .unauthorized, .unknown, .unsupported:
-            os_log("Central Manager was either .poweredOff, .resetting, .unauthorized, .unknown, .unsupported: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: central.state))
             state = .Unassigned
         case .poweredOn:
-            os_log("state poweredOn", log: BubbleBluetoothManager.bt_log)
             retrievePeripherals()
         @unknown default:
             break
@@ -187,7 +183,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     }
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        os_log("Did connect peripheral while state %{public}@ with name: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue), String(describing: peripheral.name))
         state = .Connected
         self.lastConnectedIdentifier = peripheral.identifier.uuidString
         // Discover all Services. This might be helpful if writing is needed some time
@@ -200,10 +195,8 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     }
     
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-        
-        os_log("Did fail to connect peripheral while state: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue))
         if let error = error {
-            os_log("Did fail to connect peripheral error: %{public}@", log: BubbleBluetoothManager.bt_log, type: .error ,  "\(error.localizedDescription)")
+            LogsAccessor.log("Did fail to connect peripheral error: \(error.localizedDescription)")
         }
         state = .Disconnected
         connect()
@@ -211,10 +204,8 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        
-        os_log("Did disconnect peripheral while state: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue))
         if let error = error {
-            os_log("Did disconnect peripheral error: %{public}@", log: BubbleBluetoothManager.bt_log, type: .error ,  "\(error.localizedDescription)")
+            LogsAccessor.log("Did disconnect peripheral error: \(error.localizedDescription)")
         }
         
         
@@ -232,13 +223,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     // MARK: - CBPeripheralDelegate
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        
-        os_log("Did discover services", log: BubbleBluetoothManager.bt_log, type: .default)
-        if let error = error {
-            os_log("Did discover services error: %{public}@", log: BubbleBluetoothManager.bt_log, type: .error ,  "\(error.localizedDescription)")
-        }
-        
-        
         if let services = peripheral.services {
             
             for service in services {
@@ -247,44 +231,30 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 } else {
                     peripheral.discoverCharacteristics(nil, for: service)
                 }
-                
-                os_log("Did discover service: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: service.debugDescription))
             }
         }
     }
     
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        
-        os_log("Did discover characteristics for service %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: peripheral.name))
-        
-        if let error = error {
-            os_log("Did discover characteristics for service error: %{public}@", log: BubbleBluetoothManager.bt_log, type: .error ,  "\(error.localizedDescription)")
-        }
-        
         if let characteristics = service.characteristics {
             for characteristic in characteristics {
-                os_log("Did discover characteristic: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: characteristic.debugDescription))
                 if (characteristic.properties.intersection(.notify)) == .notify && characteristic.uuid == CBUUID(string: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E") {
                     peripheral.setNotifyValue(true, for: characteristic)
-                    os_log("Set notify value for this characteristic", log: BubbleBluetoothManager.bt_log, type: .default)
                 }
                 if (characteristic.uuid == CBUUID(string: "6E400002-B5A3-F393-E0A9-E50E24DCCA9E")) {
                     writeCharacteristic = characteristic
                 }
             }
         } else {
-            os_log("Discovered characteristics, but no characteristics listed. There must be some error.", log: BubbleBluetoothManager.bt_log, type: .default)
+            LogsAccessor.log("Discovered characteristics, but no characteristics listed.")
         }
     }
     
     
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-        
-        os_log("Did update notification state for characteristic: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: characteristic.debugDescription))
-        
         if let error = error {
-            os_log("Peripheral did update notification state for characteristic: %{public}@ with error", log: BubbleBluetoothManager.bt_log, type: .error ,  "\(error.localizedDescription)")
+            LogsAccessor.log("Peripheral did update notification with error: \(error.localizedDescription)")
         } else {
             resetBuffer()
             requestData()
@@ -293,10 +263,8 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     }
     
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        os_log("Did update value for characteristic: %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: characteristic.debugDescription))
-        
         if let error = error {
-            os_log("Characteristic update error: %{public}@", log: BubbleBluetoothManager.bt_log, type: .error ,  "\(error.localizedDescription)")
+            LogsAccessor.log("Characteristic update error: \(error.localizedDescription)")
         } else {
             if characteristic.uuid == CBUUID(string: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"), let value = characteristic.value {
                 if let firstByte = value.first {
@@ -306,6 +274,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                             let battery = Int(value[4])
                             bubble = Bubble(hardware: "0", firmware: "0", battery: battery)
                             delegate?.BubbleBluetoothManagerMessageChanged()
+                            LogsAccessor.log("Battery: \(battery)")
                         case .dataPacket:
                             guard rxBuffer.count >= 8 else { return }
                             rxBuffer.append(value.suffix(from: 4))
@@ -314,11 +283,9 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                                 resetBuffer()
                             }
                         case .noSensor:
-                            os_log("dabear:: receive noSensor")
                             delegate?.BubbleBluetoothManagerReceivedMessage(0x0000, txFlags: 0x34, payloadData: rxBuffer)
                             resetBuffer()
                         case .serialNumber:
-                            os_log("dabear:: receive serialNumber")
                             rxBuffer.append(value.subdata(in: 2..<10))
                         case .patchInfo:
                             if value.count >= 10 {
@@ -352,14 +319,11 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         guard rxBuffer.count >= 352, let bubble = bubble else {
             return
         }
+        
+        LogsAccessor.log("receive 344")
         let data = rxBuffer.subdata(in: 8..<352)
         sensorData = SensorData(uuid: rxBuffer.subdata(in: 0..<8), bytes: [UInt8](data), date: Date())
         sensorData?.patchInfo = patchInfo
-        
-        if bubble.battery < 20 {
-            NotificationHelper.sendLowBatteryNotificationIfNeeded(device: bubble)
-        }
-        
         // Check if sensor data is valid and, if this is not the case, request data again after thirty second
         if let sensorData = sensorData {
             // Inform delegate that new data is available
@@ -368,8 +332,8 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     }
     
     deinit {
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
         self.delegate = nil
-        os_log("dabear:: Bubblemanager deinit called")
     }
 }
 

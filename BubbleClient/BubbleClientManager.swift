@@ -191,7 +191,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         
         BubbleClientManager.proxy?.disconnectManually()
         BubbleClientManager.proxy?.delegate = nil
-        //BubbleClientManager.proxy = nil
     }
     
     public func retrievePeripherals() {
@@ -330,8 +329,11 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     public var reloadData: (() -> ())?
     public func BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: SensorData, Bubble: Bubble) {
         reloadData?()
+        if sensorData.isFirstSensor {
+            LogsAccessor.log(sensorData.state.description)
+            if sensorData.state != .ready { return }
+        }
         self.delegateQueue.async {
-            if sensorData.isFirstSensor && sensorData.state != .ready { return }
             if sensorData.hasValidCRCs || sensorData.isSecondSensor {
                 self.lastValidSensorData = sensorData
                 
