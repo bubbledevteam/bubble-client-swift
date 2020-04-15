@@ -31,12 +31,18 @@ class LibreOOPClient {
         let task = URLSession.shared.dataTask(with: request as URLRequest) {
             data, response, error in
             DispatchQueue.main.async {
+                if let error = error {
+                    LogsAccessor.log(error.localizedDescription)
+                }
+                
                 guard let data = data else {
                     callback?(nil)
                     return
                 }
                 
-                BubbleClientManager.addlog(log: "server data: \(String.init(data: data, encoding: .utf8) ?? "")")
+                if let response = String(data: data, encoding: String.Encoding.utf8) {
+                    LogsAccessor.log( response)
+                }
                 
                 let decoder = JSONDecoder.init()
                 if let oopValue = try? decoder.decode(LibreRawGlucoseOOPData.self, from: data) {
@@ -78,7 +84,6 @@ class LibreOOPClient {
                     let glucose32 = trendToLibreGlucose(last32) ?? []
                     let last96 = split(current: first, glucoseData: glucose32.reversed())
                     glucoseData = last96
-                    BubbleClientManager.addlog(log: "web oop latest: \(first.description)")
                     callback((glucoseData, sensorState, nil))
                 } else {
                     callback(([], sensorState, nil))
@@ -86,11 +91,11 @@ class LibreOOPClient {
             }
         }
         
-        
+        LogsAccessor.log("patchInfo: \(sensorData.patchInfo ?? ""), patchUid: \(sensorData.patchUid ?? ""), \ncontent: \(Data(sensorData.bytes).hexEncodedString())")
         guard let patchUid = sensorData.patchUid,
             let patchInfo = sensorData.patchInfo else {
-            oop()
-            return
+                oop()
+                return
         }
         
         let bytesAsData = Data(bytes: sensorData.bytes, count: sensorData.bytes.count)
@@ -131,14 +136,11 @@ class LibreOOPClient {
                             }
                         }
                     } else {
-                        if retryCount < 4 {
-                            retry()
+                        if sensorData.isFirstSensor {
+                            oop()
                         } else {
-                            if sensorData.isFirstSensor {
-                                oop()
-                            } else {
-                                callback(([], nil, nil))
-                            }
+                            LogsAccessor.log( "network failed!")
+                            callback(([], nil, nil))
                         }
                     }
                 }
@@ -196,7 +198,7 @@ class LibreOOPClient {
                         p.slope_offset != 0 ||
                         p.offset_slope != 0 ||
                         p.offset_offset != 0 {
-                        BubbleClientManager.addlog(log: "parameters: \(p.description)")
+                        LogsAccessor.log("parameters: \(p.description)")
                         try? keychain.setLibreCalibrationData(p)
                         callback(p)
                     } else {

@@ -71,21 +71,14 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             //"shouldSendGlucoseNotifications: \(shouldSendGlucoseNotifications)",
             "latestBackfill: \(latestBackfill?.description ?? "")",
             //"latestCollector: \(String(describing: latestSpikeCollector))",
-            "logs: \(Self.logs.joined(separator: "\n"))",
+            "logs: \(LogsAccessor.todayLogs())",
             ""
             ].joined(separator: "\n")
     }
     
-    static private var logs = [String]()
-    
-    public static func addlog(log: String?) {
-        guard let log = log else { return }
-        logs.insert(log, at: 0)
-    }
-    
     public func fetchNewDataIfNeeded(_ completion: @escaping (CGMResult) -> Void) {
         NSLog("dabear:: fetchNewDataIfNeeded called but we don't continue")
-
+        
     }
     
     
@@ -277,8 +270,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             return
         }
         
-        BubbleClientManager.addlog(log: "patchUid: \(data.patchUid ?? ""), patchInfo: \(data.patchInfo ?? "")\n content: \(Data(data.bytes).hexEncodedString())")
-        
         LibreOOPClient.handleLibreData(sensorData: data) { result in
             guard let glucose = result?.glucoseData, !glucose.isEmpty else {
                 callback(LibreError.noSensorData, nil)
@@ -339,30 +330,19 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     public var reloadData: (() -> ())?
     public func BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: SensorData, Bubble: Bubble) {
         reloadData?()
-        NotificationHelper.sendLowBatteryNotificationIfNeeded(device: Bubble)
-        //        NotificationHelper.sendInvalidSensorNotificationIfNeeded(sensorData: sensorData)
-        NotificationHelper.sendSensorExpireAlertIfNeeded(sensorData: sensorData)
-        
-        if sensorData.isFirstSensor && sensorData.state != .ready { return }
-        
-        if sensorData.hasValidCRCs || sensorData.isSecondSensor {
-            NSLog("dabear:: got sensordata with valid crcs, sensor was ready")
-            self.lastValidSensorData = sensorData
-            
-            self.handleGoodReading(data: sensorData) { (error, glucose) in
-                self.delegateQueue.async {
+        self.delegateQueue.async {
+            if sensorData.isFirstSensor && sensorData.state != .ready { return }
+            if sensorData.hasValidCRCs || sensorData.isSecondSensor {
+                self.lastValidSensorData = sensorData
+                
+                self.handleGoodReading(data: sensorData) { (error, glucose) in
                     if let error = error {
-                        NSLog("dabear:: handleGoodReading returned with error: \(error)")
-                        
                         self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(error))
-                        self.reloadData?()
                         return
                     }
                     
                     guard let glucose = glucose else {
-                        NSLog("dabear:: handleGoodReading returned with no data")
                         self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .noData)
-                        self.reloadData?()
                         return
                     }
                     
@@ -379,22 +359,27 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                     self.latestBackfill = glucose.first
                     
                     if newGlucose.count > 0 {
-                        NSLog("dabear:: handleGoodReading returned with \(newGlucose.count) new glucose samples")
+                        var params = "["
+                        for g in newGlucose {
+                            params +=
+                            """
+                            {"date": \(g.date), "glucose": \(g.quantity.doubleValue(for: .milligramsPerDeciliter))},\n
+                            """
+                        }
+                        params += "]"
+                        LogsAccessor.log(params)
+                        
                         self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .newData(newGlucose))
                         
                     } else {
-                        NSLog("dabear:: handleGoodReading returned with no new data")
                         self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .noData)
-                        
                     }
                 }
-            }
-            
-        } else {
-            self.delegateQueue.async {
+                
+                
+            } else {
                 self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
             }
-            os_log("dit not get sensordata with valid crcs")
         }
     }
     
@@ -402,5 +387,4 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     func BubbleBluetoothManagerMessageChanged() {
         reloadData?()
     }
-    
 }

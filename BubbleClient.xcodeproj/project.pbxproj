@@ -69,6 +69,11 @@
 		EE72B077230CE02C00D67B8F /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B074230CDE0200D67B8F /* LoopKitUI.framework */; };
 		EEC805EC244016BD0092C718 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC805EB244016BD0092C718 /* UserDefaults.swift */; };
 		EEED17A624444D8800070523 /* Calibration.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED17A524444D8800070523 /* Calibration.swift */; };
+		EEED17B32446A4EB00070523 /* LogsAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED17B22446A4EB00070523 /* LogsAccessor.swift */; };
+		EEED17B52446A51A00070523 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED17B42446A51A00070523 /* CoreDataManager.swift */; };
+		EEED17BC2446A91C00070523 /* BubbleClientModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EEED17BA2446A91C00070523 /* BubbleClientModel.xcdatamodeld */; };
+		EEED17C32446B2FD00070523 /* LocalLog+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED17BD2446A94C00070523 /* LocalLog+CoreDataClass.swift */; };
+		EEED17C42446B2FD00070523 /* LocalLog+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED17BE2446A94C00070523 /* LocalLog+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -184,6 +189,11 @@
 		EE72B074230CDE0200D67B8F /* LoopKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKitUI.framework; path = Carthage/Build/iOS/LoopKitUI.framework; sourceTree = "<group>"; };
 		EEC805EB244016BD0092C718 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		EEED17A524444D8800070523 /* Calibration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Calibration.swift; sourceTree = "<group>"; };
+		EEED17B22446A4EB00070523 /* LogsAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsAccessor.swift; sourceTree = "<group>"; };
+		EEED17B42446A51A00070523 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		EEED17BB2446A91C00070523 /* BubbleClientModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = BubbleClientModel.xcdatamodel; sourceTree = "<group>"; };
+		EEED17BD2446A94C00070523 /* LocalLog+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalLog+CoreDataClass.swift"; sourceTree = "<group>"; };
+		EEED17BE2446A94C00070523 /* LocalLog+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalLog+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		EEEFD06B243D669900D82782 /* copy-frameworks.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "copy-frameworks.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -299,6 +309,7 @@
 		432B0E7E1CDFC3C50045347B = {
 			isa = PBXGroup;
 			children = (
+				EEED17AA2446A11700070523 /* CoreData */,
 				EEEFD06A243D669900D82782 /* Scripts */,
 				2729D6A62220C1030030E1B8 /* LibreSensor */,
 				2729D671221F42070030E1B8 /* Bluetooth */,
@@ -385,6 +396,18 @@
 				27E0968E22A9AD6F00B3164D /* TimeIntervalExtensions.swift */,
 			);
 			path = Common;
+			sourceTree = "<group>";
+		};
+		EEED17AA2446A11700070523 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				EEED17BD2446A94C00070523 /* LocalLog+CoreDataClass.swift */,
+				EEED17BE2446A94C00070523 /* LocalLog+CoreDataProperties.swift */,
+				EEED17B22446A4EB00070523 /* LogsAccessor.swift */,
+				EEED17B42446A51A00070523 /* CoreDataManager.swift */,
+				EEED17BA2446A91C00070523 /* BubbleClientModel.xcdatamodeld */,
+			);
+			path = CoreData;
 			sourceTree = "<group>";
 		};
 		EEEFD06A243D669900D82782 /* Scripts */ = {
@@ -602,6 +625,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEED17C32446B2FD00070523 /* LocalLog+CoreDataClass.swift in Sources */,
+				EEED17C42446B2FD00070523 /* LocalLog+CoreDataProperties.swift in Sources */,
 				27E3C39F222EE9A80036AAC7 /* LibreOOPWebExtensions.swift in Sources */,
 				27CFAB5F224AB27B006DEFE3 /* CollectionExtensions.swift in Sources */,
 				27E3C390222EDF560036AAC7 /* LibreError.swift in Sources */,
@@ -611,6 +636,7 @@
 				27D0DA6B2231CBB7007BBB2C /* DateExtensions.swift in Sources */,
 				27E3C398222EE9450036AAC7 /* LibreOOPDefaults.swift in Sources */,
 				277DAD0D226B970300422ADA /* UserDefaults+Alarmsettings.swift in Sources */,
+				EEED17BC2446A91C00070523 /* BubbleClientModel.xcdatamodeld in Sources */,
 				27E3C3A2222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift in Sources */,
 				2729D69C221F44670030E1B8 /* SensorSerialNumber.swift in Sources */,
 				277DAD10226C93D000422ADA /* GlucoseAlarmType.swift in Sources */,
@@ -620,6 +646,8 @@
 				270C266F226A5A6E005B27F3 /* GlucoseSchedules.swift in Sources */,
 				2729D677221F421C0030E1B8 /* Bubble.swift in Sources */,
 				2729D6A822248BDD0030E1B8 /* BubbleClientManager.swift in Sources */,
+				EEED17B52446A51A00070523 /* CoreDataManager.swift in Sources */,
+				EEED17B32446A4EB00070523 /* LogsAccessor.swift in Sources */,
 				EEED17A624444D8800070523 /* Calibration.swift in Sources */,
 				EEC805EC244016BD0092C718 /* UserDefaults.swift in Sources */,
 				275C3DA3229FCED400E27439 /* NotificationHelper.swift in Sources */,
@@ -960,7 +988,7 @@
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,4";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -995,7 +1023,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,4";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -1143,6 +1171,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		EEED17BA2446A91C00070523 /* BubbleClientModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				EEED17BB2446A91C00070523 /* BubbleClientModel.xcdatamodel */,
+			);
+			currentVersion = EEED17BB2446A91C00070523 /* BubbleClientModel.xcdatamodel */;
+			path = BubbleClientModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 432B0E7F1CDFC3C50045347B /* Project object */;
 }

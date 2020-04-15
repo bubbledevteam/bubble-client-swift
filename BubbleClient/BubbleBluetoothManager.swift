@@ -113,6 +113,14 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         }
         RunLoop.current.add(timer, forMode: .common)
         #endif
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(runWhenAppWillEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+    }
+    
+    @objc private func runWhenAppWillEnterForeground(_ : Notification) {
+        if peripheral?.state != .connected {
+            retrievePeripherals()
+        }
     }
     
     func test() {
@@ -128,18 +136,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
             delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
         }
     }
-    
-//    func scanForBubble() {
-//        autoScanning = false
-//        os_log("Scan for Bubble while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state))
-//        if centralManager.state == .poweredOn {
-//            disconnectManually()
-//            os_log("Before scan for Bubble while central manager state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: centralManager.state.rawValue))
-//            centralManager.scanForPeripherals(withServices: nil, options: nil)
-//
-//            state = .Scanning
-//        }
-//    }
     
     func connect() {
         os_log("Connect while state %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue))
@@ -187,8 +183,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        
-//        os_log("Did discover peripheral while state %{public}@ with name: %{public}@, wantstoterminate?:  %d", log: BubbleBluetoothManager.bt_log, type: .default, String(describing: state.rawValue), String(describing: peripheral.name), self.wantsToTerminate)
         
     }
     
@@ -312,15 +306,10 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                             let battery = Int(value[4])
                             bubble = Bubble(hardware: "0", firmware: "0", battery: battery)
                             delegate?.BubbleBluetoothManagerMessageChanged()
-//                            if let writeCharacteristic = writeCharacteristic {
-//                                print("-----set: ", writeCharacteristic)
-//                                peripheral.writeValue(Data([0x02, 0x00, 0x00, 0x00, 0x00, 0x2B]), for: writeCharacteristic, type: .withoutResponse)
-//                            }
                         case .dataPacket:
                             guard rxBuffer.count >= 8 else { return }
                             rxBuffer.append(value.suffix(from: 4))
                             if rxBuffer.count >= 352 {
-                                os_log("dabear:: receive 352 bytes")
                                 handleCompleteMessage()
                                 resetBuffer()
                             }
@@ -344,14 +333,12 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     
     func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
-        os_log("Did Write value %{public}@ for characteristic %{public}@", log: BubbleBluetoothManager.bt_log, type: .default, String(characteristic.value.debugDescription), String(characteristic.debugDescription))
+        
     }
     
     // Bubble specific commands
     func requestData() {
-//        if let writeCharacteristic = writeCharacteristic {
-//            peripheral?.writeValue(Data.init(bytes: [0x00, 0x00, 0x05]), for: writeCharacteristic, type: .withoutResponse)
-//        }
+        
     }
     
     
@@ -360,7 +347,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     }
     
     var latestUpdateDate = Date(timeIntervalSince1970: 0)
-    
     func handleCompleteMessage() {
         guard latestUpdateDate.addingTimeInterval(60 * 4) < Date() else { return }
         guard rxBuffer.count >= 352, let bubble = bubble else {
@@ -385,7 +371,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         self.delegate = nil
         os_log("dabear:: Bubblemanager deinit called")
     }
-    
 }
 
 fileprivate enum BubbleResponseType: UInt8 {
@@ -400,7 +385,6 @@ fileprivate enum BubbleResponseType: UInt8 {
 extension String {
     var hexadecimal: Data? {
         var data = Data(capacity: count / 2)
-        
         let regex = try! NSRegularExpression(pattern: "[0-9a-f]{1,2}", options: .caseInsensitive)
         regex.enumerateMatches(in: self, range: NSRange(startIndex..., in: self)) { match, _, _ in
             let byteString = (self as NSString).substring(with: match!.range)
