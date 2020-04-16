@@ -339,12 +339,16 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                 
                 self.handleGoodReading(data: sensorData) { (error, glucose) in
                     if let error = error {
-                        self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(error))
+                        self.delegate.notify { (delegate) in
+                            delegate?.cgmManager(self, didUpdateWith: .error(error))
+                        }
                         return
                     }
                     
                     guard let glucose = glucose else {
-                        self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .noData)
+                        self.delegate.notify { (delegate) in
+                            delegate?.cgmManager(self, didUpdateWith: .noData)
+                        }
                         return
                     }
                     
@@ -370,17 +374,22 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                         }
                         params += "]"
                         LogsAccessor.log(params)
-                        
-                        self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .newData(newGlucose))
+                        self.delegate.notify { (delegate) in
+                            delegate?.cgmManager(self, didUpdateWith: .newData(newGlucose))
+                        }
                         
                     } else {
-                        self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .noData)
+                        self.delegate.notify { (delegate) in
+                            delegate?.cgmManager(self, didUpdateWith: .noData)
+                        }
                     }
                 }
                 
                 
             } else {
-                self.cgmManagerDelegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
+                self.delegate.notify { (delegate) in
+                    delegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
+                }
             }
         }
     }
