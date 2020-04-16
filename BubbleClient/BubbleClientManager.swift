@@ -357,10 +357,17 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                         return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
                     }
                     
-                    if let latest = self.latestBackfill, let current = glucose.first, newGlucose.count == 1 {
-                        let arrow = LibreOOPClient.GetGlucoseDirection(current: current, last: latest)
-                        glucose.first?.trend = UInt8(arrow.rawValue)
+                    var latest = self.latestBackfill
+                    if glucose.count > 2 {
+                        if let latestBackfill = latest, let current = glucose.first {
+                            if latestBackfill.timeStamp.addingTimeInterval(8 * 60) < current.timeStamp {
+                                latest = glucose[1]
+                            }
+                        }
                     }
+                    
+                    let arrow = LibreOOPClient.GetGlucoseDirection(current: glucose.first, last: latest)
+                    glucose.first?.trend = UInt8(arrow.rawValue)
                     
                     self.latestBackfill = glucose.first
                     
