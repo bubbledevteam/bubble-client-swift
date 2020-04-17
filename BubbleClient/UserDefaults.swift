@@ -58,4 +58,7 @@ public struct UserDefaultJsonWrapper<T: Codable> {
 public struct UserDefaultsUnit {
     @UserDefaultJsonWrapper("latestGlucose")
     public static var latestGlucose: GlucoseData?
+    
+    @UserDefaultJsonWrapper("latestUpdateData")
+    public static var latestUpdateData: GlucoseData?
 }
