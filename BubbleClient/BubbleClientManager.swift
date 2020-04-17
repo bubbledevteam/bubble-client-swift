@@ -103,7 +103,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                 UserDefaultsUnit.latestUpdateData = newValue
             }
         }
-        get { UserDefaultsUnit.latestUpdateData }
+        get { UserDefaultsUnit.latestUpdateData ?? UserDefaultsUnit.latestGlucose }
     }
     
     public static var managerIdentifier = "DexBubbleClient1"
