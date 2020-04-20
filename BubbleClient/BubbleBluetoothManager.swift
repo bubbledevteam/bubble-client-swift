@@ -107,7 +107,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
             self.test()
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now + .second(60 * 4.2)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(Int(60 * 4.2))) {
             self.test1()
         }
         
