@@ -103,14 +103,18 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         
         #if DEBUG
         DispatchQueue.global().async {
-            sleep(10)
+            sleep(2)
             self.test()
         }
         
-        let timer = Timer.init(timeInterval: 60, repeats: true) { (_) in
-            self.test()
+        DispatchQueue.main.asyncAfter(deadline: .now + .second(60 * 4.2)) {
+            self.test1()
         }
-        RunLoop.current.add(timer, forMode: .common)
+        
+//        let timer = Timer.init(timeInterval: 60, repeats: true) { (_) in
+//            self.test()
+//        }
+//        RunLoop.current.add(timer, forMode: .common)
         #endif
         
         NotificationCenter.default.addObserver(self, selector: #selector(runWhenAppWillEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
@@ -123,11 +127,25 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     }
     
     func test() {
-        var data = "1ef660140300000000000000000000000000000000000000e1400101980ac834d900470ac8f89800440ac8d4d8002d0ac894d8002a0ac86058013a0ac8305801400ac8fc17015a0ac8c45701680ac8a81701710ac89817018d0ac88c57019a0ac87817019f0ac8745701a60ac8f457019a0ac86c1801a30ac8f898009e0ac86c18012603c898d7002503c874d700ff02c83cd700b202c8c459008602c8401b809b02c8f41c80b802c8c41c80c202c8941c808703c8d41c804f04c8805a009004c82c1d806904c8501c800005c83c1c806805c84c1d808f05c8941d807805c8341e809e05c8a01c807705c8c81c800105c8141e80b604c8b81d808904c86c1d804004c8cc1d807804c8b05d80f804c8201d802906c8d01a80a806c8bc1b802107c8041c80ae07c8ec1b808808c8b89900ac09c8601801290ac85c5900f24c0000827600087e083351140796805a00eda6106a1ac804cfb96d".hexadecimal ?? Data()
+        var data = "a41f98160300000000000000000000000000000000000000ae100604b309c8f09a00ba09c8f8da00bb09c8fcda00cb09c8fc9a00cf09c8f4da00eb09c82cdb007709c868db006e09c854db007909c850db007909c858db006f09c850db008209c848db008909c830db009409c808db009a09c8f0da00a509c8e4da009407c894db006b08c814db003209c8fcda008109c848db004603c8f056010b03c8d01601c202c82c17018702c88817015502c88817015402c88017019202c8801701cb02c8a417010303c88c17013a03c83417014003c81817015d03c85457015503c89857018703885e1701e503c89817017204c8581701f404c81c17019a05c8401701df05c8b85601c505c8ac1601cf05c87817015705c88017012105c84017017904c864db006f04c8389d00d904c8ec9c000a06883edc000f07888e5c00062200005493000814097a51140796805a00eda6026d1ac804868967".hexadecimal ?? Data()
         data = data.subdata(in: 0..<344)
         sensorData = SensorData(uuid: Data(), bytes: [UInt8](data), date: Date())
-        sensorData?.patchUid = "1FE0A80400A007E0"
-        sensorData?.patchInfo = "DF000008D306"
+        sensorData?.patchUid = "E14C2A6000A007E0"
+        sensorData?.patchInfo = "DF000008E92B"
+        // Check if sensor data is valid and, if this is not the case, request data again after thirty second
+        if let sensorData = sensorData {
+            let bubble = Bubble(hardware: "0", firmware: "0", battery: 20)
+            // Inform delegate that new data is available
+            delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
+        }
+    }
+    
+    func test1() {
+        var data = "a41f98160300000000000000000000000000000000000000c2390b04b309c8f09a00ba09c8f8da00bb09c8fcda00cb09c8fc9a00cf09c8f4da00eb09c82cdb00040ac848db00130ac844db001a0ac844db00050ac850db00020ac854db008209c848db008909c830db009409c808db009a09c8f0da00a509c8e4da009407c894db006b08c814db003209c8fcda008109c848db004603c8f056010b03c8d01601c202c82c17018702c88817015502c88817015402c88017019202c8801701cb02c8a417010303c88c17013a03c83417014003c81817015d03c85457015503c89857018703885e1701e503c89817017204c8581701f404c81c17019a05c8401701df05c8b85601c505c8ac1601cf05c87817015705c88017012105c84017017904c864db006f04c8389d00d904c8ec9c000a06883edc000f07888e5c000b2200005493000814097a51140796805a00eda6026d1ac804868967".hexadecimal ?? Data()
+        data = data.subdata(in: 0..<344)
+        sensorData = SensorData(uuid: Data(), bytes: [UInt8](data), date: Date())
+        sensorData?.patchUid = "E14C2A6000A007E0"
+        sensorData?.patchInfo = "DF000008022E"
         // Check if sensor data is valid and, if this is not the case, request data again after thirty second
         if let sensorData = sensorData {
             let bubble = Bubble(hardware: "0", firmware: "0", battery: 20)
