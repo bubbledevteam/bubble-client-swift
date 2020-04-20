@@ -70,7 +70,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             //"Notification glucoseunit: \(glucoseUnit)",
             //"shouldSendGlucoseNotifications: \(shouldSendGlucoseNotifications)",
             "latestBackfill: \(latestBackfill?.description ?? "")",
-            "latestUpdate: \(latestUpdateData?.description ?? "")",
             //"latestCollector: \(String(describing: latestSpikeCollector))",
             "logs: \(LogsAccessor.todayLogs())",
             ""
