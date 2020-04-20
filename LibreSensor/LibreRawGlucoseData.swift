@@ -11,11 +11,12 @@ public class GlucoseData: Codable {
     public var glucoseLevelRaw: Double
     public var glucoseLevelFiltered: Double
     public var trend: UInt8
-    public var currentValue: Double?
+    public var lastValue: Double
     
     init(timeStamp:Date, glucoseLevelRaw:Double, glucoseLevelFiltered:Double, trend: UInt8 = 0) {
         self.timeStamp = timeStamp
         self.glucoseLevelRaw = glucoseLevelRaw
+        self.lastValue = glucoseLevelRaw
         self.glucoseLevelFiltered = glucoseLevelFiltered
         self.trend = trend
     }

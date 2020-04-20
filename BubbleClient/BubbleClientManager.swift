@@ -358,7 +358,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                     }
                     
                     if let last  = self.latestBackfill, let value = glucose.first?.glucoseLevelRaw {
-                        last.currentValue = value
+                        last.glucoseLevelRaw = value
                         self.latestBackfill = last
                     }
                     
@@ -372,14 +372,17 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                             }
                         }
                         
-                        if let currentValue = latest?.currentValue {
-                            latest?.glucoseLevelRaw = currentValue
+                        if let lastValue = latest?.lastValue {
+                            latest?.glucoseLevelRaw = lastValue
                         }
                         
                         let arrow = LibreOOPClient.GetGlucoseDirection(current: glucose.first, last: latest)
                         glucose.first?.trend = UInt8(arrow.rawValue)
                         
-                        self.latestBackfill = glucose.first
+                        if let newValue = glucose.first {
+                            newValue.lastValue = newValue.glucoseLevelRaw
+                            self.latestBackfill = newValue
+                        }
                         
                         var params = "["
                         for g in newGlucose {
