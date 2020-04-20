@@ -97,15 +97,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         get { UserDefaultsUnit.latestGlucose }
     }
     
-    private var latestUpdateData: GlucoseData? {
-        set {
-            if let newValue = newValue {
-                UserDefaultsUnit.latestUpdateData = newValue
-            }
-        }
-        get { UserDefaultsUnit.latestUpdateData ?? UserDefaultsUnit.latestGlucose }
-    }
-    
     public static var managerIdentifier = "DexBubbleClient1"
     
     required convenience public init?(rawState: CGMManager.RawStateValue) {
@@ -362,14 +353,18 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                         return
                     }
                     
-                    let startDate = self.latestUpdateData?.startDate.addingTimeInterval(4 * 60)
+                    let startDate = self.latestBackfill?.startDate.addingTimeInterval(4 * 60)
                     let newGlucose = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).map {
                         return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
                     }
-                    self.latestBackfill = glucose.first
+                    
+                    if let last  = self.latestBackfill, let value = glucose.first?.glucoseLevelRaw {
+                        last.glucoseLevelRaw = value
+                        self.latestBackfill = last
+                    }
                     
                     if newGlucose.count > 0 {
-                        var latest = self.latestUpdateData
+                        var latest = self.latestBackfill
                         if glucose.count > 2 {
                             if let latestUpdateData = latest, let current = glucose.first {
                                 if latestUpdateData.timeStamp.addingTimeInterval(8 * 60) < current.timeStamp {
@@ -381,7 +376,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                         let arrow = LibreOOPClient.GetGlucoseDirection(current: glucose.first, last: latest)
                         glucose.first?.trend = UInt8(arrow.rawValue)
                         
-                        self.latestUpdateData = glucose.first
+                        self.latestBackfill = glucose.first
                         
                         var params = "["
                         for g in newGlucose {
