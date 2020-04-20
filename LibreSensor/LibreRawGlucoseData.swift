@@ -30,7 +30,12 @@ public class GlucoseData: Codable {
     }
     
     var description: String {
-        return "timeStamp = \(timeStamp.description(with: .current)) glucoseLevelRaw = \(glucoseLevelRaw.description) trend = \(trend)"
+        return """
+        timeStamp = \(timeStamp.description(with: .current))
+        glucoseLevelRaw = \(glucoseLevelRaw.description)
+        trend = \(trend)
+        lastValue = \(lastValue)
+        """
     }
     
     

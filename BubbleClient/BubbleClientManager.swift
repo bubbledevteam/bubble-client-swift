@@ -382,6 +382,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                         if let newValue = glucose.first {
                             newValue.lastValue = newValue.glucoseLevelRaw
                             self.latestBackfill = newValue
+                            LogsAccessor.log(newValue.description)
                         }
                         
                         var params = "["

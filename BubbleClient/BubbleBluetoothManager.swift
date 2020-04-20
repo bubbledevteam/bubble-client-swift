@@ -106,15 +106,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
             sleep(2)
             self.test()
         }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(Int(60 * 4.2))) {
-            self.test1()
-        }
-        
-//        let timer = Timer.init(timeInterval: 60, repeats: true) { (_) in
-//            self.test()
-//        }
-//        RunLoop.current.add(timer, forMode: .common)
         #endif
         
         NotificationCenter.default.addObserver(self, selector: #selector(runWhenAppWillEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
@@ -138,6 +129,10 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
             // Inform delegate that new data is available
             delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
         }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(Int(60 * 4.5))) {
+            self.test1()
+        }
     }
     
     func test1() {
@@ -151,6 +146,10 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
             let bubble = Bubble(hardware: "0", firmware: "0", battery: 20)
             // Inform delegate that new data is available
             delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(Int(60 * 4.5))) {
+            self.test()
         }
     }
     
