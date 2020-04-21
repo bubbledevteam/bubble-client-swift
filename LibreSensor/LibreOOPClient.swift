@@ -300,6 +300,7 @@ class LibreOOPClient {
                 index = index + 192 // if end of ring buffer is reached shift to beginning of ring buffer
             }
             
+            guard index + 6 < body.count else { return [] }
             let range = index..<index+6
             let measurementBytes = Array(body[range])
             let (date, counter) = dateOfMostRecentHistoryValue(minutesSinceStart: minutesSinceStart, nextHistoryBlock: nextHistoryBlock, date: date)
