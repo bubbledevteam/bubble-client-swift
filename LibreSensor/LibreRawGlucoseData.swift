@@ -12,8 +12,10 @@ public class GlucoseData: Codable {
     public var glucoseLevelFiltered: Double
     public var trend: UInt8
     public var lastValue: Double
+    public var lastDate: Date
     
     init(timeStamp:Date, glucoseLevelRaw:Double, glucoseLevelFiltered:Double, trend: UInt8 = 0) {
+        self.lastDate = timeStamp
         self.timeStamp = timeStamp
         self.glucoseLevelRaw = glucoseLevelRaw
         self.lastValue = glucoseLevelRaw
@@ -35,10 +37,9 @@ public class GlucoseData: Codable {
         glucoseLevelRaw = \(glucoseLevelRaw.description)
         trend = \(trend)
         lastValue = \(lastValue)
+        lastDate = \(lastDate.description(with: .current))
         """
     }
-    
-    
 }
 
 extension GlucoseData: GlucoseValue {

@@ -356,12 +356,14 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                     let filterred = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).sorted { (data1, data2) -> Bool in
                         return data1.timeStamp > data2.timeStamp
                     }
+                    
                     let newGlucose = filterred.map {
                         return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
                     }
                     
-                    if let last  = self.latestBackfill, let value = glucose.first?.glucoseLevelRaw {
-                        last.glucoseLevelRaw = value
+                    if let last  = self.latestBackfill, let value = filterred.first {
+                        last.glucoseLevelRaw = value.glucoseLevelRaw
+                        last.timeStamp = value.timeStamp
                         self.latestBackfill = last
                     }
                     
@@ -371,18 +373,20 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                             latest = filterred[1]
                         }
                         
-                        if let lastValue = latest?.lastValue {
-                            latest?.glucoseLevelRaw = lastValue
+                        LogsAccessor.log("current: \(filterred.first?.description ?? "")")
+                        LogsAccessor.log("last: \(latest?.description ?? "")")
+                        if let last = latest {
+                            latest?.glucoseLevelRaw = last.lastValue
+                            latest?.timeStamp = last.lastDate
                         }
                         
-                        LogsAccessor.log("current date: \(filterred.first?.timeStamp ?? Date(timeIntervalSince1970: 0)), current value: \(filterred.first?.glucoseLevelRaw ?? 0), latest date: \(latest?.timeStamp ?? Date(timeIntervalSince1970: 0)), latest value: \(latest?.glucoseLevelRaw ?? 0)")
+                        LogsAccessor.log("last changed: \(latest?.description ?? "")")
+                        
                         let arrow = LibreOOPClient.GetGlucoseDirection(current: filterred.first, last: latest)
                         glucose.first?.trend = UInt8(arrow.rawValue)
                         
                         if let newValue = glucose.first {
-                            newValue.lastValue = newValue.glucoseLevelRaw
                             self.latestBackfill = newValue
-                            LogsAccessor.log(newValue.description)
                         }
                         
                         var params = "["
