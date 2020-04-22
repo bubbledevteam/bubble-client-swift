@@ -126,12 +126,12 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     public init(){
         lastConnected = nil
         
-        os_log("dabear: BubbleClientManager will be created now")
+        LogsAccessor.log("BubbleClientManager will be created now")
         //proxy = BubbleBluetoothManager()
         BubbleClientManager.proxy?.delegate = self
         //proxy?.connect()
         
-        BubbleClientManager.instanceCount += 1   
+        BubbleClientManager.instanceCount += 1
     }
     
     public var connectionState : String {
@@ -353,7 +353,10 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                     }
                     
                     let startDate = self.latestBackfill?.startDate.addingTimeInterval(4 * 60)
-                    let newGlucose = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).map {
+                    let filterred = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).sorted { (data1, data2) -> Bool in
+                        return data1.timeStamp > data2.timeStamp
+                    }
+                    let newGlucose = filterred.map {
                         return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
                     }
                     
@@ -364,19 +367,16 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                     
                     if newGlucose.count > 0 {
                         var latest = self.latestBackfill
-                        if glucose.count > 2 {
-                            if let latestUpdateData = latest, let current = glucose.first {
-                                if latestUpdateData.timeStamp.addingTimeInterval(8 * 60) < current.timeStamp {
-                                    latest = glucose[1]
-                                }
-                            }
+                        if filterred.count > 2 {
+                            latest = filterred[1]
                         }
                         
                         if let lastValue = latest?.lastValue {
                             latest?.glucoseLevelRaw = lastValue
                         }
                         
-                        let arrow = LibreOOPClient.GetGlucoseDirection(current: glucose.first, last: latest)
+                        LogsAccessor.log("current date: \(filterred.first?.timeStamp ?? Date(timeIntervalSince1970: 0)), current value: \(filterred.first?.glucoseLevelRaw ?? 0), latest date: \(latest?.timeStamp ?? Date(timeIntervalSince1970: 0)), latest value: \(latest?.glucoseLevelRaw ?? 0)")
+                        let arrow = LibreOOPClient.GetGlucoseDirection(current: filterred.first, last: latest)
                         glucose.first?.trend = UInt8(arrow.rawValue)
                         
                         if let newValue = glucose.first {
