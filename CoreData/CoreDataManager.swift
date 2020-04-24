@@ -57,10 +57,6 @@ final class CoreDataManager: NSObject {
         return NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
     }()
     
-    static func addLog(log: String?) {
-        LogsAccessor.log(log)
-    }
-    
     private func addPersistentStore(to persistentStoreCoordinator: NSPersistentStoreCoordinator) {
         // Helpers
         let fileManager = FileManager.default
@@ -102,6 +98,7 @@ final class CoreDataManager: NSObject {
     private func setupCoreDataStack() {
         // Fetch Persistent Store Coordinator
         guard let persistentStoreCoordinator = mainManagedObjectContext.persistentStoreCoordinator else {
+            LogsAccessor.error("Unable to Set Up Core Data Stack")
             fatalError("Unable to Set Up Core Data Stack")
         }
         
@@ -126,7 +123,7 @@ final class CoreDataManager: NSObject {
                     try self.mainManagedObjectContext.save()
                 }
             } catch {
-                LogsAccessor.log("in saveChangesAtTermination,  Unable to Save Changes of Main Managed Object Context, \(error.localizedDescription)")
+                LogsAccessor.error("in saveChangesAtTermination,  Unable to Save Changes of Main Managed Object Context, \(error.localizedDescription)")
             }
         }
         
@@ -136,7 +133,7 @@ final class CoreDataManager: NSObject {
                     try self.privateManagedObjectContext.save()
                 }
             } catch {
-                LogsAccessor.log("in saveChangesAtTermination,  Unable to Save Changes of Private Managed Object Context, \(error.localizedDescription)")
+                LogsAccessor.error("in saveChangesAtTermination,  Unable to Save Changes of Private Managed Object Context, \(error.localizedDescription)")
             }
         }
     }
@@ -150,7 +147,7 @@ final class CoreDataManager: NSObject {
                     try self.mainManagedObjectContext.save()
                 }
             } catch {
-                LogsAccessor.log("in saveChangesAtTermination,  Unable to Save Changes of Main Managed Object Context, \(error.localizedDescription)")
+                LogsAccessor.error("in saveChangesAtTermination,  Unable to Save Changes of Main Managed Object Context, \(error.localizedDescription)")
             }
         }
         
@@ -160,7 +157,7 @@ final class CoreDataManager: NSObject {
                     try self.privateManagedObjectContext.save()
                 }
             } catch {
-                LogsAccessor.log("in saveChangesAtTermination,  Unable to Save Changes of Private Managed Object Context, \(error.localizedDescription)")
+                LogsAccessor.error("in saveChangesAtTermination,  Unable to Save Changes of Private Managed Object Context, \(error.localizedDescription)")
             }
         }
     }

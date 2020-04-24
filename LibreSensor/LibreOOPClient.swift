@@ -25,6 +25,7 @@ let token = "bubble-201907"
 class LibreOOPClient {
     // MARK: - public functions
     static func webOOP(uploadURL: URL, callback: ((LibreRawGlucoseOOPData?) -> ())?) {
+        LogsAccessor.log("start libreoop2")
         let request = NSMutableURLRequest(url: uploadURL)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
@@ -47,12 +48,28 @@ class LibreOOPClient {
                 let decoder = JSONDecoder.init()
                 if let oopValue = try? decoder.decode(LibreRawGlucoseOOPData.self, from: data) {
                     callback?(oopValue)
-                    return
+                } else {
+                    callback?(nil)
                 }
-                callback?(nil)
             }
         }
         task.resume()
+    }
+    
+    public static func oopParams(libreData: [UInt8], params: LibreDerivedAlgorithmParameters) -> [LibreRawGlucoseData] {
+        LogsAccessor.log("start last16")
+        let last16 = trendMeasurements(bytes: libreData, date: Date(), LibreDerivedAlgorithmParameterSet: params)
+        if var glucoseData = trendToLibreGlucose(last16), let first = glucoseData.first {
+            LogsAccessor.log("start history")
+            let last32 = historyMeasurements(bytes: libreData, date: first.timeStamp, LibreDerivedAlgorithmParameterSet: params)
+            let glucose32 = trendToLibreGlucose(last32) ?? []
+            LogsAccessor.log("start split")
+            let last96 = split(current: first, glucoseData: glucose32.reversed())
+            glucoseData = last96
+            return glucoseData
+        } else {
+            return []
+        }
     }
     
     public static func handleLibreData(sensorData: SensorData, callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
@@ -61,6 +78,7 @@ class LibreOOPClient {
         
         // web oop for newwork bad and version < 1.22
         func oop() {
+            LogsAccessor.log("start calibrateSensor")
             LibreOOPClient.calibrateSensor(sensorData: sensorData, serialNumber: sensorData.serialNumber) {
                 (calibrationparams)  in
                 var params = LibreDerivedAlgorithmParameters.init(slope_slope: 0.13,
@@ -71,6 +89,7 @@ class LibreOOPClient {
                                                                   extraSlope: 1.0,
                                                                   extraOffset: 0.0)
                 if let p = calibrationparams {
+                    LogsAccessor.log("calibrateSensor params: \(calibrationparams?.description ?? "")")
                     params = p
                     guard !p.isErrorParameters else {
                         callback(([], sensorState, nil))
@@ -78,16 +97,9 @@ class LibreOOPClient {
                     }
                 }
                 
-                let last16 = trendMeasurements(bytes: sensorData.bytes, date: Date(), LibreDerivedAlgorithmParameterSet: params)
-                if var glucoseData = trendToLibreGlucose(last16), let first = glucoseData.first {
-                    let last32 = historyMeasurements(bytes: sensorData.bytes, date: first.timeStamp, LibreDerivedAlgorithmParameterSet: params)
-                    let glucose32 = trendToLibreGlucose(last32) ?? []
-                    let last96 = split(current: first, glucoseData: glucose32.reversed())
-                    glucoseData = last96
-                    callback((glucoseData, sensorState, nil))
-                } else {
-                    callback(([], sensorState, nil))
-                }
+                
+                callback((oopParams(libreData: sensorData.bytes,
+                                    params: params), sensorState, nil))
             }
         }
         
@@ -112,12 +124,13 @@ class LibreOOPClient {
                 webOOP(uploadURL: uploadURL) { oopValue in
                     if let oopValue = oopValue, !oopValue.isError {
                         if oopValue.valueError {
+                            LogsAccessor.log( "libreoop2 server glucose data error")
+                            // libreoop2 server glucose data error
                             if sensorData.isSecondSensor && oopValue.sensorState.sensorState == .notYetStarted {
                                 callback(([], .notYetStarted, nil))
                             } else {
                                 callback(([], .failure, nil))
                             }
-                            return
                         } else {
                             if let time = oopValue.sensorTime {
                                 var last96 = [LibreRawGlucoseData]()
@@ -136,6 +149,7 @@ class LibreOOPClient {
                             }
                         }
                     } else {
+                        // libreoop2 network failed
                         if sensorData.isFirstSensor {
                             oop()
                         } else {
@@ -183,6 +197,7 @@ class LibreOOPClient {
     
     private static func calibrateSensor(sensorData: SensorData, serialNumber: String,  callback: @escaping (LibreDerivedAlgorithmParameters?) -> Void) {
         if let response = keychain.getLibreCalibrationData(), response.serialNumber == sensorData.serialNumber {
+            LogsAccessor.log("parameters from keychain")
             callback(response)
             return
         }
@@ -208,6 +223,7 @@ class LibreOOPClient {
                     callback(nil)
                 }
             } catch {
+                LogsAccessor.log("calibrateSensor decode: \(error.localizedDescription)")
                 callback(nil)
             }
         })
@@ -224,7 +240,7 @@ class LibreOOPClient {
             "timestamp": "\(date)",
             "appName": "diabox"
         ]
-        
+        LogsAccessor.log("start calibrateSensor")
         if let uploadURL = URL.init(string: "\(baseUrl)/calibrateSensor") {
             let request = NSMutableURLRequest(url: uploadURL)
             request.httpMethod = "POST"
@@ -244,6 +260,7 @@ class LibreOOPClient {
                 
                 if let response = String(data: data, encoding: String.Encoding.utf8) {
                     DispatchQueue.main.sync {
+                        LogsAccessor.log(response)
                         completion(data, response, true)
                     }
                     return
@@ -257,6 +274,7 @@ class LibreOOPClient {
             task.resume()
         }
     }
+    
     
     private static func trendMeasurements(bytes: [UInt8], date: Date, _ offset: Double = 0.0, slope: Double = 0.1, LibreDerivedAlgorithmParameterSet: LibreDerivedAlgorithmParameters?) -> [LibreMeasurement] {
         guard bytes.count >= 320 else { return [] }
@@ -294,18 +312,21 @@ class LibreOOPClient {
         var measurements = [LibreMeasurement]()
         // History data is stored in body from byte 100 to byte 100+192-1=291 in units of 6 bytes. Index on data such that most recent block is first.
         for blockIndex in 0..<32 {
-            
             var index = 100 + (nextHistoryBlock - 1 - blockIndex) * 6 // runs backwards
             if index < 100 {
                 index = index + 192 // if end of ring buffer is reached shift to beginning of ring buffer
             }
-            
-            guard index + 6 < body.count else { return [] }
+            guard index + 6 < body.count else { break }
             let range = index..<index+6
             let measurementBytes = Array(body[range])
             let (date, counter) = dateOfMostRecentHistoryValue(minutesSinceStart: minutesSinceStart, nextHistoryBlock: nextHistoryBlock, date: date)
             let final = date.addingTimeInterval(Double(-900 * blockIndex))
-            let measurement = LibreMeasurement(bytes: measurementBytes, slope: slope, offset: offset, counter: counter - blockIndex * 15, date: final, LibreDerivedAlgorithmParameterSet: LibreDerivedAlgorithmParameterSet)
+            let measurement = LibreMeasurement(bytes: measurementBytes,
+                                               slope: slope,
+                                               offset: offset,
+                                               counter: counter - blockIndex * 15,
+                                               date: final,
+                                               LibreDerivedAlgorithmParameterSet: LibreDerivedAlgorithmParameterSet)
             measurements.append(measurement)
         }
         return measurements

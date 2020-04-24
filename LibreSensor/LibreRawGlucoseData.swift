@@ -92,7 +92,7 @@ class LibreRawGlucoseData: GlucoseData {
     
 }
 
-class LibreRawGlucoseOOPData: NSObject, Codable {
+public class LibreRawGlucoseOOPData: NSObject, Codable {
     var alarm : String?
     var esaMinutesToWait : Int?
     var historicGlucose : [HistoricGlucose]?
@@ -102,6 +102,7 @@ class LibreRawGlucoseOOPData: NSObject, Codable {
     var trendArrow : String?
     var msg: String?
     var errcode: String?
+    var endTime: Int?
     
     enum Error: String {
         typealias RawValue = String
@@ -135,23 +136,17 @@ class LibreRawGlucoseOOPData: NSObject, Codable {
     }
     
     var sensorTime: Int? {
-        if let msg = msg {
-            switch Error(rawValue: msg) {
-            case .TERMINATE_SENSOR_CORRUPT_PAYLOAD,
-                 .TERMINATE_SENSOR_NORMAL_TERMINATED_STATE,
-                 .TERMINATE_SENSOR_ERROR_TERMINATED_STATE,
-                 .TYPE_SENSOR_Expired:
-                return 24 * 6 * 149
-            default:
-                break
-            }
+        if let endTime = endTime, endTime != 0 {
+            return 24 * 6 * 149
         }
         return realTimeGlucose?.id
     }
     
     var sensorState: String {
-        if let sensorTime = sensorTime, sensorTime < 62 {
-            return LibreSensorState.notYetStarted.identify
+        if let dataQuality = realTimeGlucose?.dataQuality, let id = realTimeGlucose?.id {
+            if dataQuality != 0 && id < 60 {
+                return LibreSensorState.notYetStarted.identify
+            }
         }
         
         var state = LibreSensorState.ready
@@ -167,8 +162,10 @@ class LibreRawGlucoseOOPData: NSObject, Codable {
                  .TERMINATE_SENSOR_CORRUPT_PAYLOAD,
                  .TERMINATE_SENSOR_NORMAL_TERMINATED_STATE,
                  .TERMINATE_SENSOR_ERROR_TERMINATED_STATE:
+                state = .end
                 break;
             case .TYPE_SENSOR_END:
+                state = .end
                 break;
             case .TYPE_SENSOR_ERROR:
                 state = .failure
@@ -182,10 +179,16 @@ class LibreRawGlucoseOOPData: NSObject, Codable {
                 break;
             }
         }
+        if let endTime = endTime, endTime != 0 {
+            state = .end
+        }
         return state.identify
     }
     
     func glucoseData(date: Date) ->(LibreRawGlucoseData?, [LibreRawGlucoseData]) {
+        if endTime != 0 {
+            return (nil, [])
+        }
         var current: LibreRawGlucoseData?
         guard let g = realTimeGlucose, g.dataQuality == 0 else { return(nil, []) }
         current = LibreRawGlucoseData.init(timeStamp: date, glucoseLevelRaw: g.value ?? 0)

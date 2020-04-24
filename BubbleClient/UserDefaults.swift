@@ -61,4 +61,7 @@ public struct UserDefaultsUnit {
     
     @UserDefaultJsonWrapper("latestUpdateData")
     public static var latestUpdateData: GlucoseData?
+    
+    @UserDefaultWrapper("coreDataError", "")
+    public static var coreDataError: String!
 }

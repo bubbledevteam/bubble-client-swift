@@ -67,10 +67,8 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             "Connection state: \(connectionState)",
             "Sensor state: \(sensorStateDescription)",
             "Bridge battery: \(battery)",
-            //"Notification glucoseunit: \(glucoseUnit)",
-            //"shouldSendGlucoseNotifications: \(shouldSendGlucoseNotifications)",
+            "Code Error: \(UserDefaultsUnit.coreDataError!)",
             "latestBackfill: \(latestBackfill?.description ?? "")",
-            //"latestCollector: \(String(describing: latestSpikeCollector))",
             "logs: \(LogsAccessor.todayLogs())",
             ""
             ].joined(separator: "\n")
@@ -88,7 +86,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     public private(set) var latestBackfill: GlucoseData? {
         set {
             if let newValue = newValue {
-                NSLog("dabear:: sending glucose notification")
                 NotificationHelper.sendGlucoseNotitifcationIfNeeded(glucose: newValue, oldValue: latestBackfill)
                 UserDefaultsUnit.latestGlucose = newValue
             }
@@ -186,9 +183,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     }
     
     public func disconnect(){
-        NSLog("dabear:: BubbleClientManager disconnect called")
-        
-        
+        LogsAccessor.log("BubbleClientManager disconnect called")
         BubbleClientManager.proxy?.disconnectManually()
         BubbleClientManager.proxy?.delegate = nil
     }
@@ -198,10 +193,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     }
     
     deinit {
-        
-        NSLog("dabear:: BubbleClientManager deinit called")
-        
-        
+        LogsAccessor.log("BubbleClientManager deinit called")
         //cleanup any references to events to this class
         disconnect()
         BubbleClientManager.instanceCount -= 1

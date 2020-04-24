@@ -13,12 +13,11 @@ import Foundation
 /// - notYetStarted: 0x01 sensor not yet started
 /// - starting:      0x02 sensor is in the starting phase
 /// - ready:         0x03 sensor is ready, i.e. in normal operation mode
-/// - stateFour:     0x04 state with yet unknown meaning
-/// - expired:       0x05 sensor is expired
+/// - expired:       0x04 sensor is expired, status after 14 days, less than 14,5 days
+/// - shutdown:      0x05 sensor stops operation after 15d after start
 /// - failure:       0x06 sensor has an error
 /// - unknown:       any other state
-
-enum LibreSensorState {
+public enum LibreSensorState {
     case notYetStarted
     case starting
     case ready
@@ -26,6 +25,7 @@ enum LibreSensorState {
     case shutdown
     case failure
     case unknown
+    case end
     
     init(){
         self = .unknown
@@ -63,6 +63,8 @@ enum LibreSensorState {
             return "Shutdown"
         case .failure:
             return "Sensor Error"
+        case .end:
+            return "Sensor End"
         default:
             return "Unknown"
         }
@@ -102,6 +104,8 @@ extension String {
             return .shutdown
         } else if self == "Sensor Error" {
             return .failure
+        } else if self == "Sensor End" {
+            return .end
         }
         return .unknown
     }

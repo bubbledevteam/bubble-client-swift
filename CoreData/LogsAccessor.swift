@@ -63,23 +63,18 @@ class LogsAccessor: NSObject {
         coreDataManager.saveChanges()
     }
     
-    static func log(_ object: String?, _ shouldPrint: Bool = true) {
-        DispatchQueue.main.async {
-            guard let object = object else { return }
-            if shouldPrint {
-                os_log("Bubble:: %s", log: osLog, type: .debug, object)
-            }
-            textLog(object: object)
-        }
-    }
-    
     static func todayLogs() -> String {
-        guard let logsAccessor = logsAccessor else { return "" }
-        let logs = logsAccessor.todayLogs()
+        let sem = DispatchSemaphore.init(value: 0)
         var text = ""
-        for log in logs {
-            text += "\(log.text ?? "")\n"
+        DispatchQueue.main.async {
+            guard let logsAccessor = logsAccessor else { return }
+            let logs = logsAccessor.todayLogs()
+            for log in logs {
+                text += "\(log.text ?? "")\n"
+            }
+            sem.signal()
         }
+        sem.wait()
         return text
     }
     
@@ -91,4 +86,27 @@ class LogsAccessor: NSObject {
         guard let coreDataManager = coreDataManager else { return nil }
         return LogsAccessor.init(coreDataManager: coreDataManager)
     }()
+    
+    static func log(_ object: String?, _ shouldPrint: Bool = true) {
+        DispatchQueue.main.async {
+            guard let object = object else { return }
+            if shouldPrint {
+                os_log("Bubble:: %s", log: osLog, type: .debug, object)
+            }
+            textLog(object: object)
+        }
+    }
+    
+    static func error(_ object: String?, _ shouldPrint: Bool = true) {
+        DispatchQueue.main.async {
+            guard let object = object else { return }
+            if shouldPrint {
+                os_log("Bubble:: %s", log: osLog, type: .debug, object)
+            }
+            let format = DateFormatter()
+            format.dateFormat = "yyyy-MM-dd hh:mm:ss"
+            let dateString = format.string(from: Date())
+            UserDefaultsUnit.coreDataError += "\n\n\(dateString)\n\(object)"
+        }
+    }
 }
