@@ -54,6 +54,10 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         )
     }
     
+    public var todayLogs: String {
+        return LogsAccessor.todayLogs()
+    }
+    
     public var peripheralState: CBPeripheralState {
         return BubbleClientManager.proxy?.peripheral?.state ?? .disconnected
     }
@@ -62,15 +66,12 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         
         return [
             "## BubbleClientManager",
-            "Testdata: foo",
             "lastConnected: \(String(describing: lastConnected))",
             "Connection state: \(connectionState)",
             "Sensor state: \(sensorStateDescription)",
             "Bridge battery: \(battery)",
             "Code Error: \(UserDefaultsUnit.coreDataError!)",
-            "latestBackfill: \(latestBackfill?.description ?? "")",
-            "logs: \(LogsAccessor.todayLogs())",
-            ""
+            "latestBackfill: \(latestBackfill?.description ?? "")"
             ].joined(separator: "\n")
     }
     

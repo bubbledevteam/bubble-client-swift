@@ -111,7 +111,8 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
     
     private enum Share: Int {
         case openApp
-        static let count = 1
+        case shareLog
+        static let count = 2
     }
 
     private enum LatestReadingRow: Int {
@@ -197,8 +198,13 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             return cell
         case .share:
             let cell = tableView.dequeueReusableCell(withIdentifier: TextButtonTableViewCell.className, for: indexPath)
-
-            cell.textLabel?.text = LocalizedString("Open App", comment: "Button title to open CGM app")
+            switch Share(rawValue: indexPath.row) {
+            case .openApp:
+                cell.textLabel?.text = LocalizedString("Open App", comment: "Button title to open CGM app")
+            case .shareLog:
+                cell.textLabel?.text = LocalizedString("Share Logs", comment: "Button title to Share Logs")
+            }
+            
 
             return cell
         }
@@ -241,8 +247,23 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
                 tableView.deselectRow(at: indexPath, animated: true)
             }
         case .share:
-            if let appURL = cgmManager?.appURL {
-                UIApplication.shared.open(appURL)
+            switch Share(rawValue: indexPath.row)! {
+            case .openApp:
+                if let appURL = cgmManager?.appURL {
+                    UIApplication.shared.open(appURL)
+                }
+            case .shareLog:
+                let logs = cgmManager?.todayLogs()
+                guard !logs.isEmpty else { return }
+                let path: String = NSHomeDirectory() + "/Documents/log.txt"
+                let url = URL.init(fileURLWithPath: path)
+                if let data = logs.data(using: .utf8) {
+                    do {
+                        try data.write(to: url)
+                        let vc = UIActivityViewController.init(activityItems: [url], applicationActivities: nil)
+                        present(vc, animated: true, completion: nil)
+                    } catch {}
+                }
             }
         case .device:
             tableView.deselectRow(at: indexPath, animated: true)
