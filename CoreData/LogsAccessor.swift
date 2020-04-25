@@ -23,7 +23,7 @@ class LogsAccessor: NSObject {
     
     func todayLogs() -> [LocalLog] {
         let calendar = Calendar(identifier: Calendar.current.identifier)
-        let date = calendar.date(byAdding: .hour, value: -10, to: Date())!
+        let date = calendar.date(byAdding: .day, value: -1, to: Date())!
         return fetchLogs(fromDate: date)
     }
     
