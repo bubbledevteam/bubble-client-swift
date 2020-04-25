@@ -198,7 +198,7 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             return cell
         case .share:
             let cell = tableView.dequeueReusableCell(withIdentifier: TextButtonTableViewCell.className, for: indexPath)
-            switch Share(rawValue: indexPath.row) {
+            switch Share(rawValue: indexPath.row)! {
             case .openApp:
                 cell.textLabel?.text = LocalizedString("Open App", comment: "Button title to open CGM app")
             case .shareLog:
@@ -253,9 +253,9 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
                     UIApplication.shared.open(appURL)
                 }
             case .shareLog:
-                let logs = cgmManager?.todayLogs()
-                guard !logs.isEmpty else { return }
-                let path: String = NSHomeDirectory() + "/Documents/log.txt"
+                
+                guard let logs = cgmManager?.todayLogs, !logs.isEmpty else { return }
+                let path: String = NSHomeDirectory() + "/Documents/loopLog.txt"
                 let url = URL.init(fileURLWithPath: path)
                 if let data = logs.data(using: .utf8) {
                     do {
