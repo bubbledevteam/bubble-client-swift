@@ -64,17 +64,12 @@ class LogsAccessor: NSObject {
     }
     
     static func todayLogs() -> String {
-        let sem = DispatchSemaphore.init(value: 0)
         var text = ""
-        DispatchQueue.main.async {
-            guard let logsAccessor = logsAccessor else { return }
-            let logs = logsAccessor.todayLogs()
-            for log in logs {
-                text += "\(log.text ?? "")\n"
-            }
-            sem.signal()
+        guard let logsAccessor = logsAccessor else { return "" }
+        let logs = logsAccessor.todayLogs()
+        for log in logs {
+            text += "\(log.text ?? "")\n"
         }
-        sem.wait()
         return text
     }
     
