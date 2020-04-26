@@ -81,15 +81,11 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     }
     
     
-    
     public private(set) var lastConnected : Date?
     
     public private(set) var latestBackfill: GlucoseData? {
         set {
-            if let newValue = newValue {
-                NotificationHelper.sendGlucoseNotitifcationIfNeeded(glucose: newValue, oldValue: latestBackfill)
-                UserDefaultsUnit.latestGlucose = newValue
-            }
+            UserDefaultsUnit.latestGlucose = newValue
         }
         get { UserDefaultsUnit.latestGlucose }
     }
@@ -97,7 +93,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     public static var managerIdentifier = "DexBubbleClient1"
     
     required convenience public init?(rawState: CGMManager.RawStateValue) {
-        os_log("dabear:: BubbleClientManager will init from rawstate")
         self.init()
         
     }
@@ -235,7 +230,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     func autoconnect() {
         guard let proxy = BubbleClientManager.proxy else {
-            os_log("dabear: could not do autoconnect, proxy was nil")
             return
         }
         
@@ -256,19 +250,10 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     public func handleGoodReading(data: SensorData?,_ callback: @escaping (LibreError?, [GlucoseData]?) -> Void) {
         //only care about the once per minute readings here, historical data will not be considered
-        
-        guard let data = data else {
-            callback(LibreError.noSensorData, nil)
-            return
-        }
+        guard let data = data else { return }
         
         LibreOOPClient.handleLibreData(sensorData: data) { result in
-            LogsAccessor.log("network end")
-            guard let glucose = result?.glucoseData, !glucose.isEmpty else {
-                callback(LibreError.noSensorData, nil)
-                return
-            }
-            
+            guard let glucose = result?.glucoseData, !glucose.isEmpty else { return }
             callback(nil, glucose)
         }
     }
@@ -327,24 +312,15 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             LogsAccessor.log(sensorData.state.description)
             if sensorData.state != .ready { return }
         }
+        
         if sensorData.hasValidCRCs || sensorData.isSecondSensor {
             self.lastValidSensorData = sensorData
             
-            self.handleGoodReading(data: sensorData) { (error, glucose) in
+            self.handleGoodReading(data: sensorData) { [weak self]  (_, glucose) in
+                guard let self = self else { return }
                 LogsAccessor.log("got glucose")
-                if let error = error {
-                    self.delegate.notify { (delegate) in
-                        delegate?.cgmManager(self, didUpdateWith: .error(error))
-                    }
-                    return
-                }
                 
-                guard let glucose = glucose else {
-                    self.delegate.notify { (delegate) in
-                        delegate?.cgmManager(self, didUpdateWith: .noData)
-                    }
-                    return
-                }
+                guard let glucose = glucose else { return }
                 
                 let startDate = self.latestBackfill?.startDate.addingTimeInterval(4 * 60)
                 let filterred = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).sorted { (data1, data2) -> Bool in
@@ -356,6 +332,8 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                 }
                 
                 if let last = self.latestBackfill, let value = filterred.first {
+                    LogsAccessor.log("last changed: \(last.description)")
+                    
                     last.glucoseLevelRaw = value.glucoseLevelRaw
                     last.timeStamp = value.timeStamp
                     self.latestBackfill = last
@@ -363,7 +341,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                 
                 if newGlucose.count > 0 {
                     var latest = self.latestBackfill
-                    if filterred.count > 2 {
+                    if filterred.count > 1 {
                         latest = filterred[1]
                     }
                     
@@ -371,8 +349,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                         latest?.glucoseLevelRaw = last.lastValue
                         latest?.timeStamp = last.lastDate
                     }
-                    
-                    LogsAccessor.log("last changed: \(latest?.description ?? "")")
                     
                     if let newValue = glucose.first {
                         let arrow = LibreOOPClient.GetGlucoseDirection(current: filterred.first, last: latest)
@@ -391,19 +367,11 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                     LogsAccessor.log(params)
                     self.delegate.notify { (delegate) in
                         delegate?.cgmManager(self, didUpdateWith: .newData(newGlucose))
-                    }
-                    
-                } else {
-                    self.delegate.notify { (delegate) in
-                        delegate?.cgmManager(self, didUpdateWith: .noData)
+                        LogsAccessor.log("update glucose success")
                     }
                 }
             }
             
-        } else {
-            self.delegate.notify { (delegate) in
-                delegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
-            }
         }
     }
     
