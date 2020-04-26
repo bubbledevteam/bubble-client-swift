@@ -325,86 +325,83 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             LogsAccessor.log(sensorData.state.description)
             if sensorData.state != .ready { return }
         }
-        self.delegateQueue.async {
-            if sensorData.hasValidCRCs || sensorData.isSecondSensor {
-                self.lastValidSensorData = sensorData
-                
-                self.handleGoodReading(data: sensorData) { (error, glucose) in
-                    if let error = error {
-                        self.delegate.notify { (delegate) in
-                            delegate?.cgmManager(self, didUpdateWith: .error(error))
-                        }
-                        return
+        if sensorData.hasValidCRCs || sensorData.isSecondSensor {
+            self.lastValidSensorData = sensorData
+            
+            self.handleGoodReading(data: sensorData) { (error, glucose) in
+                if let error = error {
+                    self.delegate.notify { (delegate) in
+                        delegate?.cgmManager(self, didUpdateWith: .error(error))
                     }
-                    
-                    guard let glucose = glucose else {
-                        self.delegate.notify { (delegate) in
-                            delegate?.cgmManager(self, didUpdateWith: .noData)
-                        }
-                        return
-                    }
-                    
-                    let startDate = self.latestBackfill?.startDate.addingTimeInterval(4 * 60)
-                    let filterred = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).sorted { (data1, data2) -> Bool in
-                        return data1.timeStamp > data2.timeStamp
-                    }
-                    
-                    let newGlucose = filterred.map {
-                        return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
-                    }
-                    
-                    if let last = self.latestBackfill, let value = filterred.first {
-                        last.glucoseLevelRaw = value.glucoseLevelRaw
-                        last.timeStamp = value.timeStamp
-                        self.latestBackfill = last
-                    }
-                    
-                    if newGlucose.count > 0 {
-                        var latest = self.latestBackfill
-                        if filterred.count > 2 {
-                            latest = filterred[1]
-                        }
-                        
-                        LogsAccessor.log("current: \(filterred.first?.description ?? "")")
-                        LogsAccessor.log("last: \(latest?.description ?? "")")
-                        if let last = latest {
-                            latest?.glucoseLevelRaw = last.lastValue
-                            latest?.timeStamp = last.lastDate
-                        }
-                        
-                        LogsAccessor.log("last changed: \(latest?.description ?? "")")
-                        
-                        if let newValue = glucose.first {
-                            let arrow = LibreOOPClient.GetGlucoseDirection(current: filterred.first, last: latest)
-                            newValue.trend = UInt8(arrow.rawValue)
-                            self.latestBackfill = newValue
-                        }
-                        
-                        var params = "["
-                        for g in newGlucose {
-                            params +=
-                            """
-                            {"date": \(g.date), "glucose": \(g.quantity.doubleValue(for: .milligramsPerDeciliter))},\n
-                            """
-                        }
-                        params += "]"
-                        LogsAccessor.log(params)
-                        self.delegate.notify { (delegate) in
-                            delegate?.cgmManager(self, didUpdateWith: .newData(newGlucose))
-                        }
-                        
-                    } else {
-                        self.delegate.notify { (delegate) in
-                            delegate?.cgmManager(self, didUpdateWith: .noData)
-                        }
-                    }
+                    return
                 }
                 
-                
-            } else {
-                self.delegate.notify { (delegate) in
-                    delegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
+                guard let glucose = glucose else {
+                    self.delegate.notify { (delegate) in
+                        delegate?.cgmManager(self, didUpdateWith: .noData)
+                    }
+                    return
                 }
+                
+                let startDate = self.latestBackfill?.startDate.addingTimeInterval(4 * 60)
+                let filterred = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).sorted { (data1, data2) -> Bool in
+                    return data1.timeStamp > data2.timeStamp
+                }
+                
+                let newGlucose = filterred.map {
+                    return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
+                }
+                
+                if let last = self.latestBackfill, let value = filterred.first {
+                    last.glucoseLevelRaw = value.glucoseLevelRaw
+                    last.timeStamp = value.timeStamp
+                    self.latestBackfill = last
+                }
+                
+                if newGlucose.count > 0 {
+                    var latest = self.latestBackfill
+                    if filterred.count > 2 {
+                        latest = filterred[1]
+                    }
+                    
+                    LogsAccessor.log("current: \(filterred.first?.description ?? "")")
+                    LogsAccessor.log("last: \(latest?.description ?? "")")
+                    if let last = latest {
+                        latest?.glucoseLevelRaw = last.lastValue
+                        latest?.timeStamp = last.lastDate
+                    }
+                    
+                    LogsAccessor.log("last changed: \(latest?.description ?? "")")
+                    
+                    if let newValue = glucose.first {
+                        let arrow = LibreOOPClient.GetGlucoseDirection(current: filterred.first, last: latest)
+                        newValue.trend = UInt8(arrow.rawValue)
+                        self.latestBackfill = newValue
+                    }
+                    
+                    var params = "["
+                    for g in newGlucose {
+                        params +=
+                        """
+                        {"date": \(g.date), "glucose": \(g.quantity.doubleValue(for: .milligramsPerDeciliter))},\n
+                        """
+                    }
+                    params += "]"
+                    LogsAccessor.log(params)
+                    self.delegate.notify { (delegate) in
+                        delegate?.cgmManager(self, didUpdateWith: .newData(newGlucose))
+                    }
+                    
+                } else {
+                    self.delegate.notify { (delegate) in
+                        delegate?.cgmManager(self, didUpdateWith: .noData)
+                    }
+                }
+            }
+            
+        } else {
+            self.delegate.notify { (delegate) in
+                delegate?.cgmManager(self, didUpdateWith: .error(LibreError.checksumValidationError))
             }
         }
     }
