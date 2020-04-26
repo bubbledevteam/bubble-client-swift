@@ -263,6 +263,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         }
         
         LibreOOPClient.handleLibreData(sensorData: data) { result in
+            LogsAccessor.log("network end")
             guard let glucose = result?.glucoseData, !glucose.isEmpty else {
                 callback(LibreError.noSensorData, nil)
                 return
@@ -330,6 +331,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             self.lastValidSensorData = sensorData
             
             self.handleGoodReading(data: sensorData) { (error, glucose) in
+                LogsAccessor.log("got glucose")
                 if let error = error {
                     self.delegate.notify { (delegate) in
                         delegate?.cgmManager(self, didUpdateWith: .error(error))
@@ -365,8 +367,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                         latest = filterred[1]
                     }
                     
-                    LogsAccessor.log("current: \(filterred.first?.description ?? "")")
-                    LogsAccessor.log("last: \(latest?.description ?? "")")
                     if let last = latest {
                         latest?.glucoseLevelRaw = last.lastValue
                         latest?.timeStamp = last.lastDate
