@@ -76,8 +76,8 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     }
     
     public func fetchNewDataIfNeeded(_ completion: @escaping (CGMResult) -> Void) {
-        NSLog("dabear:: fetchNewDataIfNeeded called but we don't continue")
-        
+        LogsAccessor.log("fetchNewDataIfNeeded")
+        completion(.noData)
     }
     
     
