@@ -11,12 +11,14 @@ import Foundation
 struct SensorSerialNumber: CustomStringConvertible {
     
     let uid: Data
+    let patchInfo: String?
 
     fileprivate let lookupTable = ["0","1","2","3","4","5","6","7","8","9","A","C","D","E","F","G","H","J","K","L","M","N","P","Q","R","T","U","V","W","X","Y","Z"]
     
-    init?(withUID uid: Data) {
+    init?(withUID uid: Data, patchInfo: String? = nil) {
         guard uid.count == 8 else {return nil}
         self.uid = uid
+        self.patchInfo = patchInfo
     }
 
     // MARK: - computed properties
@@ -87,7 +89,21 @@ struct SensorSerialNumber: CustomStringConvertible {
         fiveBitsArray.append( bytes[5] >> 3 )
         fiveBitsArray.append( bytes[5] << 2 )
 
-        let serialNumber = fiveBitsArray.reduce("0", { // prepend with "0" according to step 3.)
+        var first = "0"
+        if let patchInfo = patchInfo, patchInfo.count > 1 {
+            let sub = patchInfo[0 ..< 2]
+            if sub == "70" {
+                first = "1"
+            } else if sub == "9D" {
+                first = "3"
+            } else if sub == "DF" {
+                first = "0"
+            } else if sub == "E5" {
+                first = "0"
+            }
+        }
+        
+        let serialNumber = fiveBitsArray.reduce(first, { // prepend with "0" according to step 3.)
             $0 + lookupTable[ Int(0x1F & $1) ]  // Mask with 0x1F to only take the five relevant bits
         })
         return serialNumber

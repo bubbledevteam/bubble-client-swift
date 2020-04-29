@@ -43,7 +43,6 @@ public struct SensorData {
     
     /// Parameters for the temperature compensation algorithm
     //let temperatureAlgorithmParameterSet: TemperatureAlgorithmParameters?
-
     /// The uid of the sensor
     let uuid: Data
     /// The serial number of the sensor
@@ -141,7 +140,7 @@ public struct SensorData {
         return  sensorStart.timeIntervalSinceNow.stringDaysFromTimeInterval() +  " day(s)"
     }
     
-    init?(uuid: Data, bytes: [UInt8], date: Date = Date()) {
+    init?(uuid: Data, bytes: [UInt8], date: Date = Date(), patchInfo: String?) {
         guard bytes.count == numberOfBytes else {
             return nil
         }
@@ -163,8 +162,9 @@ public struct SensorData {
         self.minutesSinceStart = Int(body[293]) << 8 + Int(body[292])
 
         self.uuid = uuid
-        self.serialNumber = SensorSerialNumber(withUID: uuid)?.serialNumber ?? "-"
         self.patchUid = uuid.hexEncodedString().uppercased()
+        self.patchInfo = patchInfo
+        self.serialNumber = SensorSerialNumber(withUID: uuid, patchInfo: patchInfo)?.serialNumber ?? "-"
     }
     
     /// Get date of most recent history value.
