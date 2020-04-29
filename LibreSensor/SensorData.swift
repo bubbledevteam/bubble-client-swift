@@ -165,10 +165,6 @@ public struct SensorData {
         self.uuid = uuid
         self.serialNumber = SensorSerialNumber(withUID: uuid)?.serialNumber ?? "-"
         self.patchUid = uuid.hexEncodedString().uppercased()
-
-        guard 0 <= nextTrendBlock && nextTrendBlock < 16 && 0 <= nextHistoryBlock && nextHistoryBlock < 32 else {
-            return nil
-        }
     }
     
     /// Get date of most recent history value.
@@ -223,8 +219,6 @@ public struct SensorData {
     func bytesWithCorrectCRC() -> [UInt8] {
         return Crc.bytesWithCorrectCRC(header) + Crc.bytesWithCorrectCRC(body) + Crc.bytesWithCorrectCRC(footer)
     }
-    
-
 }
 
 
