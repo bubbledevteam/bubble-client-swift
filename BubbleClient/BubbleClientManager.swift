@@ -328,6 +328,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             guard let glucose = glucose else { return }
             
             let startDate = self.latestBackfill?.startDate.addingTimeInterval(4 * 60)
+            
             let filterred = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).sorted { (data1, data2) -> Bool in
                 return data1.timeStamp > data2.timeStamp
             }
@@ -336,11 +337,10 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                 return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
             }
             
-            if let last = self.latestBackfill, let value = filterred.first {
-                LogsAccessor.log("last changed: \(last.description)")
-                
-                last.glucoseLevelRaw = value.glucoseLevelRaw
-                last.timeStamp = value.timeStamp
+            // update current glucose value every time.
+            if let last = self.latestBackfill, let current = filterred.first {
+                last.glucoseLevelRaw = current.glucoseLevelRaw
+                last.timeStamp = current.timeStamp
                 self.latestBackfill = last
             }
             
@@ -349,27 +349,27 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                 if filterred.count > 1 {
                     latest = filterred[1]
                 }
-                
+                // update glucoseLevelRaw and timeStamp for calculate arrow.
                 if let last = latest {
                     latest?.glucoseLevelRaw = last.lastValue
                     latest?.timeStamp = last.lastDate
                 }
                 
-                if let newValue = glucose.first {
-                    let arrow = LibreOOPClient.GetGlucoseDirection(current: filterred.first, last: latest)
+                if let newValue = filterred.first {
+                    let arrow = LibreOOPClient.GetGlucoseDirection(current: newValue, last: latest)
                     newValue.trend = UInt8(arrow.rawValue)
                     self.latestBackfill = newValue
+                    var params = "current glucose: \(newValue.description)\n["
+                    for g in newGlucose {
+                        params +=
+                        """
+                        {"date": \(g.date), "glucose": \(g.quantity.doubleValue(for: .milligramsPerDeciliter))},\n
+                        """
+                    }
+                    params += "]"
+                    LogsAccessor.log(params)
                 }
                 
-                var params = "["
-                for g in newGlucose {
-                    params +=
-                    """
-                    {"date": \(g.date), "glucose": \(g.quantity.doubleValue(for: .milligramsPerDeciliter))},\n
-                    """
-                }
-                params += "]"
-                LogsAccessor.log(params)
                 self.delegate.notify { (delegate) in
                     delegate?.cgmManager(self, didUpdateWith: .newData(newGlucose))
                     LogsAccessor.log("update glucose success")

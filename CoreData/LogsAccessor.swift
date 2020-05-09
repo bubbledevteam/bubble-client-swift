@@ -64,7 +64,7 @@ class LogsAccessor: NSObject {
     }
     
     static func todayLogs() -> String {
-        var text = "Code Error: \(UserDefaultsUnit.coreDataError!)"
+        var text = ""
         guard let logsAccessor = logsAccessor else { return "" }
         let logs = logsAccessor.todayLogs()
         for log in logs {

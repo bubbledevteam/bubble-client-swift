@@ -376,11 +376,12 @@ class LibreOOPClient {
     
     static func GetGlucoseDirection(current: GlucoseData?, last: GlucoseData?) -> GlucoseTrend {
         
-        guard let current = current, let last = last else {
+        guard let c = current, let l = last else {
+            LogsAccessor.log("direction error: \n current: \(current?.description ?? "")\nlast: \(last?.description ?? "")")
             return .flat
         }
         
-        let  s = calculateSlopeByMinute(current: current, last: last)
+        let  s = calculateSlopeByMinute(current: c, last: l)
         
         switch s {
         case _ where s <= (-3.5):
@@ -399,7 +400,7 @@ class LibreOOPClient {
             return GlucoseTrend.flat //flat is the new (tm) "unknown"!
             
         default:
-            NSLog("Got unknown trendarrow value of \(s))")
+            LogsAccessor.log("Got unknown trendarrow value of \(s))")
             return GlucoseTrend.flat
         }
         
