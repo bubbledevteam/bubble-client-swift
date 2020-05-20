@@ -81,10 +81,10 @@ class LibreOOPClient {
             LogsAccessor.log("start calibrateSensor")
             LibreOOPClient.calibrateSensor(sensorData: sensorData, serialNumber: sensorData.serialNumber) {
                 (calibrationparams)  in
-                var params = LibreDerivedAlgorithmParameters.init(slope_slope: 0.13,
-                                                                  slope_offset: 0,
-                                                                  offset_slope: 0,
-                                                                  offset_offset: -20,
+                var params = LibreDerivedAlgorithmParameters.init(slope_slope: 0.00001729,
+                                                                  slope_offset: -0.0006316,
+                                                                  offset_slope: 0.002080,
+                                                                  offset_offset: -20.15,
                                                                   isValidForFooterWithReverseCRCs: 1,
                                                                   extraSlope: 1.0,
                                                                   extraOffset: 0.0)
@@ -213,7 +213,13 @@ class LibreOOPClient {
             do {
                 let response = try decoder.decode(GetCalibrationStatus.self, from: data)
                 if let slope = response.slope {
-                    var p = LibreDerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope?.toDouble() ?? 0, slope_offset: slope.slopeOffset?.toDouble() ?? 0, offset_slope: slope.offsetSlope?.toDouble() ?? 0, offset_offset: slope.offsetOffset?.toDouble() ?? 0, isValidForFooterWithReverseCRCs: Int(slope.isValidForFooterWithReverseCRCs ?? 1), extraSlope: 1.0, extraOffset: 0.0)
+                    var p = LibreDerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope ?? 0,
+                                                                 slope_offset: slope.slopeOffset ?? 0,
+                                                                 offset_slope: slope.offsetSlope ?? 0,
+                                                                 offset_offset: slope.offsetOffset ?? 0,
+                                                                 isValidForFooterWithReverseCRCs: Int(slope.isValidForFooterWithReverseCRCs ?? 1),
+                                                                 extraSlope: 1.0,
+                                                                 extraOffset: 0.0)
                     p.serialNumber = serialNumber
                     if p.slope_slope != 0 ||
                         p.slope_offset != 0 ||
@@ -244,7 +250,6 @@ class LibreOOPClient {
             "token": token,
             "content": "\(bytesAsData.hexEncodedString())",
             "timestamp": "\(date)",
-            "appName": "diabox"
         ]
         LogsAccessor.log("start calibrateSensor")
         if let uploadURL = URL.init(string: "\(baseUrl)/calibrateSensor") {

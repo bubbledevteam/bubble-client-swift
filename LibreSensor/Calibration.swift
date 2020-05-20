@@ -77,7 +77,7 @@ public func calibrateSensor(sensordata: SensorData,  callback: @escaping (LibreD
             let response = try decoder.decode(GetCalibrationStatus.self, from: data)
             print(response)
             if let slope = response.slope {
-                var para = LibreDerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope?.toDouble() ?? 0, slope_offset: slope.slopeOffset?.toDouble() ?? 0, offset_slope: slope.offsetSlope?.toDouble() ?? 0, offset_offset: slope.offsetOffset?.toDouble() ?? 0, isValidForFooterWithReverseCRCs: Int(slope.isValidForFooterWithReverseCRCs ?? 1), extraSlope: 1.0, extraOffset: 0.0)
+                var para = LibreDerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope ?? 0, slope_offset: slope.slopeOffset ?? 0, offset_slope: slope.offsetSlope ?? 0, offset_offset: slope.offsetOffset ?? 0, isValidForFooterWithReverseCRCs: Int(slope.isValidForFooterWithReverseCRCs ?? 1), extraSlope: 1.0, extraOffset: 0.0)
                 para.serialNumber = sensordata.serialNumber
                 do {
                     try keychain.setLibreCalibrationData(para)
