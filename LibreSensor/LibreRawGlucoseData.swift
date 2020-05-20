@@ -144,7 +144,7 @@ public class LibreRawGlucoseOOPData: NSObject, Codable {
     
     var canGetParameters: Bool {
         if let dataQuality = realTimeGlucose?.dataQuality, let id = realTimeGlucose?.id {
-            if dataQuality != 0 && id >= 60 {
+            if dataQuality == 0 && id >= 60 {
                 return true
             }
         }
