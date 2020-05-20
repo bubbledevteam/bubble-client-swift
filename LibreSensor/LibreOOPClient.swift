@@ -103,7 +103,6 @@ class LibreOOPClient {
             }
         }
         
-        LogsAccessor.log("patchInfo: \(sensorData.patchInfo ?? ""), patchUid: \(sensorData.patchUid ?? ""), \ncontent: \(Data(sensorData.bytes).hexEncodedString())")
         guard let patchUid = sensorData.patchUid,
             let patchInfo = sensorData.patchInfo else {
                 oop()
@@ -132,6 +131,13 @@ class LibreOOPClient {
                                 callback(([], .failure, nil))
                             }
                         } else {
+                            if oopValue.canGetParameters {
+                                let response = keychain.getLibreCalibrationData()
+                                if response?.serialNumber != sensorData.serialNumber {
+                                    LibreOOPClient.calibrateSensor(sensorData: sensorData, serialNumber: sensorData.serialNumber) { _ in }
+                                }
+                            }
+                            
                             if let time = oopValue.sensorTime {
                                 var last96 = [LibreRawGlucoseData]()
                                 if !(oopValue.historicGlucose?.isEmpty ?? true) {
@@ -397,7 +403,7 @@ class LibreOOPClient {
         case _ where s <= (3.5):
             return GlucoseTrend.upUp
         case _ where s <= (40):
-            return GlucoseTrend.flat //flat is the new (tm) "unknown"!
+            return GlucoseTrend.upUpUp //flat is the new (tm) "unknown"!
             
         default:
             LogsAccessor.log("Got unknown trendarrow value of \(s))")

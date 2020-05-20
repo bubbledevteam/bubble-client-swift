@@ -142,10 +142,19 @@ public class LibreRawGlucoseOOPData: NSObject, Codable {
         return realTimeGlucose?.id
     }
     
+    var canGetParameters: Bool {
+        if let dataQuality = realTimeGlucose?.dataQuality, let id = realTimeGlucose?.id {
+            if dataQuality != 0 && id >= 60 {
+                return true
+            }
+        }
+        return false
+    }
+    
     var sensorState: String {
         if let dataQuality = realTimeGlucose?.dataQuality, let id = realTimeGlucose?.id {
             if dataQuality != 0 && id < 60 {
-                return LibreSensorState.notYetStarted.identify
+                return LibreSensorState.starting.identify
             }
         }
         
@@ -211,6 +220,10 @@ public class LibreRawGlucoseOOPData: NSObject, Codable {
     }
     
     var valueError: Bool {
+        if let id = realTimeGlucose?.id, id < 60 {
+            return false
+        }
+        
         if let g = realTimeGlucose, let value = g.dataQuality {
             return value != 0
         }

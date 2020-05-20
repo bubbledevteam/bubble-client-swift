@@ -326,7 +326,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             LogsAccessor.log("got glucose")
             
             guard let glucose = glucose else { return }
-            
             let startDate = self.latestBackfill?.startDate.addingTimeInterval(4 * 60)
             
             let filterred = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).sorted { (data1, data2) -> Bool in
