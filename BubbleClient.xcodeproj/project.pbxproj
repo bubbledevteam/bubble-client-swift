@@ -67,6 +67,7 @@
 		EE72B075230CDE0200D67B8F /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B074230CDE0200D67B8F /* LoopKitUI.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		EE72B076230CE02000D67B8F /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B072230CDDF500D67B8F /* LoopKit.framework */; };
 		EE72B077230CE02C00D67B8F /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B074230CDE0200D67B8F /* LoopKitUI.framework */; };
+		EE97F5AF24778458005FD8F2 /* URLEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE97F5AE24778458005FD8F2 /* URLEncoder.swift */; };
 		EEC805EC244016BD0092C718 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC805EB244016BD0092C718 /* UserDefaults.swift */; };
 		EEED17A624444D8800070523 /* Calibration.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED17A524444D8800070523 /* Calibration.swift */; };
 		EEED17B32446A4EB00070523 /* LogsAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED17B22446A4EB00070523 /* LogsAccessor.swift */; };
@@ -187,6 +188,7 @@
 		EE10F6D3243C320400C5340C /* LibreMeasurement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreMeasurement.swift; sourceTree = "<group>"; };
 		EE72B072230CDDF500D67B8F /* LoopKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKit.framework; path = Carthage/Build/iOS/LoopKit.framework; sourceTree = "<group>"; };
 		EE72B074230CDE0200D67B8F /* LoopKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LoopKitUI.framework; path = Carthage/Build/iOS/LoopKitUI.framework; sourceTree = "<group>"; };
+		EE97F5AE24778458005FD8F2 /* URLEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLEncoder.swift; sourceTree = "<group>"; };
 		EEC805EB244016BD0092C718 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		EEED17A524444D8800070523 /* Calibration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Calibration.swift; sourceTree = "<group>"; };
 		EEED17B22446A4EB00070523 /* LogsAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsAccessor.swift; sourceTree = "<group>"; };
@@ -384,6 +386,7 @@
 		43AB51342133176B00B3D58D /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				EE97F5AE24778458005FD8F2 /* URLEncoder.swift */,
 				4325E9CE210E6A0A00969CE5 /* HKUnit.swift */,
 				27CFAB5422496C7A006DEFE3 /* DoubleExtensions.swift */,
 				43AB51352133177800B3D58D /* LocalizedString.swift */,
@@ -625,6 +628,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE97F5AF24778458005FD8F2 /* URLEncoder.swift in Sources */,
 				EEED17C32446B2FD00070523 /* LocalLog+CoreDataClass.swift in Sources */,
 				EEED17C42446B2FD00070523 /* LocalLog+CoreDataProperties.swift in Sources */,
 				27E3C39F222EE9A80036AAC7 /* LibreOOPWebExtensions.swift in Sources */,

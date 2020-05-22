@@ -24,36 +24,46 @@ let token = "bubble-201907"
 
 class LibreOOPClient {
     // MARK: - public functions
-    static func webOOP(uploadURL: URL, callback: ((LibreRawGlucoseOOPData?) -> ())?) {
-        LogsAccessor.log("start libreoop2")
-        let request = NSMutableURLRequest(url: uploadURL)
-        request.httpMethod = "POST"
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        let task = URLSession.shared.dataTask(with: request as URLRequest) {
-            data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    LogsAccessor.log(error.localizedDescription)
-                }
-                
-                guard let data = data else {
-                    callback?(nil)
-                    return
-                }
-                
-                if let response = String(data: data, encoding: String.Encoding.utf8) {
-                    LogsAccessor.log( response)
-                }
-                
-                let decoder = JSONDecoder.init()
-                if let oopValue = try? decoder.decode(LibreRawGlucoseOOPData.self, from: data) {
-                    callback?(oopValue)
-                } else {
-                    callback?(nil)
+    public static func webOOP(libreData: [UInt8], patchUid: String, patchInfo: String, callback: ((LibreRawGlucoseOOPData?) -> Void)?) {
+        let bytesAsData = Data(bytes: libreData, count: libreData.count)
+        let item = URLQueryItem(name: "accesstoken", value: token)
+        let item1 = URLQueryItem(name: "patchUid", value: patchUid)
+        let item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
+        let item3 = URLQueryItem(name: "content", value: bytesAsData.hexEncodedString())
+        var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2")!
+        urlComponents.queryItems = [item, item1, item2, item3]
+        if let uploadURL = URL.init(string: urlComponents.url?.absoluteString.removingPercentEncoding ?? "") {
+            let request = NSMutableURLRequest(url: uploadURL)
+            request.httpMethod = "POST"
+            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            let task = URLSession.shared.dataTask(with: request as URLRequest) {
+                data, response, error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        LogsAccessor.log( error.localizedDescription)
+                    }
+                    
+                    guard let data = data else {
+                        callback?(nil)
+                        return
+                    }
+                    
+                    if let response = String(data: data, encoding: String.Encoding.utf8) {
+                        LogsAccessor.log(response)
+                    }
+                    
+                    let decoder = JSONDecoder.init()
+                    if let oopValue = try? decoder.decode(LibreRawGlucoseOOPData.self, from: data) {
+                        callback?(oopValue)
+                    } else {
+                        callback?(nil)
+                    }
                 }
             }
+            task.resume()
+        } else {
+            callback?(nil)
         }
-        task.resume()
     }
     
     public static func oopParams(libreData: [UInt8], params: LibreDerivedAlgorithmParameters) -> [LibreRawGlucoseData] {
@@ -72,100 +82,126 @@ class LibreOOPClient {
         }
     }
     
-    public static func handleLibreData(sensorData: SensorData, callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
-        //only care about the once per minute readings here, historical data will not be considered
-        let sensorState = sensorData.state
+    public static func handleLibreA2Data(libreData: [UInt8], callback: ((LibreRawGlucoseOOPA2Data?) -> Void)?) {
+        let bytesAsData = Data(bytes: libreData, count: libreData.count)
+        if let uploadURL = URL.init(string: "\(baseUrl)/callnox") {
+            var request = URLRequest(url: uploadURL)
+            request.httpMethod = "POST"
+            do {
+                let data = try JSONSerialization.data(withJSONObject: [["timestamp": "\(Int(Date().timeIntervalSince1970 * 1000))",
+                    "content": bytesAsData.hexEncodedString()]], options: [])
+                let string = String.init(data: data, encoding: .utf8)
+                let json: [String: Any] = ["userId": 1,
+                                           "list": string!]
+                request = try URLEncoding().encode(request, with: json)
+                let task = URLSession.shared.dataTask(with: request as URLRequest) {
+                    data, response, error in
+                    if let error = error {
+                        LogsAccessor.log( error.localizedDescription)
+                    }
+                    
+                    do {
+                        guard let data = data else {
+                            callback?(nil)
+                            return
+                        }
+                        
+                        if let response = String(data: data, encoding: String.Encoding.utf8) {
+                            LogsAccessor.log(response)
+                        }
+                        let decoder = JSONDecoder.init()
+                        let oopValue = try decoder.decode(LibreRawGlucoseOOPA2Data.self, from: data)
+                        callback?(oopValue)
+                    } catch {
+                        callback?(nil)
+                        LogsAccessor.log("handleLibreA2Data: \(error.localizedDescription)")
+                    }
+                }
+                task.resume()
+            } catch {
+                callback?(nil)
+                LogsAccessor.log("handleLibreA2Data: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    static func oop(sensorData: SensorData, serialNumber: String, _ callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
+        LogsAccessor.log("start calibrateSensor")
+        let libreData = sensorData.bytes
+        let sensorState = LibreSensorState(stateByte: libreData[4])
+        let body = Array(libreData[24 ..< 320])
+        let sensorTime = Int(body[293]) << 8 + Int(body[292])
+        guard sensorTime >= 60 else {
+            callback(([], .starting, sensorTime))
+            LogsAccessor.log("sensorTime < 60")
+            return
+        }
         
-        // web oop for newwork bad and version < 1.22
-        func oop() {
-            LogsAccessor.log("start calibrateSensor")
-            LibreOOPClient.calibrateSensor(sensorData: sensorData, serialNumber: sensorData.serialNumber) {
-                (calibrationparams)  in
-                var params = LibreDerivedAlgorithmParameters.init(slope_slope: 0.00001729,
-                                                                  slope_offset: -0.0006316,
-                                                                  offset_slope: 0.002080,
-                                                                  offset_offset: -20.15,
-                                                                  isValidForFooterWithReverseCRCs: 1,
-                                                                  extraSlope: 1.0,
-                                                                  extraOffset: 0.0)
-                if let p = calibrationparams {
-                    LogsAccessor.log("calibrateSensor params: \(calibrationparams?.description ?? "")")
-                    params = p
-                    guard !p.isErrorParameters else {
-                        callback(([], sensorState, nil))
-                        return
+        calibrateSensor(sensorData: sensorData, serialNumber: sensorData.serialNumber) {
+            (calibrationparams)  in
+            callback((oopParams(libreData: libreData, params: calibrationparams),
+            sensorState,
+            sensorTime))
+            LogsAccessor.log("calibrateSensor params: \(calibrationparams.description)")
+        }
+    }
+    
+    static func handleGlucose(sensorData: SensorData, oopValue: LibreRawGlucoseWeb?, serialNumber: String, _ callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
+        if let oopValue = oopValue, !oopValue.isError {
+            if oopValue.valueError {
+                if oopValue.sensorState.sensorState == .notYetStarted {
+                    callback(([], .notYetStarted, nil))
+                } else {
+                    callback(([], .failure, nil))
+                }
+            } else {
+                if oopValue.canGetParameters {
+                    let response = keychain.getLibreCalibrationData()
+                    if response?.serialNumber != sensorData.serialNumber {
+                        calibrateSensor(sensorData: sensorData, serialNumber: sensorData.serialNumber) { _ in }
                     }
                 }
                 
-                
-                callback((oopParams(libreData: sensorData.bytes,
-                                    params: params), sensorState, nil))
-            }
-        }
-        
-        guard let patchUid = sensorData.patchUid,
-            let patchInfo = sensorData.patchInfo else {
-                oop()
-                return
-        }
-        
-        let bytesAsData = Data(bytes: sensorData.bytes, count: sensorData.bytes.count)
-        let item = URLQueryItem(name: "accesstoken", value: token)
-        let item1 = URLQueryItem(name: "patchUid", value: patchUid)
-        let item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
-        let item3 = URLQueryItem(name: "content", value: bytesAsData.hexEncodedString())
-        var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2")!
-        urlComponents.queryItems = [item, item1, item2, item3]
-        var retryCount = 1
-        if let uploadURL = URL.init(string: urlComponents.url?.absoluteString.removingPercentEncoding ?? "") {
-            func retry() {
-                retryCount += 1
-                webOOP(uploadURL: uploadURL) { oopValue in
-                    if let oopValue = oopValue, !oopValue.isError {
-                        if oopValue.valueError {
-                            LogsAccessor.log( "libreoop2 server glucose data error")
-                            // libreoop2 server glucose data error
-                            if sensorData.isSecondSensor && oopValue.sensorState.sensorState == .notYetStarted {
-                                callback(([], .notYetStarted, nil))
-                            } else {
-                                callback(([], .failure, nil))
-                            }
-                        } else {
-                            if oopValue.canGetParameters {
-                                let response = keychain.getLibreCalibrationData()
-                                if response?.serialNumber != sensorData.serialNumber {
-                                    LibreOOPClient.calibrateSensor(sensorData: sensorData, serialNumber: sensorData.serialNumber) { _ in }
-                                }
-                            }
-                            
-                            if let time = oopValue.sensorTime {
-                                var last96 = [LibreRawGlucoseData]()
-                                if !(oopValue.historicGlucose?.isEmpty ?? true) {
-                                    let value = oopValue.glucoseData(date: Date())
-                                    last96 = split(current: value.0, glucoseData: value.1)
-                                }
-                                
-                                if time < 20880 {
-                                    callback((last96, oopValue.sensorState.sensorState, time))
-                                } else {
-                                    callback(([], .expired, time))
-                                }
-                            } else {
-                                callback(([], oopValue.sensorState.sensorState, nil))
-                            }
-                        }
+                if let time = oopValue.sensorTime {
+                    var last96 = [LibreRawGlucoseData]()
+                    let value = oopValue.glucoseData(date: Date())
+                    last96 = split(current: value.0, glucoseData: value.1)
+                    
+                    if time < 20880 {
+                        callback((last96, oopValue.sensorState.sensorState, time))
                     } else {
-                        // libreoop2 network failed
-                        if sensorData.isFirstSensor {
-                            oop()
-                        } else {
-                            LogsAccessor.log( "network failed!")
-                            callback(([], nil, nil))
-                        }
+                        callback(([], .expired, time))
                     }
+                } else {
+                    callback(([], oopValue.sensorState.sensorState, nil))
                 }
             }
-            retry()
+        } else {
+            if sensorData.isFirstSensor {
+                oop(sensorData: sensorData, serialNumber: serialNumber,  callback)
+            } else {
+                callback(([], .failure, nil))
+            }
+        }
+    }
+    public static func handleLibreData(sensorData: SensorData, callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
+        guard let patchUid = sensorData.patchUid, let patchInfo = sensorData.patchInfo else {
+            oop(sensorData: sensorData, serialNumber: sensorData.serialNumber,  callback)
+            return
+        }
+        
+        if patchInfo.hasPrefix("A2") {
+            handleLibreA2Data(libreData: sensorData.bytes) { (data) in
+                DispatchQueue.main.async {
+                    handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
+                }
+            }
+        } else {
+            DispatchQueue.main.async {
+                webOOP(libreData: sensorData.bytes, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                    handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
+                }
+            }
         }
     }
     
@@ -201,13 +237,19 @@ class LibreOOPClient {
         return items
     }
     
-    private static func calibrateSensor(sensorData: SensorData, serialNumber: String,  callback: @escaping (LibreDerivedAlgorithmParameters?) -> Void) {
+    private static func calibrateSensor(sensorData: SensorData, serialNumber: String,  callback: @escaping (LibreDerivedAlgorithmParameters) -> Void) {
         if let response = keychain.getLibreCalibrationData(), response.serialNumber == sensorData.serialNumber {
             LogsAccessor.log("parameters from keychain")
             callback(response)
             return
         }
-        
+        let params = LibreDerivedAlgorithmParameters.init(slope_slope: 0.00001729,
+                                                          slope_offset: -0.0006316,
+                                                          offset_slope: 0.002080,
+                                                          offset_offset: -20.15,
+                                                          isValidForFooterWithReverseCRCs: 1,
+                                                          extraSlope: 1.0,
+                                                          extraOffset: 0.0)
         post(bytes: sensorData.bytes, { (data, str, can) in
             let decoder = JSONDecoder()
             do {
@@ -229,14 +271,14 @@ class LibreOOPClient {
                         try? keychain.setLibreCalibrationData(p)
                         callback(p)
                     } else {
-                        callback(nil)
+                        callback(params)
                     }
                 } else {
-                    callback(nil)
+                    callback(params)
                 }
             } catch {
                 LogsAccessor.log("calibrateSensor decode: \(error.localizedDescription)")
-                callback(nil)
+                callback(params)
             }
         })
     }
