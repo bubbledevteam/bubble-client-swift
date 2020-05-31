@@ -66,22 +66,6 @@ class LibreOOPClient {
         }
     }
     
-    public static func oopParams(libreData: [UInt8], params: LibreDerivedAlgorithmParameters) -> [LibreRawGlucoseData] {
-        LogsAccessor.log("start last16")
-        let last16 = trendMeasurements(bytes: libreData, date: Date(), LibreDerivedAlgorithmParameterSet: params)
-        if var glucoseData = trendToLibreGlucose(last16), let first = glucoseData.first {
-            LogsAccessor.log("start history")
-            let last32 = historyMeasurements(bytes: libreData, date: first.timeStamp, LibreDerivedAlgorithmParameterSet: params)
-            let glucose32 = trendToLibreGlucose(last32) ?? []
-            LogsAccessor.log("start split")
-            let last96 = split(current: first, glucoseData: glucose32.reversed())
-            glucoseData = last96
-            return glucoseData
-        } else {
-            return []
-        }
-    }
-    
     public static func handleLibreA2Data(libreData: [UInt8], callback: ((LibreRawGlucoseOOPA2Data?) -> Void)?) {
         let bytesAsData = Data(bytes: libreData, count: libreData.count)
         if let uploadURL = URL.init(string: "\(baseUrl)/callnox") {
@@ -125,6 +109,22 @@ class LibreOOPClient {
         }
     }
     
+    public static func oopParams(libreData: [UInt8], params: LibreDerivedAlgorithmParameters) -> [LibreRawGlucoseData] {
+        LogsAccessor.log("start last16")
+        let last16 = trendMeasurements(bytes: libreData, date: Date(), LibreDerivedAlgorithmParameterSet: params)
+        if var glucoseData = trendToLibreGlucose(last16), let first = glucoseData.first {
+            LogsAccessor.log("start history")
+            let last32 = historyMeasurements(bytes: libreData, date: first.timeStamp, LibreDerivedAlgorithmParameterSet: params)
+            let glucose32 = trendToLibreGlucose(last32) ?? []
+            LogsAccessor.log("start split")
+            let last96 = split(current: first, glucoseData: glucose32.reversed())
+            glucoseData = last96
+            return glucoseData
+        } else {
+            return []
+        }
+    }
+    
     static func oop(sensorData: SensorData, serialNumber: String, _ callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
         LogsAccessor.log("start calibrateSensor")
         let libreData = sensorData.bytes
@@ -139,10 +139,10 @@ class LibreOOPClient {
         
         calibrateSensor(sensorData: sensorData, serialNumber: sensorData.serialNumber) {
             (calibrationparams)  in
+            LogsAccessor.log("calibrateSensor params: \(calibrationparams.description)")
             callback((oopParams(libreData: libreData, params: calibrationparams),
             sensorState,
             sensorTime))
-            LogsAccessor.log("calibrateSensor params: \(calibrationparams.description)")
         }
     }
     
@@ -157,7 +157,7 @@ class LibreOOPClient {
             } else {
                 if oopValue.canGetParameters {
                     let response = keychain.getLibreCalibrationData()
-                    if response?.serialNumber != sensorData.serialNumber {
+                    if response?.serialNumber != sensorData.serialNumber || (response?.versionChanged ?? false) {
                         calibrateSensor(sensorData: sensorData, serialNumber: sensorData.serialNumber) { _ in }
                     }
                 }
@@ -247,7 +247,7 @@ class LibreOOPClient {
                                                           extraOffset: 0.0)
         if let response = keychain.getLibreCalibrationData(),
             response.serialNumber == sensorData.serialNumber,
-            response.version == params.version {
+            !response.versionChanged {
             LogsAccessor.log("parameters from keychain")
             callback(response)
             return

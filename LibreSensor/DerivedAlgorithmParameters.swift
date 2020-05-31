@@ -19,10 +19,23 @@ public struct LibreDerivedAlgorithmParameters: Codable, CustomStringConvertible 
     public var serialNumber: String?
     
     // change the parameters when version changed
-    public var version: Int? = 1
+    public var version: Int? = 2
+    
+    public var versionChanged: Bool {
+        let p = LibreDerivedAlgorithmParameters.init(slope_slope: 0, slope_offset: 0, offset_slope: 0, offset_offset: 0, isValidForFooterWithReverseCRCs: 0, extraSlope: 0, extraOffset: 0)
+        return p.version != version
+    }
     
     public var description: String {
-        return "LibreDerivedAlgorithmParameters:: slopeslope: \(slope_slope), slopeoffset: \(slope_offset), offsetoffset: \(offset_offset), offsetSlope: \(offset_slope), extraSlope: \(extraSlope), extraOffset: \(extraOffset), isValidForFooterWithReverseCRCs: \(isValidForFooterWithReverseCRCs)"
+        return """
+        LibreDerivedAlgorithmParameters::
+        slopeslope: \(slope_slope),
+        slopeoffset: \(slope_offset),
+        offsetoffset: \(offset_offset),
+        offsetSlope: \(offset_slope),
+        isValidForFooterWithReverseCRCs: \(isValidForFooterWithReverseCRCs),
+        version: \(version ?? -1)
+        """
     }
     
     var isErrorParameters: Bool {
