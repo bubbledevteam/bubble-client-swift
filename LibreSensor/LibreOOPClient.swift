@@ -238,11 +238,6 @@ class LibreOOPClient {
     }
     
     private static func calibrateSensor(sensorData: SensorData, serialNumber: String,  callback: @escaping (LibreDerivedAlgorithmParameters) -> Void) {
-        if let response = keychain.getLibreCalibrationData(), response.serialNumber == sensorData.serialNumber {
-            LogsAccessor.log("parameters from keychain")
-            callback(response)
-            return
-        }
         let params = LibreDerivedAlgorithmParameters.init(slope_slope: 0.00001816666666666667,
                                                           slope_offset: -0.00016666666666666666,
                                                           offset_slope: 0.007499999999999993,
@@ -250,6 +245,13 @@ class LibreOOPClient {
                                                           isValidForFooterWithReverseCRCs: 1,
                                                           extraSlope: 1.0,
                                                           extraOffset: 0.0)
+        if let response = keychain.getLibreCalibrationData(),
+            response.serialNumber == sensorData.serialNumber,
+            response.version == params.version {
+            LogsAccessor.log("parameters from keychain")
+            callback(response)
+            return
+        }
         post(bytes: sensorData.bytes, { (data, str, can) in
             let decoder = JSONDecoder()
             do {
