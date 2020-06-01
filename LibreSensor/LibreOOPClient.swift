@@ -22,7 +22,7 @@ import LoopKit
 let baseUrl = "http://www.glucose.space"
 let token = "bubble-201907"
 
-class LibreOOPClient {
+public class LibreOOPClient {
     // MARK: - public functions
     public static func webOOP(libreData: [UInt8], patchUid: String, patchInfo: String, callback: ((LibreRawGlucoseOOPData?) -> Void)?) {
         let bytesAsData = Data(bytes: libreData, count: libreData.count)
@@ -125,7 +125,7 @@ class LibreOOPClient {
         }
     }
     
-    static func oop(sensorData: SensorData, serialNumber: String, _ callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
+    public static func oop(sensorData: SensorData, serialNumber: String, _ callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
         LogsAccessor.log("start calibrateSensor")
         let libreData = sensorData.bytes
         let sensorState = LibreSensorState(stateByte: libreData[4])
@@ -230,7 +230,7 @@ class LibreOOPClient {
         var ptime = endTime
         while ptime >= startTime {
             let value = (frameS.sample(atTime: CGFloat(ptime)) as? Double) ?? 0
-            let item = LibreRawGlucoseData.init(timeStamp: Date.init(timeIntervalSince1970: ptime / 1000), glucoseLevelRaw: value, unsmoothedGlucose: value)
+            let item = LibreRawGlucoseData.init(timeStamp: Date.init(timeIntervalSince1970: ptime / 1000), glucoseLevelRaw: value)
             items.append(item)
             ptime -= 300000
         }
@@ -287,7 +287,7 @@ class LibreOOPClient {
     
     // MARK: - private functions
     
-    private static func post(bytes: [UInt8],_ completion:@escaping (( _ data_: Data, _ response: String, _ success: Bool ) -> Void)) {
+    public static func post(bytes: [UInt8],_ completion:@escaping (( _ data_: Data, _ response: String, _ success: Bool ) -> Void)) {
         let date = Date().toMillisecondsAsInt64()
         let bytesAsData = Data(bytes: bytes, count: bytes.count)
         let json: [String: String] = [
@@ -402,9 +402,9 @@ class LibreOOPClient {
         
         var origarr = [LibreRawGlucoseData]()
         for trend in measurements {
-            let glucose = LibreRawGlucoseData(timeStamp: trend.date,
-                                              glucoseLevelRaw: trend.temperatureAlgorithmGlucose,
-                                              unsmoothedGlucose: trend.temperatureAlgorithmGlucose)
+            let glucose = LibreRawGlucoseData.init(timeStamp: trend.date, glucoseLevelRaw: trend.temperatureAlgorithmGlucose)
+            glucose.rawGlucose = trend.rawGlucose
+            glucose.rawTemperature = trend.rawTemperature
             origarr.append(glucose)
         }
         return origarr

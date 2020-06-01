@@ -14,6 +14,13 @@ public class GlucoseData: Codable {
     public var lastValue: Double
     public var lastDate: Date
     
+    public var rawGlucose: Int?
+    /// The raw temperature as read from the sensor
+    public var rawTemperature: Int?
+    
+    /// The glucose value in mg/dl
+    public var glucose: Double?
+    
     init(timeStamp:Date, glucoseLevelRaw:Double, glucoseLevelFiltered:Double, trend: UInt8 = 0) {
         self.lastDate = timeStamp
         self.timeStamp = timeStamp
@@ -31,13 +38,16 @@ public class GlucoseData: Codable {
         self.init(timeStamp: timeStamp, glucoseLevelRaw: 0.0, glucoseLevelFiltered: 0.0)
     }
     
-    var description: String {
+    public var description: String {
         return """
         timeStamp = \(timeStamp.description(with: .current))
         glucoseLevelRaw = \(glucoseLevelRaw.description)
         trend = \(trend)
         lastValue = \(lastValue)
         lastDate = \(lastDate.description(with: .current))
+        rawGlucose = \(rawGlucose ?? 0)
+        rawTemperature = \(rawTemperature ?? 0)
+        
         """
     }
 }
@@ -68,13 +78,9 @@ extension GlucoseData: SensorDisplayable {
 
 
 /// extends RawGlucoseData and adds property unsmoothedGlucose, because this is only used for Libre
-class LibreRawGlucoseData: GlucoseData {
+public class LibreRawGlucoseData: GlucoseData {
     
-    var unsmoothedGlucose: Double
-
-    init(timeStamp:Date, glucoseLevelRaw:Double, glucoseLevelFiltered:Double, unsmoothedGlucose: Double = 0.0) {
-        self.unsmoothedGlucose = unsmoothedGlucose
-
+    init(timeStamp:Date, glucoseLevelRaw:Double, glucoseLevelFiltered:Double) {
         super.init(timeStamp: timeStamp, glucoseLevelRaw: glucoseLevelRaw, glucoseLevelFiltered: glucoseLevelFiltered)
     }
     
@@ -82,9 +88,10 @@ class LibreRawGlucoseData: GlucoseData {
         self.init(timeStamp: timeStamp, glucoseLevelRaw: glucoseLevelRaw, glucoseLevelFiltered: glucoseLevelRaw)
     }
     
-    convenience init(timeStamp:Date, glucoseLevelRaw:Double, unsmoothedGlucose: Double) {
-        self.init(timeStamp: timeStamp, glucoseLevelRaw: glucoseLevelRaw, glucoseLevelFiltered: 0.0, unsmoothedGlucose: unsmoothedGlucose)
+    convenience init(timeStamp:Date, unsmoothedGlucose: Double) {
+        self.init(timeStamp: timeStamp, glucoseLevelRaw: 0.0, glucoseLevelFiltered: 0.0)
     }
+    
     
     required init(from decoder: Decoder) throws {
         fatalError("init(from:) has not been implemented")

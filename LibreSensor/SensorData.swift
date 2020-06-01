@@ -100,7 +100,7 @@ public struct SensorData {
         
     }
     
-    var patchUid: String?
+    public var patchUid: String?
     var patchInfo: String? {
         didSet {
             if let patchInfo = patchInfo, patchInfo.count > 2 {
@@ -140,7 +140,7 @@ public struct SensorData {
         return  sensorStart.timeIntervalSinceNow.stringDaysFromTimeInterval() +  " day(s)"
     }
     
-    init?(uuid: Data, bytes: [UInt8], date: Date = Date(), patchInfo: String?) {
+    public init?(uuid: Data, bytes: [UInt8], date: Date = Date(), patchInfo: String?) {
         guard bytes.count == numberOfBytes else {
             return nil
         }

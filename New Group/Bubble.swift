@@ -18,7 +18,7 @@ public struct Bubble: CustomStringConvertible {
     // battery level String
     let batteryString: String
     
-    init(hardware: String, firmware: String, battery: Int) {
+    public init(hardware: String, firmware: String, battery: Int) {
         self.hardware = hardware
         self.firmware = firmware
         self.battery = battery
