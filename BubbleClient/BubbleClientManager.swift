@@ -99,11 +99,13 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     required convenience public init?(rawState: CGMManager.RawStateValue) {
         self.init()
-        
+        useFilter = rawState[Config.useFilterKey] as? Bool ?? false
     }
     
     public var rawState: CGMManager.RawStateValue {
-        return [:]
+        [
+            Config.useFilterKey: useFilter
+        ]
     }
     
     public let keychain = KeychainManager()
