@@ -112,9 +112,9 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
     private enum Section: Int {
         case device
         case latestReading
+        case kalman
         case share
         case delete
-        case kalman
         static let count = 5
     }
 
