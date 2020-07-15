@@ -59,6 +59,9 @@
 		43AB5127213315D300B3D58D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 43AB5125213315D300B3D58D /* Localizable.strings */; };
 		43AB51362133177800B3D58D /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB51352133177800B3D58D /* LocalizedString.swift */; };
 		43AB51372133177800B3D58D /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB51352133177800B3D58D /* LocalizedString.swift */; };
+		EE0C352224BEFAA200072FD7 /* KalmanFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0C351F24BEFAA200072FD7 /* KalmanFilter.swift */; };
+		EE0C352324BEFAA200072FD7 /* KalmanFilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0C352024BEFAA200072FD7 /* KalmanFilterType.swift */; };
+		EE0C352424BEFAA200072FD7 /* DoubleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0C352124BEFAA200072FD7 /* DoubleExtension.swift */; };
 		EE10F6D2243C31F900C5340C /* LibreRawGlucoseData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE10F6D1243C31F900C5340C /* LibreRawGlucoseData.swift */; };
 		EE10F6D4243C320400C5340C /* LibreMeasurement.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE10F6D3243C320400C5340C /* LibreMeasurement.swift */; };
 		EE44A48E2484F92A007275C3 /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE72B072230CDDF500D67B8F /* LoopKit.framework */; };
@@ -512,6 +515,9 @@
 		43AB512F2133161A00B3D58D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		43AB51302133161A00B3D58D /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		43AB51352133177800B3D58D /* LocalizedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedString.swift; sourceTree = "<group>"; };
+		EE0C351F24BEFAA200072FD7 /* KalmanFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KalmanFilter.swift; sourceTree = "<group>"; };
+		EE0C352024BEFAA200072FD7 /* KalmanFilterType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KalmanFilterType.swift; sourceTree = "<group>"; };
+		EE0C352124BEFAA200072FD7 /* DoubleExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleExtension.swift; sourceTree = "<group>"; };
 		EE10F6D1243C31F900C5340C /* LibreRawGlucoseData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreRawGlucoseData.swift; sourceTree = "<group>"; };
 		EE10F6D3243C320400C5340C /* LibreMeasurement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreMeasurement.swift; sourceTree = "<group>"; };
 		EE44A4972484F92B007275C3 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -3333,6 +3339,7 @@
 		432B0E8A1CDFC3C50045347B /* BubbleClient */ = {
 			isa = PBXGroup;
 			children = (
+				EE0C351E24BEFAA200072FD7 /* KalmanFilter */,
 				2729D67A221F421F0030E1B8 /* BubbleBluetoothManager.swift */,
 				2729D6A722248BDD0030E1B8 /* BubbleClientManager.swift */,
 				275C3DA2229FCED400E27439 /* NotificationHelper.swift */,
@@ -3393,6 +3400,16 @@
 				27E0968E22A9AD6F00B3164D /* TimeIntervalExtensions.swift */,
 			);
 			path = Common;
+			sourceTree = "<group>";
+		};
+		EE0C351E24BEFAA200072FD7 /* KalmanFilter */ = {
+			isa = PBXGroup;
+			children = (
+				EE0C351F24BEFAA200072FD7 /* KalmanFilter.swift */,
+				EE0C352024BEFAA200072FD7 /* KalmanFilterType.swift */,
+				EE0C352124BEFAA200072FD7 /* DoubleExtension.swift */,
+			);
+			path = KalmanFilter;
 			sourceTree = "<group>";
 		};
 		EE44A4922484F92A007275C3 /* Carthage */ = {
@@ -7566,10 +7583,12 @@
 				EEED17C42446B2FD00070523 /* LocalLog+CoreDataProperties.swift in Sources */,
 				27E3C39F222EE9A80036AAC7 /* LibreOOPWebExtensions.swift in Sources */,
 				27CFAB5F224AB27B006DEFE3 /* CollectionExtensions.swift in Sources */,
+				EE0C352324BEFAA200072FD7 /* KalmanFilterType.swift in Sources */,
 				27E3C390222EDF560036AAC7 /* LibreError.swift in Sources */,
 				4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */,
 				27E3C39A222EE9450036AAC7 /* LibreOOPClient.swift in Sources */,
 				2729D69F221F44670030E1B8 /* SensorState.swift in Sources */,
+				EE0C352424BEFAA200072FD7 /* DoubleExtension.swift in Sources */,
 				27D0DA6B2231CBB7007BBB2C /* DateExtensions.swift in Sources */,
 				27E3C398222EE9450036AAC7 /* LibreOOPDefaults.swift in Sources */,
 				277DAD0D226B970300422ADA /* UserDefaults+Alarmsettings.swift in Sources */,
@@ -7582,6 +7601,7 @@
 				2729D67B221F421F0030E1B8 /* BubbleBluetoothManager.swift in Sources */,
 				270C266F226A5A6E005B27F3 /* GlucoseSchedules.swift in Sources */,
 				2729D677221F421C0030E1B8 /* Bubble.swift in Sources */,
+				EE0C352224BEFAA200072FD7 /* KalmanFilter.swift in Sources */,
 				2729D6A822248BDD0030E1B8 /* BubbleClientManager.swift in Sources */,
 				EEED17B52446A51A00070523 /* CoreDataManager.swift in Sources */,
 				EEED17B32446A4EB00070523 /* LogsAccessor.swift in Sources */,
