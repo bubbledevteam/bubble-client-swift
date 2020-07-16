@@ -336,6 +336,18 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             
             guard let glucose = glucose, !glucose.isEmpty else { return }
             var filteredGlucose = glucose
+            
+            var origin = "original glucose: \n["
+            for g in glucose {
+                origin +=
+                """
+                {"date": \(g.timeStamp), "glucose": \(g.quantity.doubleValue(for: .milligramsPerDeciliter))},\n
+                """
+            }
+            origin += "]"
+            LogsAccessor.log(origin)
+            
+            LogsAccessor.log("useFilter: \(self.useFilter)")
             if self.useFilter {
                 var filter = KalmanFilter(stateEstimatePrior: glucose.last!.glucoseLevelRaw, errorCovariancePrior: Config.filterNoise)
                 filteredGlucose.removeAll()
@@ -347,6 +359,16 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                     filteredGlucose.append(item)
                 }
                 filteredGlucose = filteredGlucose.reversed()
+                
+                var filterred = "filterred glucose: \n["
+                for g in filteredGlucose {
+                    filterred +=
+                    """
+                    {"date": \(g.timeStamp), "glucose": \(g.quantity.doubleValue(for: .milligramsPerDeciliter))},\n
+                    """
+                }
+                filterred += "]"
+                LogsAccessor.log(filterred)
             }
             
             let startDate = self.latestBackfill?.startDate.addingTimeInterval(4 * 60)
