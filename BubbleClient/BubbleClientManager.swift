@@ -336,6 +336,13 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             
             guard let glucose = glucose, !glucose.isEmpty else { return }
             var filteredGlucose = glucose
+            let startDate = self.latestBackfill?.startDate.addingTimeInterval(4 * 60)
+            
+            filteredGlucose = filteredGlucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).sorted { (data1, data2) -> Bool in
+                return data1.timeStamp > data2.timeStamp
+            }
+            
+            filteredGlucose.append(contentsOf: UserDefaultsUnit.glucoses)
             
             var origin = "original glucose: \n["
             for g in glucose {
@@ -371,8 +378,12 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                 LogsAccessor.log(filterred)
             }
             
-            let startDate = self.latestBackfill?.startDate.addingTimeInterval(4 * 60)
-            
+            if filteredGlucose.count > 12 {
+                UserDefaultsUnit.glucoses = filteredGlucose[0..<12].map({ $0 })
+            } else {
+                UserDefaultsUnit.glucoses = filteredGlucose
+            }
+        
             let filterred = filteredGlucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).sorted { (data1, data2) -> Bool in
                 return data1.timeStamp > data2.timeStamp
             }
