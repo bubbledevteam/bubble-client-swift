@@ -101,27 +101,7 @@ public struct SensorData {
     }
     
     public var patchUid: String?
-    var patchInfo: String? {
-        didSet {
-            if let patchInfo = patchInfo, patchInfo.count > 2 {
-                let sub = patchInfo[0 ..< 2]
-                switch sub {
-                case "70":
-                    sensorName = "Libre Pro/H"
-                case "9D":
-                    sensorName = "Libre 2"
-                case "DF":
-                    sensorName = "Libre 1"
-                case "E5":
-                    sensorName = "Libre US 14 Days"
-                default:
-                    sensorName = "Libre"
-                }
-            } else {
-                sensorName = "Libre"
-            }
-        }
-    }
+    var patchInfo: String?
     var sensorName = "Libre"
     
     var isSecondSensor: Bool {
@@ -165,6 +145,24 @@ public struct SensorData {
         self.patchUid = uuid.hexEncodedString().uppercased()
         self.patchInfo = patchInfo
         self.serialNumber = SensorSerialNumber(withUID: uuid, patchInfo: patchInfo)?.serialNumber ?? "-"
+        
+        if let patchInfo = patchInfo, patchInfo.count > 2 {
+            let sub = patchInfo[0 ..< 2]
+            switch sub {
+            case "70":
+                sensorName = "Libre Pro/H"
+            case "9D":
+                sensorName = "Libre 2"
+            case "DF":
+                sensorName = "Libre 1"
+            case "E5":
+                sensorName = "Libre US 14 Days"
+            default:
+                sensorName = "Libre"
+            }
+        } else {
+            sensorName = "Libre"
+        }
     }
     
     /// Get date of most recent history value.
