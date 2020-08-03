@@ -334,18 +334,17 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             guard let self = self else { return }
             LogsAccessor.log("got glucose")
             
-            guard let glucose = glucose, !glucose.isEmpty else { return }
-            var filteredGlucose = glucose
+            guard var glucose = glucose, !glucose.isEmpty else { return }
             let startDate = self.latestBackfill?.startDate.addingTimeInterval(4 * 60)
             
-            filteredGlucose = filteredGlucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).sorted { (data1, data2) -> Bool in
+            glucose = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).sorted { (data1, data2) -> Bool in
                 return data1.timeStamp > data2.timeStamp
             }
             
-            filteredGlucose.append(contentsOf: UserDefaultsUnit.glucoses)
+            glucose.append(contentsOf: UserDefaultsUnit.glucoses)
             
             var origin = "original glucose: \n["
-            for g in filteredGlucose {
+            for g in glucose {
                 origin +=
                 """
                 {"date": \(g.timeStamp), "glucose": \(g.quantity.doubleValue(for: .milligramsPerDeciliter))},\n
@@ -354,11 +353,12 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             origin += "]"
             LogsAccessor.log(origin)
             
+            var filteredGlucose = glucose
             LogsAccessor.log("useFilter: \(self.useFilter)")
             if self.useFilter {
-                var filter = KalmanFilter(stateEstimatePrior: filteredGlucose.last!.glucoseLevelRaw, errorCovariancePrior: Config.filterNoise)
-                filteredGlucose.removeAll()
-                for item in filteredGlucose.reversed() {
+                var filter = KalmanFilter(stateEstimatePrior: glucose.last!.glucoseLevelRaw, errorCovariancePrior: Config.filterNoise)
+                filteredGlucose = []
+                for item in glucose.reversed() {
                     let prediction = filter.predict(stateTransitionModel: 1, controlInputModel: 0, controlVector: 0, covarianceOfProcessNoise: Config.filterNoise)
                     let update = prediction.update(measurement: item.glucoseLevelRaw, observationModel: 1, covarienceOfObservationNoise: Config.filterNoise)
                     filter = update
