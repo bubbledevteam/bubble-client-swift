@@ -345,7 +345,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             filteredGlucose.append(contentsOf: UserDefaultsUnit.glucoses)
             
             var origin = "original glucose: \n["
-            for g in glucose {
+            for g in filteredGlucose {
                 origin +=
                 """
                 {"date": \(g.timeStamp), "glucose": \(g.quantity.doubleValue(for: .milligramsPerDeciliter))},\n
@@ -356,9 +356,9 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             
             LogsAccessor.log("useFilter: \(self.useFilter)")
             if self.useFilter {
-                var filter = KalmanFilter(stateEstimatePrior: glucose.last!.glucoseLevelRaw, errorCovariancePrior: Config.filterNoise)
+                var filter = KalmanFilter(stateEstimatePrior: filteredGlucose.last!.glucoseLevelRaw, errorCovariancePrior: Config.filterNoise)
                 filteredGlucose.removeAll()
-                for item in glucose.reversed() {
+                for item in filteredGlucose.reversed() {
                     let prediction = filter.predict(stateTransitionModel: 1, controlInputModel: 0, controlVector: 0, covarianceOfProcessNoise: Config.filterNoise)
                     let update = prediction.update(measurement: item.glucoseLevelRaw, observationModel: 1, covarienceOfObservationNoise: Config.filterNoise)
                     filter = update
