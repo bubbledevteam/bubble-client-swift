@@ -14,6 +14,7 @@ public class GlucoseData: Codable {
     public var lastValue: Double
     public var lastDate: Date
     
+    public var originValue: Double?
     public var rawGlucose: Int?
     /// The raw temperature as read from the sensor
     public var rawTemperature: Int?
@@ -21,11 +22,19 @@ public class GlucoseData: Codable {
     /// The glucose value in mg/dl
     public var glucose: Double?
     
+    public var trueValue: Double {
+        if let originValue = originValue, originValue > 0 {
+            return originValue
+        }
+        return glucoseLevelRaw
+    }
+    
     init(timeStamp:Date, glucoseLevelRaw:Double, glucoseLevelFiltered:Double, trend: UInt8 = 0) {
         self.lastDate = timeStamp
         self.timeStamp = timeStamp
         self.glucoseLevelRaw = glucoseLevelRaw
         self.lastValue = glucoseLevelRaw
+        self.originValue = glucoseLevelRaw
         self.glucoseLevelFiltered = glucoseLevelFiltered
         self.trend = trend
     }
@@ -194,7 +203,7 @@ public class LibreRawGlucoseOOPData: NSObject, Codable, LibreRawGlucoseWeb {
     }
     
     var sensorTime: Int? {
-        if let endTime = endTime, endTime != 0 {
+        if let endTime = endTime, endTime < 0 {
             return 24 * 6 * 149
         }
         return realTimeGlucose?.id
@@ -246,14 +255,14 @@ public class LibreRawGlucoseOOPData: NSObject, Codable, LibreRawGlucoseWeb {
                 break;
             }
         }
-        if let endTime = endTime, endTime != 0 {
+        if let endTime = endTime, endTime < 0 {
             state = .end
         }
         return state.identify
     }
     
     func glucoseData(date: Date) ->(LibreRawGlucoseData?, [LibreRawGlucoseData]) {
-        if endTime != 0 {
+        if endTime ?? 0 < 0 {
             return (nil, [])
         }
         var current: LibreRawGlucoseData?

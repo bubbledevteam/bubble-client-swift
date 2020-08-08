@@ -188,6 +188,9 @@ public class LibreOOPClient {
                     last96 = split(current: value.0, glucoseData: value.1)
                     
                     if time < 20880 {
+                        if time < 60 {
+                            try? keychain.setLibreCalibrationData(LibreDerivedAlgorithmParameters.init(slope_slope: 0, slope_offset: 0, offset_slope: 0, offset_offset: 0, isValidForFooterWithReverseCRCs: 0, extraSlope: 0, extraOffset: 0))
+                        }
                         callback((last96, oopValue.sensorState.sensorState, time))
                     } else {
                         callback(([], .expired, time))
@@ -209,6 +212,12 @@ public class LibreOOPClient {
         guard let patchUid = sensorData.patchUid, let patchInfo = sensorData.patchInfo else {
             oop(sensorData: sensorData, serialNumber: sensorData.serialNumber,  callback)
             return
+        }
+        
+        if sensorData.isFirstSensor {
+            if sensorData.minutesSinceStart < 60 {
+                try? keychain.setLibreCalibrationData(LibreDerivedAlgorithmParameters.init(slope_slope: 0, slope_offset: 0, offset_slope: 0, offset_offset: 0, isValidForFooterWithReverseCRCs: 0, extraSlope: 0, extraOffset: 0))
+            }
         }
         
         if patchInfo.hasPrefix("A2") {

@@ -356,11 +356,11 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             var filteredGlucose = glucose
             LogsAccessor.log("useFilter: \(self.useFilter)")
             if self.useFilter {
-                var filter = KalmanFilter(stateEstimatePrior: glucose.last!.glucoseLevelRaw, errorCovariancePrior: Config.filterNoise)
+                var filter = KalmanFilter(stateEstimatePrior: glucose.last!.trueValue, errorCovariancePrior: Config.filterNoise)
                 filteredGlucose = []
                 for item in glucose.reversed() {
                     let prediction = filter.predict(stateTransitionModel: 1, controlInputModel: 0, controlVector: 0, covarianceOfProcessNoise: Config.filterNoise)
-                    let update = prediction.update(measurement: item.glucoseLevelRaw, observationModel: 1, covarienceOfObservationNoise: Config.filterNoise)
+                    let update = prediction.update(measurement: item.trueValue, observationModel: 1, covarienceOfObservationNoise: Config.filterNoise)
                     filter = update
                     item.glucoseLevelRaw = filter.stateEstimatePrior.rounded()
                     filteredGlucose.append(item)
@@ -378,8 +378,8 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                 LogsAccessor.log(filterred)
             }
             
-            if filteredGlucose.count > 12 {
-                UserDefaultsUnit.glucoses = filteredGlucose[0..<12].map({ $0 })
+            if filteredGlucose.count > 5 {
+                UserDefaultsUnit.glucoses = filteredGlucose[0 ..< 5].map({ $0 })
             } else {
                 UserDefaultsUnit.glucoses = filteredGlucose
             }
