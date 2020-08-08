@@ -24,13 +24,22 @@ let token = "bubble-201907"
 
 public class LibreOOPClient {
     // MARK: - public functions
-    public static func webOOP(libreData: [UInt8], patchUid: String, patchInfo: String, callback: ((LibreRawGlucoseOOPData?) -> Void)?) {
-        let bytesAsData = Data(bytes: libreData, count: libreData.count)
+    public static func webOOP(sensorData: SensorData, bubble: Bubble, patchUid: String, patchInfo: String, callback: ((LibreRawGlucoseOOPData?) -> Void)?) {
+        let bytesAsData = Data(sensorData.bytes)
+        var patchUid = patchUid
+        var patchInfo = patchInfo
+        if sensorData.isSecondSensor && (bubble.firmware.toDouble() ?? 0) >= 2.6 {
+            patchUid = "7683376000A007E0"
+            patchInfo = "DF0000080000"
+        }
         let item = URLQueryItem(name: "accesstoken", value: token)
         let item1 = URLQueryItem(name: "patchUid", value: patchUid)
         let item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
         let item3 = URLQueryItem(name: "content", value: bytesAsData.hexEncodedString())
         var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2")!
+        if (bubble.firmware.toDouble() ?? 0) >= 2.6 {
+            urlComponents = URLComponents(string: "\(baseUrl)/libreoop2AndCalibrate")!
+        }
         urlComponents.queryItems = [item, item1, item2, item3]
         if let uploadURL = URL.init(string: urlComponents.url?.absoluteString.removingPercentEncoding ?? "") {
             let request = NSMutableURLRequest(url: uploadURL)
@@ -53,10 +62,21 @@ public class LibreOOPClient {
                     }
                     
                     let decoder = JSONDecoder.init()
-                    if let oopValue = try? decoder.decode(LibreRawGlucoseOOPData.self, from: data) {
-                        callback?(oopValue)
+                    if (bubble.firmware.toDouble() ?? 0) >= 2.6 {
+                        if let oopValue = try? decoder.decode(LibreGlucoseData.self, from: data) {
+                            callback?(oopValue.data)
+                            if let parameters = oopValue.slopeValue {
+                                try? keychain.setLibreCalibrationData(parameters)
+                            }
+                        } else {
+                            callback?(nil)
+                        }
                     } else {
-                        callback?(nil)
+                        if let oopValue = try? decoder.decode(LibreRawGlucoseOOPData.self, from: data) {
+                            callback?(oopValue)
+                        } else {
+                            callback?(nil)
+                        }
                     }
                 }
             }
@@ -66,8 +86,8 @@ public class LibreOOPClient {
         }
     }
     
-    public static func handleLibreA2Data(libreData: [UInt8], callback: ((LibreRawGlucoseOOPA2Data?) -> Void)?) {
-        let bytesAsData = Data(bytes: libreData, count: libreData.count)
+    public static func handleLibreA2Data(sensorData: SensorData, callback: ((LibreRawGlucoseOOPA2Data?) -> Void)?) {
+        let bytesAsData = Data(sensorData.bytes)
         if let uploadURL = URL.init(string: "\(baseUrl)/callnox") {
             var request = URLRequest(url: uploadURL)
             request.httpMethod = "POST"
@@ -109,7 +129,7 @@ public class LibreOOPClient {
         }
     }
     
-    public static func oopParams(libreData: [UInt8], params: LibreDerivedAlgorithmParameters) -> [LibreRawGlucoseData] {
+    public static func oopParams(libreData: [UInt8], params: LibreDerivedAlgorithmParameters) -> [GlucoseData] {
         LogsAccessor.log("start last16")
         let last16 = trendMeasurements(bytes: libreData, date: Date(), LibreDerivedAlgorithmParameterSet: params)
         if var glucoseData = trendToLibreGlucose(last16), let first = glucoseData.first {
@@ -163,7 +183,7 @@ public class LibreOOPClient {
                 }
                 
                 if let time = oopValue.sensorTime {
-                    var last96 = [LibreRawGlucoseData]()
+                    var last96 = [GlucoseData]()
                     let value = oopValue.glucoseData(date: Date())
                     last96 = split(current: value.0, glucoseData: value.1)
                     
@@ -184,28 +204,25 @@ public class LibreOOPClient {
             }
         }
     }
-    public static func handleLibreData(sensorData: SensorData, callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
+    
+    public static func handleLibreData(sensorData: SensorData, bubble: Bubble, callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
         guard let patchUid = sensorData.patchUid, let patchInfo = sensorData.patchInfo else {
             oop(sensorData: sensorData, serialNumber: sensorData.serialNumber,  callback)
             return
         }
         
         if patchInfo.hasPrefix("A2") {
-            handleLibreA2Data(libreData: sensorData.bytes) { (data) in
-                DispatchQueue.main.async {
-                    handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
-                }
+            handleLibreA2Data(sensorData: sensorData) { (data) in
+                handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
             }
         } else {
-            DispatchQueue.main.async {
-                webOOP(libreData: sensorData.bytes, patchUid: patchUid, patchInfo: patchInfo) { (data) in
-                    handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
-                }
+            webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
             }
         }
     }
     
-    private static func split(current: LibreRawGlucoseData?, glucoseData: [LibreRawGlucoseData]) -> [LibreRawGlucoseData] {
+    public static func split(current: GlucoseData?, glucoseData: [GlucoseData]) -> [GlucoseData] {
         var x = [Double]()
         var y = [Double]()
         
@@ -398,7 +415,7 @@ public class LibreOOPClient {
     }
     
     
-    private static func trendToLibreGlucose(_ measurements: [LibreMeasurement]) -> [LibreRawGlucoseData]?{
+    private static func trendToLibreGlucose(_ measurements: [LibreMeasurement]) -> [GlucoseData]?{
         
         var origarr = [LibreRawGlucoseData]()
         for trend in measurements {
@@ -494,4 +511,12 @@ extension String {
         }
         return nil
     }
+}
+
+public extension Data {
+    var bytes: [UInt8] {
+        // http://stackoverflow.com/questions/38097710/swift-3-changes-for-getbytes-method
+        return [UInt8](self)
+    }
+
 }

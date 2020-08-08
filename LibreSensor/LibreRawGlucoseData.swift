@@ -108,6 +108,48 @@ protocol LibreRawGlucoseWeb {
     func glucoseData(date: Date) ->(LibreRawGlucoseData?, [LibreRawGlucoseData])
 }
 
+class LibreGlucoseData: Codable {
+    struct Slope: Codable {
+        var slopeSlope: Double?
+        var slopeOffset: Double?
+        var offsetOffset: Double?
+        var offsetSlope: Double?
+        
+        enum CodingKeys: String, CodingKey {
+            case slopeSlope = "slope_slope"
+            case slopeOffset = "slope_offset"
+            case offsetOffset = "offset_offset"
+            case offsetSlope = "offset_slope"
+        }
+        
+        var isErrorParameters: Bool {
+            if slopeSlope == 0 &&
+                slopeOffset == 0 &&
+                offsetOffset == 0 &&
+                offsetSlope == 0 {
+                return true
+            }
+            return slopeSlope == nil || slopeOffset == nil || offsetOffset == nil || offsetSlope == nil
+        }
+    }
+    
+    private var slope: Slope?
+    var data: LibreRawGlucoseOOPData?
+    
+    var slopeValue: LibreDerivedAlgorithmParameters? {
+        if let s = slope, !s.isErrorParameters {
+            return LibreDerivedAlgorithmParameters.init(slope_slope: s.slopeSlope!,
+                                                        slope_offset: s.slopeOffset!,
+                                                        offset_slope: s.offsetSlope!,
+                                                        offset_offset: s.offsetOffset!,
+                                                        isValidForFooterWithReverseCRCs: 1,
+                                                        extraSlope: 1,
+                                                        extraOffset: 0)
+        }
+        return nil
+    }
+}
+
 public class LibreRawGlucoseOOPData: NSObject, Codable, LibreRawGlucoseWeb {
     var alarm : String?
     var esaMinutesToWait : Int?

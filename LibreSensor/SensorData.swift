@@ -129,7 +129,11 @@ public struct SensorData {
     }
     
     var isFirstSensor: Bool {
-        return sensorName == "Libre" || sensorName == "Libre 1" || sensorName == "Libre Pro/H"
+        return sensorName == "Libre" || sensorName == "Libre 1"
+    }
+    
+    var isProSensor: Bool {
+        return sensorName == "Libre Pro/H"
     }
     
     var humanReadableSensorAge : String {

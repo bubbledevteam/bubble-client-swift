@@ -248,19 +248,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         }
     }
     
-    public func handleGoodReading(data: SensorData?,_ callback: @escaping (LibreError?, [GlucoseData]?) -> Void) {
-        //only care about the once per minute readings here, historical data will not be considered
-        guard let data = data else {
-            LogsAccessor.log("sensor data nil")
-            return
-        }
-        
-        LibreOOPClient.handleLibreData(sensorData: data) { result in
-            guard let glucose = result?.glucoseData, !glucose.isEmpty else { return }
-            callback(nil, glucose)
-        }
-    }
-    
     public func BubbleBluetoothManagerPeripheralStateChanged(_ state: BubbleManagerState) {
         switch state {
         case .Connected:
@@ -308,6 +295,19 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         
     }
     
+    public func handleGoodReading(data: SensorData?, bubble: Bubble, _ callback: @escaping (LibreError?, [GlucoseData]?) -> Void) {
+        //only care about the once per minute readings here, historical data will not be considered
+        guard let data = data else {
+            LogsAccessor.log("sensor data nil")
+            return
+        }
+        
+        LibreOOPClient.handleLibreData(sensorData: data, bubble: bubble) { result in
+            guard let glucose = result?.glucoseData, !glucose.isEmpty else { return }
+            callback(nil, glucose)
+        }
+    }
+    
     public var reloadData: (() -> ())?
     public func BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: SensorData, Bubble: Bubble) {
         reloadData?()
@@ -321,7 +321,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         }
         
         self.lastValidSensorData = sensorData
-        self.handleGoodReading(data: sensorData) { [weak self]  (_, glucose) in
+        self.handleGoodReading(data: sensorData, bubble: Bubble) { [weak self]  (_, glucose) in
             guard let self = self else { return }
             LogsAccessor.log("got glucose")
             

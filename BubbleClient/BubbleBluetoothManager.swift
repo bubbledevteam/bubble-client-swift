@@ -73,6 +73,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     var writeCharacteristic: CBCharacteristic?
     
     var rxBuffer = Data()
+    private var proRxBuffer = Data()
     var sensorData: SensorData?
     var patchInfo: String?
     
@@ -285,9 +286,10 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 if let firstByte = value.first {
                     if let bubbleResponseState = BubbleResponseType(rawValue: firstByte) {
                         switch bubbleResponseState {
-                        case .bubbleInfo:
+                        case .bubbleInfo, .decryptedDataPacket:
                             let battery = Int(value[4])
-                            bubble = Bubble(hardware: "0", firmware: "0", battery: battery)
+                            let firmware = "\(value[2]).\(value[3])"
+                            bubble = Bubble(hardware: "0", firmware: firmware, battery: battery)
                             delegate?.BubbleBluetoothManagerMessageChanged()
                             LogsAccessor.log("Battery: \(battery)")
                         case .dataPacket:
@@ -336,13 +338,12 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         }
         
         LogsAccessor.log("receive 344")
-        let data = rxBuffer.subdata(in: 8..<352)
+        let data = rxBuffer.subdata(in: 8 ..< 352)
         sensorData = SensorData(uuid: rxBuffer.subdata(in: 0..<8), bytes: [UInt8](data), date: Date(), patchInfo: patchInfo)
-        // Check if sensor data is valid and, if this is not the case, request data again after thirty second
-        if let sensorData = sensorData {
-            // Inform delegate that new data is available
-            delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
-        }
+        guard let sensorData = sensorData else { return }
+        
+        // Inform delegate that new data is available
+        delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
     }
     
     deinit {
@@ -353,6 +354,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
 
 fileprivate enum BubbleResponseType: UInt8 {
     case dataPacket = 130
+    case decryptedDataPacket = 0x88
     case bubbleInfo = 128
     case noSensor = 191
     case serialNumber = 192
