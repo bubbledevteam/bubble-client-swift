@@ -79,6 +79,7 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
 
         tableView.register(SettingsTableViewCell.self, forCellReuseIdentifier: SettingsTableViewCell.className)
         tableView.register(TextButtonTableViewCell.self, forCellReuseIdentifier: TextButtonTableViewCell.className)
+        tableView.register(SwitchTableViewCell.self, forCellReuseIdentifier: SwitchTableViewCell.className)
         
         let button = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneTapped(_:)))
         self.navigationItem.setRightBarButton(button, animated: false)
@@ -94,15 +95,27 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         }
     }
     
+    @objc private func dosingEnabledChanged(_ sender: UISwitch) {
+        cgmManager?.useFilter = sender.isOn
+        cgmManager?.delegateQueue.async {
+            if let cgmManager = self.cgmManager {
+                cgmManager.cgmManagerDelegate?
+                .cgmManagerDidUpdateState(cgmManager)
+            }
+        }
+        tableView.reloadData()
+    }
+    
 
     // MARK: - UITableViewDataSource
 
     private enum Section: Int {
         case device
         case latestReading
+        case kalman
         case share
         case delete
-        static let count = 4
+        static let count = 5
     }
 
     override public func numberOfSections(in tableView: UITableView) -> Int {
@@ -131,6 +144,8 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         case .share:
             return Share.count
         case .device:
+            return 1
+        case .kalman:
             return 1
         }
     }
@@ -207,6 +222,16 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             
 
             return cell
+        case .kalman:
+            let switchCell = tableView.dequeueReusableCell(withIdentifier: SwitchTableViewCell.className, for: indexPath) as! SwitchTableViewCell
+
+            switchCell.selectionStyle = .none
+            switchCell.switch?.isOn = cgmManager?.useFilter ?? false
+            switchCell.textLabel?.text = NSLocalizedString("Use glucose filter", comment: "Switch title to Use glucose filter")
+
+            switchCell.switch?.addTarget(self, action: #selector(dosingEnabledChanged(_:)), for: .valueChanged)
+
+            return switchCell
         }
     }
 
@@ -220,6 +245,8 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             return nil
         case .device:
             return nil
+        case .kalman:
+            return NSLocalizedString("Use Kalman filter to smooth out a sensor noise.", comment: "Section title for Use glucose filter")
         }
     }
 
@@ -261,6 +288,8 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             }
         case .device:
             tableView.deselectRow(at: indexPath, animated: true)
+        case .kalman:
+            return
         }
     }
     

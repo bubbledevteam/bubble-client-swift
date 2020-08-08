@@ -26,6 +26,11 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         }
     }
     
+    private enum Config {
+        static let useFilterKey = "BubbleClientManager.useFilter"
+        static let filterNoise = 2.5
+    }
+    
     public var delegateQueue: DispatchQueue! {
         get {
             return delegate.queue
@@ -94,11 +99,13 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     required convenience public init?(rawState: CGMManager.RawStateValue) {
         self.init()
-        
+        useFilter = rawState[Config.useFilterKey] as? Bool ?? false
     }
     
     public var rawState: CGMManager.RawStateValue {
-        return [:]
+        [
+            Config.useFilterKey: useFilter
+        ]
     }
     
     public let keychain = KeychainManager()
@@ -112,6 +119,8 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     public let providesBLEHeartbeat = true
     
     public let shouldSyncToRemoteService = true
+    
+    public var useFilter = false
     
     
     private(set) public var lastValidSensorData : SensorData? = nil
@@ -325,10 +334,57 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             guard let self = self else { return }
             LogsAccessor.log("got glucose")
             
-            guard let glucose = glucose else { return }
+            guard var glucose = glucose, !glucose.isEmpty else { return }
             let startDate = self.latestBackfill?.startDate.addingTimeInterval(4 * 60)
             
-            let filterred = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).sorted { (data1, data2) -> Bool in
+            glucose = glucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).sorted { (data1, data2) -> Bool in
+                return data1.timeStamp > data2.timeStamp
+            }
+            
+            glucose.append(contentsOf: UserDefaultsUnit.glucoses)
+            
+            var origin = "original glucose: \n["
+            for g in glucose {
+                origin +=
+                """
+                {"date": \(g.timeStamp), "glucose": \(g.quantity.doubleValue(for: .milligramsPerDeciliter))},\n
+                """
+            }
+            origin += "]"
+            LogsAccessor.log(origin)
+            
+            var filteredGlucose = glucose
+            LogsAccessor.log("useFilter: \(self.useFilter)")
+            if self.useFilter {
+                var filter = KalmanFilter(stateEstimatePrior: glucose.last!.glucoseLevelRaw, errorCovariancePrior: Config.filterNoise)
+                filteredGlucose = []
+                for item in glucose.reversed() {
+                    let prediction = filter.predict(stateTransitionModel: 1, controlInputModel: 0, controlVector: 0, covarianceOfProcessNoise: Config.filterNoise)
+                    let update = prediction.update(measurement: item.glucoseLevelRaw, observationModel: 1, covarienceOfObservationNoise: Config.filterNoise)
+                    filter = update
+                    item.glucoseLevelRaw = filter.stateEstimatePrior.rounded()
+                    filteredGlucose.append(item)
+                }
+                filteredGlucose = filteredGlucose.reversed()
+                
+                var filterred = "filterred glucose: \n["
+                for g in filteredGlucose {
+                    filterred +=
+                    """
+                    {"date": \(g.timeStamp), "glucose": \(g.quantity.doubleValue(for: .milligramsPerDeciliter))},\n
+                    """
+                }
+                filterred += "]"
+                LogsAccessor.log(filterred)
+            }
+            
+            if filteredGlucose.count > 12 {
+                UserDefaultsUnit.glucoses = filteredGlucose[0..<12].map({ $0 })
+            } else {
+                UserDefaultsUnit.glucoses = filteredGlucose
+            }
+        
+            let filterred = filteredGlucose.filterDateRange(startDate, nil).filter({ $0.isStateValid }).sorted { (data1, data2) -> Bool in
                 return data1.timeStamp > data2.timeStamp
             }
             
