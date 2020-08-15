@@ -30,19 +30,19 @@ struct LibreMeasurement {
     /// The glucose value in mg/dl
     let glucose: Double
     /// Initialize a new glucose measurement
-//    let slope_slope: Double = 0.0
-//    let slope_offset: Double = 0.0
-//    let offset_slope: Double = 0.0
-//    let offset_offset: Double = 0.0
+    //    let slope_slope: Double = 0.0
+    //    let slope_offset: Double = 0.0
+    //    let offset_slope: Double = 0.0
+    //    let offset_offset: Double = 0.0
     let temperatureAlgorithmGlucose: Double
     // {"status":"complete","slope_slope":0.00001816666666666667,"slope_offset":-0.00016666666666666666,"offset_offset":-21.5,"offset_slope":0.007499999999999993,"uuid":"calibrationmetadata-e61686dd-1305-44f0-a675-df98aabce67f","isValidForFooterWithReverseCRCs":61141}
-
+    
     let oopSlope: Double
     let oopOffset: Double
     ///
     let temperatureAlgorithmParameterSet: LibreDerivedAlgorithmParameters?
-
-
+    
+    
     ///
     /// - parameter bytes:  raw data bytes as read from the sensor
     /// - parameter slope:  slope to calculate glucose from raw value in (mg/dl)/raw
@@ -62,19 +62,43 @@ struct LibreMeasurement {
         self.counter = counter
         
         self.temperatureAlgorithmParameterSet = LibreDerivedAlgorithmParameterSet
-        if let LibreDerivedAlgorithmParameterSet = self.temperatureAlgorithmParameterSet {
-            self.oopSlope = LibreDerivedAlgorithmParameterSet.slope_slope * Double(rawTemperature) + LibreDerivedAlgorithmParameterSet.offset_slope
-            self.oopOffset = LibreDerivedAlgorithmParameterSet.slope_offset * Double(rawTemperature) + LibreDerivedAlgorithmParameterSet.offset_offset
-            //        self.oopSlope = slope_slope * Double(rawTemperature) + slope_offset
-            //        self.oopOffset = offset_slope * Double(rawTemperature) + offset_offset
-            let oopGlucose = oopSlope * Double(rawGlucose) + oopOffset
-            //self.temperatureAlgorithmGlucose = oopGlucose
-            // Final correction, if sensor values are very low and need to be compensated
-            self.temperatureAlgorithmGlucose = oopGlucose
+        if let parameterSet = self.temperatureAlgorithmParameterSet {
+            self.oopSlope = parameterSet.slope_slope * Double(self.rawTemperature) + parameterSet.offset_slope
+            self.oopOffset = parameterSet.slope_offset * Double(self.rawTemperature) + parameterSet.offset_offset
+            var glucose = oopSlope * Double(rawGlucose) + oopOffset
+            
+            if glucose < 39 {
+                glucose = 39
+            }
+            
+            if glucose > 501 {
+                glucose = 501
+            }
+            
+            self.temperatureAlgorithmGlucose = glucose
         } else {
-            self.oopSlope = 0
-            self.oopOffset = 0
-            self.temperatureAlgorithmGlucose = 0
+            let parameterSet = LibreDerivedAlgorithmParameters.init(slope_slope: 0.13,
+                                                                    slope_offset: 0,
+                                                                    offset_slope: 0,
+                                                                    offset_offset: -20,
+                                                                    isValidForFooterWithReverseCRCs: 1,
+                                                                    extraSlope: 1.0,
+                                                                    extraOffset: 0.0)
+            self.oopSlope = parameterSet.slope_slope * Double(self.rawTemperature) + parameterSet.offset_slope
+            self.oopOffset = parameterSet.slope_offset * Double(self.rawTemperature) + parameterSet.offset_offset
+            
+            var glucose = parameterSet.slope_slope * Double(self.rawGlucose) + parameterSet.offset_slope * Double(self.rawTemperature)
+            glucose += parameterSet.slope_offset * Double(self.rawGlucose) * Double(self.rawTemperature) + parameterSet.offset_offset
+            
+            if glucose < 39 {
+                glucose = 39
+            }
+            
+            if glucose > 501 {
+                glucose = 501
+            }
+            
+            self.temperatureAlgorithmGlucose = glucose
         }
     }
     
@@ -85,6 +109,6 @@ struct LibreMeasurement {
         aString.append("oopGlucose: \(temperatureAlgorithmGlucose) (mg/dl)" )
         
         return aString
-
+        
     }
 }
