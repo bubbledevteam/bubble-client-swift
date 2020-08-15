@@ -70,7 +70,7 @@ struct LibreMeasurement {
             let oopGlucose = oopSlope * Double(rawGlucose) + oopOffset
             //self.temperatureAlgorithmGlucose = oopGlucose
             // Final correction, if sensor values are very low and need to be compensated
-            self.temperatureAlgorithmGlucose = oopGlucose * LibreDerivedAlgorithmParameterSet.extraSlope + LibreDerivedAlgorithmParameterSet.extraOffset
+            self.temperatureAlgorithmGlucose = oopGlucose
         } else {
             self.oopSlope = 0
             self.oopOffset = 0

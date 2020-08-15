@@ -264,13 +264,21 @@ public class LibreOOPClient {
     }
     
     private static func calibrateSensor(sensorData: SensorData, serialNumber: String,  callback: @escaping (LibreDerivedAlgorithmParameters) -> Void) {
-        let params = LibreDerivedAlgorithmParameters.init(slope_slope: 0.00001816666666666667,
-                                                          slope_offset: -0.00016666666666666666,
-                                                          offset_slope: 0.007499999999999993,
-                                                          offset_offset: -21.5,
+//        let params = LibreDerivedAlgorithmParameters.init(slope_slope: 0.00001816666666666667,
+//                                                          slope_offset: -0.00016666666666666666,
+//                                                          offset_slope: 0.007499999999999993,
+//                                                          offset_offset: -21.5,
+//                                                          isValidForFooterWithReverseCRCs: 1,
+//                                                          extraSlope: 1.0,
+//                                                          extraOffset: 0.0)
+        let params = LibreDerivedAlgorithmParameters.init(slope_slope: 0.13,
+                                                          slope_offset: 0,
+                                                          offset_slope: 0,
+                                                          offset_offset: -20,
                                                           isValidForFooterWithReverseCRCs: 1,
                                                           extraSlope: 1.0,
                                                           extraOffset: 0.0)
+        
         if let response = keychain.getLibreCalibrationData(),
             response.serialNumber == sensorData.serialNumber,
             !response.versionChanged {
@@ -278,37 +286,38 @@ public class LibreOOPClient {
             callback(response)
             return
         }
-        post(bytes: sensorData.bytes, { (data, str, can) in
-            let decoder = JSONDecoder()
-            do {
-                let response = try decoder.decode(GetCalibrationStatus.self, from: data)
-                if let slope = response.slope {
-                    var p = LibreDerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope ?? 0,
-                                                                 slope_offset: slope.slopeOffset ?? 0,
-                                                                 offset_slope: slope.offsetSlope ?? 0,
-                                                                 offset_offset: slope.offsetOffset ?? 0,
-                                                                 isValidForFooterWithReverseCRCs: Int(slope.isValidForFooterWithReverseCRCs ?? 1),
-                                                                 extraSlope: 1.0,
-                                                                 extraOffset: 0.0)
-                    p.serialNumber = serialNumber
-                    if p.slope_slope != 0 ||
-                        p.slope_offset != 0 ||
-                        p.offset_slope != 0 ||
-                        p.offset_offset != 0 {
-                        LogsAccessor.log("parameters: \(p.description)")
-                        try? keychain.setLibreCalibrationData(p)
-                        callback(p)
-                    } else {
-                        callback(params)
-                    }
-                } else {
-                    callback(params)
-                }
-            } catch {
-                LogsAccessor.log("calibrateSensor decode: \(error.localizedDescription)")
-                callback(params)
-            }
-        })
+        callback(params)
+//        post(bytes: sensorData.bytes, { (data, str, can) in
+//            let decoder = JSONDecoder()
+//            do {
+//                let response = try decoder.decode(GetCalibrationStatus.self, from: data)
+//                if let slope = response.slope {
+//                    var p = LibreDerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope ?? 0,
+//                                                                 slope_offset: slope.slopeOffset ?? 0,
+//                                                                 offset_slope: slope.offsetSlope ?? 0,
+//                                                                 offset_offset: slope.offsetOffset ?? 0,
+//                                                                 isValidForFooterWithReverseCRCs: Int(slope.isValidForFooterWithReverseCRCs ?? 1),
+//                                                                 extraSlope: 1.0,
+//                                                                 extraOffset: 0.0)
+//                    p.serialNumber = serialNumber
+//                    if p.slope_slope != 0 ||
+//                        p.slope_offset != 0 ||
+//                        p.offset_slope != 0 ||
+//                        p.offset_offset != 0 {
+//                        LogsAccessor.log("parameters: \(p.description)")
+//                        try? keychain.setLibreCalibrationData(p)
+//                        callback(p)
+//                    } else {
+//                        callback(params)
+//                    }
+//                } else {
+//                    callback(params)
+//                }
+//            } catch {
+//                LogsAccessor.log("calibrateSensor decode: \(error.localizedDescription)")
+//                callback(params)
+//            }
+//        })
     }
     
     // MARK: - private functions
