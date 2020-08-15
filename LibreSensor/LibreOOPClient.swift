@@ -264,20 +264,20 @@ public class LibreOOPClient {
     }
     
     private static func calibrateSensor(sensorData: SensorData, serialNumber: String,  callback: @escaping (LibreDerivedAlgorithmParameters) -> Void) {
-//        let params = LibreDerivedAlgorithmParameters.init(slope_slope: 0.00001816666666666667,
-//                                                          slope_offset: -0.00016666666666666666,
-//                                                          offset_slope: 0.007499999999999993,
-//                                                          offset_offset: -21.5,
-//                                                          isValidForFooterWithReverseCRCs: 1,
-//                                                          extraSlope: 1.0,
-//                                                          extraOffset: 0.0)
-        let params = LibreDerivedAlgorithmParameters.init(slope_slope: 0.13,
-                                                          slope_offset: 0,
-                                                          offset_slope: 0,
-                                                          offset_offset: -20,
+        let params = LibreDerivedAlgorithmParameters.init(slope_slope: 0.00001816666666666667,
+                                                          slope_offset: -0.00016666666666666666,
+                                                          offset_slope: 0.007499999999999993,
+                                                          offset_offset: -21.5,
                                                           isValidForFooterWithReverseCRCs: 1,
                                                           extraSlope: 1.0,
                                                           extraOffset: 0.0)
+//        let params = LibreDerivedAlgorithmParameters.init(slope_slope: 0.13,
+//                                                          slope_offset: 0,
+//                                                          offset_slope: 0,
+//                                                          offset_offset: -20,
+//                                                          isValidForFooterWithReverseCRCs: 1,
+//                                                          extraSlope: 1.0,
+//                                                          extraOffset: 0.0)
         
         if let response = keychain.getLibreCalibrationData(),
             response.serialNumber == sensorData.serialNumber,
