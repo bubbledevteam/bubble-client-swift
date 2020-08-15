@@ -387,8 +387,8 @@ public class LibreOOPClient {
         var origarr = [LibreRawGlucoseData]()
         for trend in measurements {
             let glucose = LibreRawGlucoseData.init(timeStamp: trend.date, glucoseLevelRaw: trend.temperatureAlgorithmGlucose)
-            glucose.rawGlucose = trend.rawGlucose
-            glucose.rawTemperature = trend.rawTemperature
+            glucose.rawGlucose = Int(trend.rawGlucose)
+            glucose.rawTemperature = Int(trend.rawTemperature)
             origarr.append(glucose)
         }
         return origarr

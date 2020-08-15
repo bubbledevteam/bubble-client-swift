@@ -20,9 +20,9 @@ struct LibreMeasurement {
     /// The bytes as String
     let byteString: String
     /// The raw glucose as read from the sensor
-    let rawGlucose: Int
+    let rawGlucose: Double
     /// The raw temperature as read from the sensor
-    let rawTemperature: Int
+    let rawTemperature: Double
     /// slope to calculate glucose from raw value in (mg/dl)/raw
     let slope: Double
     /// glucose offset to be added in mg/dl
@@ -53,22 +53,25 @@ struct LibreMeasurement {
     init(bytes: [UInt8], slope: Double = 0.1, offset: Double = 0.0, counter: Int = 0, date: Date, LibreDerivedAlgorithmParameterSet: LibreDerivedAlgorithmParameters? = nil) {
         self.bytes = bytes
         self.byteString = bytes.reduce("", {$0 + String(format: "%02X", arguments: [$1])})
-        self.rawGlucose = (Int(bytes[1] & 0x1F) << 8) + Int(bytes[0]) // switched to 13 bit mask on 2018-03-15
-        self.rawTemperature = (Int(bytes[4] & 0x3F) << 8)  + Int(bytes[3]) // 14 bit-mask for raw temperature
+        self.rawGlucose = Double((Int(bytes[1] & 0x1F) << 8) + Int(bytes[0])) // switched to 13 bit mask on 2018-03-15
+        self.rawTemperature = Double((Int(bytes[4] & 0x3F) << 8) + Int(bytes[3])) // 14 bit-mask for raw temperature
         self.slope = slope
         self.offset = offset
         self.glucose = offset + slope * Double(rawGlucose)
         self.date = date
         self.counter = counter
         
-        var glucose = 0.113 * Double(self.rawGlucose) - 21.1
+        var parameterSet = LibreDerivedAlgorithmParameters.init(slope_slope: 0, slope_offset: 0, offset_slope: 0.113, offset_offset: -20.15)
         
-        self.temperatureAlgorithmParameterSet = LibreDerivedAlgorithmParameterSet
-        if let parameterSet = self.temperatureAlgorithmParameterSet {
-            self.oopSlope = parameterSet.slope_slope * Double(self.rawTemperature) + parameterSet.offset_slope
-            self.oopOffset = parameterSet.slope_offset * Double(self.rawTemperature) + parameterSet.offset_offset
-            glucose = oopSlope * Double(rawGlucose) + oopOffset
+        if let LibreDerivedAlgorithmParameterSet = LibreDerivedAlgorithmParameterSet {
+            parameterSet = LibreDerivedAlgorithmParameterSet
         }
+        self.temperatureAlgorithmParameterSet = parameterSet
+        
+        var glucose = parameterSet.offset_slope * rawGlucose +
+            parameterSet.slope_offset * rawTemperature +
+            parameterSet.slope_slope * rawTemperature * rawGlucose +
+            parameterSet.offset_offset;
         
         if glucose < 39 { glucose = 39 }
         if glucose > 501 { glucose = 501 }
