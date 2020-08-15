@@ -80,10 +80,7 @@ struct LibreMeasurement {
             let parameterSet = LibreDerivedAlgorithmParameters.init(slope_slope: 0.13,
                                                                     slope_offset: 0,
                                                                     offset_slope: 0,
-                                                                    offset_offset: -20,
-                                                                    isValidForFooterWithReverseCRCs: 1,
-                                                                    extraSlope: 1.0,
-                                                                    extraOffset: 0.0)
+                                                                    offset_offset: -20)
             self.oopSlope = parameterSet.slope_slope * Double(self.rawTemperature) + parameterSet.offset_slope
             self.oopOffset = parameterSet.slope_offset * Double(self.rawTemperature) + parameterSet.offset_offset
             

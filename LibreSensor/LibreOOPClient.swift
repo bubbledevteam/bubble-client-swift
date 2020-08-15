@@ -185,7 +185,7 @@ public class LibreOOPClient {
                     
                     if time < 20880 {
                         if time < 60 {
-                            try? keychain.setLibreCalibrationData(LibreDerivedAlgorithmParameters.init(slope_slope: 0, slope_offset: 0, offset_slope: 0, offset_offset: 0, isValidForFooterWithReverseCRCs: 0, extraSlope: 0, extraOffset: 0))
+                            try? keychain.setLibreCalibrationData(LibreDerivedAlgorithmParameters.init(slope_slope: 0, slope_offset: 0, offset_slope: 0, offset_offset: 0))
                         }
                         callback((last96, oopValue.sensorState.sensorState, time))
                     } else {
@@ -212,7 +212,7 @@ public class LibreOOPClient {
         
         if sensorData.isFirstSensor {
             if sensorData.minutesSinceStart < 60 {
-                try? keychain.setLibreCalibrationData(LibreDerivedAlgorithmParameters.init(slope_slope: 0, slope_offset: 0, offset_slope: 0, offset_offset: 0, isValidForFooterWithReverseCRCs: 0, extraSlope: 0, extraOffset: 0))
+                try? keychain.setLibreCalibrationData(LibreDerivedAlgorithmParameters.init(slope_slope: 0, slope_offset: 0, offset_slope: 0, offset_offset: 0))
             }
         }
         

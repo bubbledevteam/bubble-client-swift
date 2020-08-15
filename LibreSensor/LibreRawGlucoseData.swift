@@ -150,10 +150,7 @@ class LibreGlucoseData: Codable {
             return LibreDerivedAlgorithmParameters.init(slope_slope: s.slopeSlope!,
                                                         slope_offset: s.slopeOffset!,
                                                         offset_slope: s.offsetSlope!,
-                                                        offset_offset: s.offsetOffset!,
-                                                        isValidForFooterWithReverseCRCs: 1,
-                                                        extraSlope: 1,
-                                                        extraOffset: 0)
+                                                        offset_offset: s.offsetOffset!)
         }
         return nil
     }
