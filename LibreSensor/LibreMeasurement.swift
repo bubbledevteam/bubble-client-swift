@@ -61,34 +61,18 @@ struct LibreMeasurement {
         self.date = date
         self.counter = counter
         
+        var glucose = 0.113 * Double(self.rawGlucose) - 21.1
+        
         self.temperatureAlgorithmParameterSet = LibreDerivedAlgorithmParameterSet
         if let parameterSet = self.temperatureAlgorithmParameterSet {
             self.oopSlope = parameterSet.slope_slope * Double(self.rawTemperature) + parameterSet.offset_slope
             self.oopOffset = parameterSet.slope_offset * Double(self.rawTemperature) + parameterSet.offset_offset
-            var glucose = oopSlope * Double(rawGlucose) + oopOffset
-            
-            if glucose < 39 {
-                glucose = 39
-            }
-            
-            if glucose > 501 {
-                glucose = 501
-            }
-            
-            self.temperatureAlgorithmGlucose = glucose
-        } else {
-            var glucose = 0.113 * Double(self.rawGlucose) - 21.1
-            
-            if glucose < 39 {
-                glucose = 39
-            }
-            
-            if glucose > 501 {
-                glucose = 501
-            }
-            
-            self.temperatureAlgorithmGlucose = glucose
+            glucose = oopSlope * Double(rawGlucose) + oopOffset
         }
+        
+        if glucose < 39 { glucose = 39 }
+        if glucose > 501 { glucose = 501 }
+        self.temperatureAlgorithmGlucose = glucose
     }
     
     var description: String {
