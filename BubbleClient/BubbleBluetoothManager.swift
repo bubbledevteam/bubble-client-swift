@@ -286,13 +286,13 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 if let firstByte = value.first {
                     if let bubbleResponseState = BubbleResponseType(rawValue: firstByte) {
                         switch bubbleResponseState {
-                        case .bubbleInfo, .decryptedDataPacket:
+                        case .bubbleInfo:
                             let battery = Int(value[4])
                             let firmware = "\(value[2]).\(value[3])"
                             bubble = Bubble(hardware: "0", firmware: firmware, battery: battery)
                             delegate?.BubbleBluetoothManagerMessageChanged()
                             LogsAccessor.log("Battery: \(battery)")
-                        case .dataPacket:
+                        case .dataPacket, .decryptedDataPacket:
                             guard rxBuffer.count >= 8 else { return }
                             rxBuffer.append(value.suffix(from: 4))
                             if rxBuffer.count >= 352 {
