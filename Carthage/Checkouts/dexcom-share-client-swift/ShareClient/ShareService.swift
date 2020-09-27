@@ -88,7 +88,7 @@ public class ShareService: ServiceAuthentication {
 
 
 private let DexcomShareURL = URL(string: KnownShareServers.US.rawValue)!
-private let DexcomShareServiceLabel = "DexcomShare1"
+private let DexcomShareServiceLabel = "DexcomShare2"
 
 
 extension KeychainManager {

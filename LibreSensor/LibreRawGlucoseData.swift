@@ -150,10 +150,7 @@ class LibreGlucoseData: Codable {
             return LibreDerivedAlgorithmParameters.init(slope_slope: s.slopeSlope!,
                                                         slope_offset: s.slopeOffset!,
                                                         offset_slope: s.offsetSlope!,
-                                                        offset_offset: s.offsetOffset!,
-                                                        isValidForFooterWithReverseCRCs: 1,
-                                                        extraSlope: 1,
-                                                        extraOffset: 0)
+                                                        offset_offset: s.offsetOffset!)
         }
         return nil
     }
@@ -304,6 +301,44 @@ class HistoricGlucose: NSObject, Codable {
     let value : Double?
 }
 
+public class LibreA2GlucoseData: Codable {
+    struct Slope: Codable {
+        var slopeSlope: Double?
+        var slopeOffset: Double?
+        var offsetOffset: Double?
+        var offsetSlope: Double?
+        
+        enum CodingKeys: String, CodingKey {
+            case slopeSlope = "slope_slope"
+            case slopeOffset = "slope_offset"
+            case offsetOffset = "offset_offset"
+            case offsetSlope = "offset_slope"
+        }
+        
+        var isErrorParameters: Bool {
+            if slopeSlope == 0 &&
+                slopeOffset == 0 &&
+                offsetOffset == 0 &&
+                offsetSlope == 0 {
+                return true
+            }
+            return slopeSlope == nil || slopeOffset == nil || offsetOffset == nil || offsetSlope == nil
+        }
+    }
+    
+    private var slope: Slope?
+    var data: LibreRawGlucoseOOPA2Data?
+    
+    var slopeValue: LibreDerivedAlgorithmParameters? {
+        if let s = slope, !s.isErrorParameters {
+            return LibreDerivedAlgorithmParameters.init(slope_slope: s.slopeSlope!,
+                                                        slope_offset: s.slopeOffset!,
+                                                        offset_slope: s.offsetSlope!,
+                                                        offset_offset: s.offsetOffset!)
+        }
+        return nil
+    }
+}
 
 public class LibreRawGlucoseOOPA2Data: NSObject, Codable, LibreRawGlucoseWeb {
     var errcode: Int?

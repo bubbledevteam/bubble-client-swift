@@ -91,6 +91,8 @@ public struct SensorData {
         return LibreSensorState(stateByte: header[4])
     }
     
+    var isDecryptedDataPacket = false
+    
     var isLikelyLibre1 : Bool {
         if bytes.count > 23 {
             let subset = bytes[9...23]

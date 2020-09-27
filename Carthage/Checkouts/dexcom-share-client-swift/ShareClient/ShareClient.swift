@@ -28,8 +28,8 @@ public enum ShareError: Error {
 
 
 public enum KnownShareServers: String {
-    case US="https://share1.dexcom.com"
-    case NON_US="https://shareous1.dexcom.com"
+    case US="https://share2.dexcom.com"
+    case NON_US="https://shareous2.dexcom.com"
 
 }
 

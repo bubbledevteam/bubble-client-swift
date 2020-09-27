@@ -76,6 +76,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     private var proRxBuffer = Data()
     var sensorData: SensorData?
     var patchInfo: String?
+    var isDecryptedDataPacket = false
     
     //    fileprivate let serviceUUIDs:[CBUUID]? = [CBUUID(string: "6E400001B5A3F393E0A9E50E24DCCA9E")]
     fileprivate let deviceName = "Bubble"
@@ -286,13 +287,14 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 if let firstByte = value.first {
                     if let bubbleResponseState = BubbleResponseType(rawValue: firstByte) {
                         switch bubbleResponseState {
-                        case .bubbleInfo, .decryptedDataPacket:
+                        case .bubbleInfo:
                             let battery = Int(value[4])
                             let firmware = "\(value[2]).\(value[3])"
                             bubble = Bubble(hardware: "0", firmware: firmware, battery: battery)
                             delegate?.BubbleBluetoothManagerMessageChanged()
                             LogsAccessor.log("Battery: \(battery)")
-                        case .dataPacket:
+                        case .dataPacket, .decryptedDataPacket:
+                            isDecryptedDataPacket = bubbleResponseState == .decryptedDataPacket
                             guard rxBuffer.count >= 8 else { return }
                             rxBuffer.append(value.suffix(from: 4))
                             if rxBuffer.count >= 352 {
@@ -340,6 +342,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         LogsAccessor.log("receive 344")
         let data = rxBuffer.subdata(in: 8 ..< 352)
         sensorData = SensorData(uuid: rxBuffer.subdata(in: 0..<8), bytes: [UInt8](data), date: Date(), patchInfo: patchInfo)
+        sensorData?.isDecryptedDataPacket = isDecryptedDataPacket
         guard let sensorData = sensorData else { return }
         
         // Inform delegate that new data is available

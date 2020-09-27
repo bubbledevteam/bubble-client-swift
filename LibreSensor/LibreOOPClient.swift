@@ -65,7 +65,8 @@ public class LibreOOPClient {
                     if (bubble.firmware.toDouble() ?? 0) >= 2.6 {
                         if let oopValue = try? decoder.decode(LibreGlucoseData.self, from: data) {
                             callback?(oopValue.data)
-                            if let parameters = oopValue.slopeValue {
+                            if var parameters = oopValue.slopeValue {
+                                parameters.serialNumber = sensorData.serialNumber
                                 try? keychain.setLibreCalibrationData(parameters)
                             }
                         } else {
@@ -88,7 +89,7 @@ public class LibreOOPClient {
     
     public static func handleLibreA2Data(sensorData: SensorData, callback: ((LibreRawGlucoseOOPA2Data?) -> Void)?) {
         let bytesAsData = Data(sensorData.bytes)
-        if let uploadURL = URL.init(string: "\(baseUrl)/callnox") {
+        if let uploadURL = URL.init(string: "\(baseUrl)/callnoxAndCalibrate") {
             var request = URLRequest(url: uploadURL)
             request.httpMethod = "POST"
             do {
@@ -102,6 +103,27 @@ public class LibreOOPClient {
                     data, response, error in
                     if let error = error {
                         LogsAccessor.log( error.localizedDescription)
+                    }
+                    
+                    do {
+                        guard let data = data else {
+                            callback?(nil)
+                            return
+                        }
+                        
+                        if let response = String(data: data, encoding: String.Encoding.utf8) {
+                            LogsAccessor.log(response)
+                        }
+                        let decoder = JSONDecoder.init()
+                        let oopValue = try decoder.decode(LibreA2GlucoseData.self, from: data)
+                        if var parameters = oopValue.slopeValue {
+                            parameters.serialNumber = sensorData.serialNumber
+                            try? keychain.setLibreCalibrationData(parameters)
+                        }
+                        callback?(oopValue.data)
+                    } catch {
+                        callback?(nil)
+                        LogsAccessor.log("handleLibreA2Data: \(error.localizedDescription)")
                     }
                     
                     do {
@@ -189,7 +211,7 @@ public class LibreOOPClient {
                     
                     if time < 20880 {
                         if time < 60 {
-                            try? keychain.setLibreCalibrationData(LibreDerivedAlgorithmParameters.init(slope_slope: 0, slope_offset: 0, offset_slope: 0, offset_offset: 0, isValidForFooterWithReverseCRCs: 0, extraSlope: 0, extraOffset: 0))
+                            try? keychain.setLibreCalibrationData(LibreDerivedAlgorithmParameters.init(slope_slope: 0, slope_offset: 0, offset_slope: 0, offset_offset: 0))
                         }
                         callback((last96, oopValue.sensorState.sensorState, time))
                     } else {
@@ -208,6 +230,7 @@ public class LibreOOPClient {
         }
     }
     
+    private static var lastA2Time = Date(timeIntervalSince1970: 0)
     public static func handleLibreData(sensorData: SensorData, bubble: Bubble, callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
         guard let patchUid = sensorData.patchUid, let patchInfo = sensorData.patchInfo else {
             oop(sensorData: sensorData, serialNumber: sensorData.serialNumber,  callback)
@@ -216,7 +239,7 @@ public class LibreOOPClient {
         
         if sensorData.isFirstSensor {
             if sensorData.minutesSinceStart < 60 {
-                try? keychain.setLibreCalibrationData(LibreDerivedAlgorithmParameters.init(slope_slope: 0, slope_offset: 0, offset_slope: 0, offset_offset: 0, isValidForFooterWithReverseCRCs: 0, extraSlope: 0, extraOffset: 0))
+                try? keychain.setLibreCalibrationData(LibreDerivedAlgorithmParameters.init(slope_slope: 0, slope_offset: 0, offset_slope: 0, offset_offset: 0))
             }
         }
         
@@ -227,6 +250,26 @@ public class LibreOOPClient {
         } else {
             webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
                 handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
+            }
+        }
+        
+        if sensorData.isProSensor {
+            oop(sensorData: sensorData, serialNumber: sensorData.serialNumber,  callback)
+        } else {
+            if !patchInfo.hasPrefix("A2") {
+                if lastA2Time.addingTimeInterval(30 * 60) > Date() {
+                    handleLibreA2Data(sensorData: sensorData) { (data) in
+                        handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
+                    }
+                } else {
+                    webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                        handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
+                    }
+                }
+            } else {
+                webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                    handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
+                }
             }
         }
     }
@@ -264,13 +307,10 @@ public class LibreOOPClient {
     }
     
     private static func calibrateSensor(sensorData: SensorData, serialNumber: String,  callback: @escaping (LibreDerivedAlgorithmParameters) -> Void) {
-        let params = LibreDerivedAlgorithmParameters.init(slope_slope: 0.00001816666666666667,
-                                                          slope_offset: -0.00016666666666666666,
-                                                          offset_slope: 0.007499999999999993,
-                                                          offset_offset: -21.5,
-                                                          isValidForFooterWithReverseCRCs: 1,
-                                                          extraSlope: 1.0,
-                                                          extraOffset: 0.0)
+        let params = LibreDerivedAlgorithmParameters.init(slope_slope: 0,
+                                                          slope_offset: 0,
+                                                          offset_slope: 0.113,
+                                                          offset_offset: -20.15)
         if let response = keychain.getLibreCalibrationData(),
             response.serialNumber == sensorData.serialNumber,
             !response.versionChanged {
@@ -278,6 +318,7 @@ public class LibreOOPClient {
             callback(response)
             return
         }
+        
         post(bytes: sensorData.bytes, { (data, str, can) in
             let decoder = JSONDecoder()
             do {
@@ -286,10 +327,7 @@ public class LibreOOPClient {
                     var p = LibreDerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope ?? 0,
                                                                  slope_offset: slope.slopeOffset ?? 0,
                                                                  offset_slope: slope.offsetSlope ?? 0,
-                                                                 offset_offset: slope.offsetOffset ?? 0,
-                                                                 isValidForFooterWithReverseCRCs: Int(slope.isValidForFooterWithReverseCRCs ?? 1),
-                                                                 extraSlope: 1.0,
-                                                                 extraOffset: 0.0)
+                                                                 offset_offset: slope.offsetOffset ?? 0)
                     p.serialNumber = serialNumber
                     if p.slope_slope != 0 ||
                         p.slope_offset != 0 ||
@@ -429,8 +467,8 @@ public class LibreOOPClient {
         var origarr = [LibreRawGlucoseData]()
         for trend in measurements {
             let glucose = LibreRawGlucoseData.init(timeStamp: trend.date, glucoseLevelRaw: trend.temperatureAlgorithmGlucose)
-            glucose.rawGlucose = trend.rawGlucose
-            glucose.rawTemperature = trend.rawTemperature
+            glucose.rawGlucose = Int(trend.rawGlucose)
+            glucose.rawTemperature = Int(trend.rawTemperature)
             origarr.append(glucose)
         }
         return origarr
