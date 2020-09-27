@@ -106,7 +106,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         #if DEBUG
         DispatchQueue.global().async {
             sleep(2)
-            self.test()
+            self.test1()
         }
         #endif
         
@@ -137,13 +137,14 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     }
     
     func test1() {
-        var data = "a41f98160300000000000000000000000000000000000000c2390b04b309c8f09a00ba09c8f8da00bb09c8fcda00cb09c8fc9a00cf09c8f4da00eb09c82cdb00040ac848db00130ac844db001a0ac844db00050ac850db00020ac854db008209c848db008909c830db009409c808db009a09c8f0da00a509c8e4da009407c894db006b08c814db003209c8fcda008109c848db004603c8f056010b03c8d01601c202c82c17018702c88817015502c88817015402c88017019202c8801701cb02c8a417010303c88c17013a03c83417014003c81817015d03c85457015503c89857018703885e1701e503c89817017204c8581701f404c81c17019a05c8401701df05c8b85601c505c8ac1601cf05c87817015705c88017012105c84017017904c864db006f04c8389d00d904c8ec9c000a06883edc000f07888e5c000b2200005493000814097a51140796805a00eda6026d1ac804868967".hexadecimal ?? Data()
+        var data = "05dad01d0300000000000000000000000000000000000000f22d0b0c600cc8bc5b00500cc8b05b004a0cc8805b00410cc8685b00360cc8485b00370cc8b85b00430cc8705b003e0cc82c5c002f0cc8345c000e0cc8585c00f20bc8845c005d0cc8305c005e0cc8fc5b00570cc8f45b00500cc8c45b00550cc8ac5b00b809c8045c00730ac8785c00500bc8005b00650cc8f89900ff0cc8a85a00a90cc8785b00f90cc8ac9a00640dc81c9a00540dc8d49a00fb0cc8645c008a0cc8605c00410cc8685b007a05c8085e002f05c8a05b005605c8689a008505c8489a004f04c8005c009603c8805d00ba03c8889a007805c8849900c307c8445a001f08c8e01d805708c8fc5b004a08c8cc5c00a508c8b85b001d09c8d89a004509c8f45b00c308c8a85c003608c8f01e806408c8305c00ba08c8745b003709c8285c003b0800007c3500045b0a0e51140796805a00eda612551ac80421ba76".hexadecimal ?? Data()
         data = data.subdata(in: 0..<344)
-        sensorData = SensorData(uuid: Data(), bytes: [UInt8](data), date: Date(), patchInfo: "DF000008022E")
-        sensorData?.patchUid = "E14C2A6000A007E0"
+        sensorData = SensorData(uuid: Data(), bytes: [UInt8](data), date: Date(), patchInfo: "A20800045B37")
+        sensorData?.patchUid = "45F4820500A007E0"
+        sensorData?.isDecryptedDataPacket = true
         // Check if sensor data is valid and, if this is not the case, request data again after thirty second
         if let sensorData = sensorData {
-            let bubble = Bubble(hardware: "0", firmware: "0", battery: 20)
+            let bubble = Bubble(hardware: "0", firmware: "2.6", battery: 20)
             // Inform delegate that new data is available
             delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
         }

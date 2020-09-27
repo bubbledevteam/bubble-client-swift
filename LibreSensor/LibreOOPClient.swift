@@ -37,7 +37,7 @@ public class LibreOOPClient {
         let item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
         let item3 = URLQueryItem(name: "content", value: bytesAsData.hexEncodedString())
         var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2")!
-        if (bubble.firmware.toDouble() ?? 0) >= 2.6 {
+        if sensorData.isDecryptedDataPacket {
             urlComponents = URLComponents(string: "\(baseUrl)/libreoop2AndCalibrate")!
         }
         urlComponents.queryItems = [item, item1, item2, item3]
@@ -235,14 +235,22 @@ public class LibreOOPClient {
         if sensorData.isProSensor {
             oop(sensorData: sensorData, serialNumber: sensorData.serialNumber,  callback)
         } else {
-            if !patchInfo.hasPrefix("A2") {
+            if patchInfo.hasPrefix("A2") {
                 if lastA2Time.addingTimeInterval(30 * 60) > Date() {
                     handleLibreA2Data(sensorData: sensorData) { (data) in
                         handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
                     }
                 } else {
                     webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
-                        handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
+                        
+                        if let data = data {
+                            handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
+                        } else {
+                            lastA2Time = Date()
+                            handleLibreA2Data(sensorData: sensorData) { (data) in
+                                handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
+                            }
+                        }
                     }
                 }
             } else {
