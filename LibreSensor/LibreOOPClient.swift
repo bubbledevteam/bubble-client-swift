@@ -28,7 +28,7 @@ public class LibreOOPClient {
         let bytesAsData = Data(sensorData.bytes)
         var patchUid = patchUid
         var patchInfo = patchInfo
-        if sensorData.isSecondSensor && (bubble.firmware.toDouble() ?? 0) >= 2.6 {
+        if !sensorData.isFirstSensor && (bubble.firmware.toDouble() ?? 0) >= 2.6 {
             patchUid = "7683376000A007E0"
             patchInfo = "DF0000080000"
         }
@@ -230,22 +230,6 @@ public class LibreOOPClient {
         guard let patchUid = sensorData.patchUid, let patchInfo = sensorData.patchInfo else {
             oop(sensorData: sensorData, serialNumber: sensorData.serialNumber,  callback)
             return
-        }
-        
-        if sensorData.isFirstSensor {
-            if sensorData.minutesSinceStart < 60 {
-                try? keychain.setLibreCalibrationData(LibreDerivedAlgorithmParameters.init(slope_slope: 0, slope_offset: 0, offset_slope: 0, offset_offset: 0))
-            }
-        }
-        
-        if patchInfo.hasPrefix("A2") {
-            handleLibreA2Data(sensorData: sensorData) { (data) in
-                handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
-            }
-        } else {
-            webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
-                handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
-            }
         }
         
         if sensorData.isProSensor {
