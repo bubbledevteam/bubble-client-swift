@@ -151,7 +151,7 @@ public class LibreOOPClient {
         }
     }
     
-    public static func oopParams(libreData: [UInt8], params: LibreDerivedAlgorithmParameters) -> [GlucoseData] {
+    public static func oopParams(libreData: [UInt8], params: LibreDerivedAlgorithmParameters?) -> [GlucoseData] {
         LogsAccessor.log("start last16")
         let last16 = trendMeasurements(bytes: libreData, date: Date(), LibreDerivedAlgorithmParameterSet: params)
         if var glucoseData = trendToLibreGlucose(last16), let first = glucoseData.first {
@@ -181,7 +181,9 @@ public class LibreOOPClient {
         
         calibrateSensor(sensorData: sensorData, serialNumber: sensorData.serialNumber) {
             (calibrationparams)  in
-            LogsAccessor.log("calibrateSensor params: \(calibrationparams.description)")
+            if let calibrationparams = calibrationparams {
+                LogsAccessor.log("calibrateSensor params: \(calibrationparams.description)")
+            }
             callback((oopParams(libreData: libreData, params: calibrationparams),
             sensorState,
             sensorTime))
@@ -197,13 +199,6 @@ public class LibreOOPClient {
                     callback(([], .failure, nil))
                 }
             } else {
-                if oopValue.canGetParameters {
-                    let response = keychain.getLibreCalibrationData()
-                    if response?.serialNumber != sensorData.serialNumber || (response?.versionChanged ?? false) {
-                        calibrateSensor(sensorData: sensorData, serialNumber: sensorData.serialNumber) { _ in }
-                    }
-                }
-                
                 if let time = oopValue.sensorTime {
                     var last96 = [GlucoseData]()
                     let value = oopValue.glucoseData(date: Date())
@@ -306,14 +301,9 @@ public class LibreOOPClient {
         return items
     }
     
-    private static func calibrateSensor(sensorData: SensorData, serialNumber: String,  callback: @escaping (LibreDerivedAlgorithmParameters) -> Void) {
-        let params = LibreDerivedAlgorithmParameters.init(slope_slope: 0,
-                                                          slope_offset: 0,
-                                                          offset_slope: 0.113,
-                                                          offset_offset: -20.15)
+    private static func calibrateSensor(sensorData: SensorData, serialNumber: String,  callback: @escaping (LibreDerivedAlgorithmParameters?) -> Void) {
         if let response = keychain.getLibreCalibrationData(),
-            response.serialNumber == sensorData.serialNumber,
-            !response.versionChanged {
+            response.serialNumber == sensorData.serialNumber {
             LogsAccessor.log("parameters from keychain")
             callback(response)
             return
@@ -337,14 +327,14 @@ public class LibreOOPClient {
                         try? keychain.setLibreCalibrationData(p)
                         callback(p)
                     } else {
-                        callback(params)
+                        callback(nil)
                     }
                 } else {
-                    callback(params)
+                    callback(nil)
                 }
             } catch {
                 LogsAccessor.log("calibrateSensor decode: \(error.localizedDescription)")
-                callback(params)
+                callback(nil)
             }
         })
     }

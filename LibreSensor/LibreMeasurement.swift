@@ -30,10 +30,10 @@ struct LibreMeasurement {
     /// The glucose value in mg/dl
     let glucose: Double
     /// Initialize a new glucose measurement
-//    let slope_slope: Double = 0.0
-//    let slope_offset: Double = 0.0
-//    let offset_slope: Double = 0.0
-//    let offset_offset: Double = 0.0
+    //    let slope_slope: Double = 0.0
+    //    let slope_offset: Double = 0.0
+    //    let offset_slope: Double = 0.0
+    //    let offset_offset: Double = 0.0
     let temperatureAlgorithmGlucose: Double
     // {"status":"complete","slope_slope":0.00001816666666666667,"slope_offset":-0.00016666666666666666,"offset_offset":-21.5,"offset_slope":0.007499999999999993,"uuid":"calibrationmetadata-e61686dd-1305-44f0-a675-df98aabce67f","isValidForFooterWithReverseCRCs":61141}
 
@@ -41,8 +41,8 @@ struct LibreMeasurement {
     var oopOffset: Double = 0
     ///
     let temperatureAlgorithmParameterSet: LibreDerivedAlgorithmParameters?
-
-
+    
+    
     ///
     /// - parameter bytes:  raw data bytes as read from the sensor
     /// - parameter slope:  slope to calculate glucose from raw value in (mg/dl)/raw
@@ -54,7 +54,7 @@ struct LibreMeasurement {
         self.bytes = bytes
         self.byteString = bytes.reduce("", {$0 + String(format: "%02X", arguments: [$1])})
         self.rawGlucose = Double((Int(bytes[1] & 0x1F) << 8) + Int(bytes[0])) // switched to 13 bit mask on 2018-03-15
-        self.rawTemperature = Double((Int(bytes[4] & 0x3F) << 8)  + Int(bytes[3])) // 14 bit-mask for raw temperature
+        self.rawTemperature = Double((Int(bytes[4] & 0x3F) << 8) + Int(bytes[3])) // 14 bit-mask for raw temperature
         self.slope = slope
         self.offset = offset
         self.glucose = offset + slope * Double(rawGlucose)
@@ -85,6 +85,6 @@ struct LibreMeasurement {
         aString.append("oopGlucose: \(temperatureAlgorithmGlucose) (mg/dl)" )
         
         return aString
-
+        
     }
 }
