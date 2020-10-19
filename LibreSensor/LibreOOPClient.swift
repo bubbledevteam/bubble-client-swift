@@ -217,11 +217,7 @@ public class LibreOOPClient {
                 }
             }
         } else {
-            if sensorData.isFirstSensor {
-                oop(sensorData: sensorData, serialNumber: serialNumber,  callback)
-            } else {
-                callback(([], .failure, nil))
-            }
+            oop(sensorData: sensorData, serialNumber: serialNumber,  callback)
         }
     }
     
