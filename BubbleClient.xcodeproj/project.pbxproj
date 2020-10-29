@@ -92,6 +92,62 @@
 			remoteGlobalIDString = 27C335DD21667C7A00CF0868;
 			remoteInfo = singleviewtesterapp2;
 		};
+		2CF3D428254B213B009CB01F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE44AD7A2484F931007275C3 /* CGMBLEKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B4D40D3E23A428BC00D7ECB5;
+			remoteInfo = CGMBLEKitG5Plugin;
+		};
+		2CF3D42A254B213B009CB01F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE44AD7A2484F931007275C3 /* CGMBLEKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B4D40D2E23A3E91800D7ECB5;
+			remoteInfo = CGMBLEKitG6Plugin;
+		};
+		2CF3D42D254B213B009CB01F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE44AB6C2484F930007275C3 /* LoopKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1DEE230124A676A300693C32;
+			remoteInfo = LoopKitHostedTests;
+		};
+		2CF3D430254B213B009CB01F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE44AE412484F932007275C3 /* LoopKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1DEE230124A676A300693C32;
+			remoteInfo = LoopKitHostedTests;
+		};
+		2CF3D433254B213B009CB01F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE44A8EA2484F92E007275C3 /* LoopKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1DEE230124A676A300693C32;
+			remoteInfo = LoopKitHostedTests;
+		};
+		2CF3D436254B213B009CB01F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE44A5902484F92B007275C3 /* LoopKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1DEE230124A676A300693C32;
+			remoteInfo = LoopKitHostedTests;
+		};
+		2CF3D439254B213B009CB01F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE44AAA22484F92F007275C3 /* ShareClient.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B40BF25E23ABD47400A43CEE;
+			remoteInfo = ShareClientPlugin;
+		};
+		2CF3D43C254B213B009CB01F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE44A7482484F92D007275C3 /* ShareClient.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B40BF25E23ABD47400A43CEE;
+			remoteInfo = ShareClientPlugin;
+		};
 		432B0E941CDFC3C50045347B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 432B0E7F1CDFC3C50045347B /* Project object */;
@@ -3730,6 +3786,7 @@
 				EE44B05E2484F933007275C3 /* LoopKit.framework */,
 				EE44B0602484F933007275C3 /* LoopKit.framework */,
 				EE44B0622484F933007275C3 /* LoopKitTests.xctest */,
+				2CF3D437254B213B009CB01F /* LoopKitHostedTests.xctest */,
 				EE44B0642484F933007275C3 /* LoopKitUI.framework */,
 				EE44B0662484F933007275C3 /* MockKit.framework */,
 				EE44B0682484F933007275C3 /* MockKitUI.framework */,
@@ -4290,6 +4347,7 @@
 				EE44B07E2484F933007275C3 /* ShareClient.framework */,
 				EE44B0802484F933007275C3 /* ShareClientTests.xctest */,
 				EE44B0822484F933007275C3 /* ShareClientUI.framework */,
+				2CF3D43D254B213B009CB01F /* ShareClientPlugin.loopplugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4724,6 +4782,7 @@
 				EE44B0462484F933007275C3 /* LoopKit.framework */,
 				EE44B0482484F933007275C3 /* LoopKit.framework */,
 				EE44B04A2484F933007275C3 /* LoopKitTests.xctest */,
+				2CF3D434254B213B009CB01F /* LoopKitHostedTests.xctest */,
 				EE44B04C2484F933007275C3 /* LoopKitUI.framework */,
 				EE44B04E2484F933007275C3 /* MockKit.framework */,
 				EE44B0502484F933007275C3 /* MockKitUI.framework */,
@@ -5284,6 +5343,7 @@
 				EE44B0722484F933007275C3 /* ShareClient.framework */,
 				EE44B0742484F933007275C3 /* ShareClientTests.xctest */,
 				EE44B0762484F933007275C3 /* ShareClientUI.framework */,
+				2CF3D43A254B213B009CB01F /* ShareClientPlugin.loopplugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5537,6 +5597,7 @@
 				EE44B0162484F933007275C3 /* LoopKit.framework */,
 				EE44B0182484F933007275C3 /* LoopKit.framework */,
 				EE44B01A2484F933007275C3 /* LoopKitTests.xctest */,
+				2CF3D42E254B213B009CB01F /* LoopKitHostedTests.xctest */,
 				EE44B01C2484F933007275C3 /* LoopKitUI.framework */,
 				EE44B01E2484F933007275C3 /* MockKit.framework */,
 				EE44B0202484F933007275C3 /* MockKitUI.framework */,
@@ -6192,6 +6253,8 @@
 				EE44B0062484F933007275C3 /* CGMBLEKitTests.xctest */,
 				EE44B0082484F933007275C3 /* CGMBLEKit Example.app */,
 				EE44B00A2484F933007275C3 /* ResetTransmitter.app */,
+				2CF3D429254B213B009CB01F /* CGMBLEKitG5Plugin.loopplugin */,
+				2CF3D42B254B213B009CB01F /* CGMBLEKitG6Plugin.loopplugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6436,6 +6499,7 @@
 				EE44B02E2484F933007275C3 /* LoopKit.framework */,
 				EE44B0302484F933007275C3 /* LoopKit.framework */,
 				EE44B0322484F933007275C3 /* LoopKitTests.xctest */,
+				2CF3D431254B213B009CB01F /* LoopKitHostedTests.xctest */,
 				EE44B0342484F933007275C3 /* LoopKitUI.framework */,
 				EE44B0362484F933007275C3 /* MockKit.framework */,
 				EE44B0382484F933007275C3 /* MockKitUI.framework */,
@@ -7120,6 +7184,7 @@
 					};
 					432B0E871CDFC3C50045347B = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = 9XUNMSKCTD;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
@@ -7130,6 +7195,7 @@
 					};
 					43A8EC81210E664300A81379 = {
 						CreatedOnToolsVersion = 9.4.1;
+						DevelopmentTeam = 9XUNMSKCTD;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -7203,6 +7269,62 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		2CF3D429254B213B009CB01F /* CGMBLEKitG5Plugin.loopplugin */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CGMBLEKitG5Plugin.loopplugin;
+			remoteRef = 2CF3D428254B213B009CB01F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2CF3D42B254B213B009CB01F /* CGMBLEKitG6Plugin.loopplugin */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CGMBLEKitG6Plugin.loopplugin;
+			remoteRef = 2CF3D42A254B213B009CB01F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2CF3D42E254B213B009CB01F /* LoopKitHostedTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = LoopKitHostedTests.xctest;
+			remoteRef = 2CF3D42D254B213B009CB01F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2CF3D431254B213B009CB01F /* LoopKitHostedTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = LoopKitHostedTests.xctest;
+			remoteRef = 2CF3D430254B213B009CB01F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2CF3D434254B213B009CB01F /* LoopKitHostedTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = LoopKitHostedTests.xctest;
+			remoteRef = 2CF3D433254B213B009CB01F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2CF3D437254B213B009CB01F /* LoopKitHostedTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = LoopKitHostedTests.xctest;
+			remoteRef = 2CF3D436254B213B009CB01F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2CF3D43A254B213B009CB01F /* ShareClientPlugin.loopplugin */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ShareClientPlugin.loopplugin;
+			remoteRef = 2CF3D439254B213B009CB01F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2CF3D43D254B213B009CB01F /* ShareClientPlugin.loopplugin */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ShareClientPlugin.loopplugin;
+			remoteRef = 2CF3D43C254B213B009CB01F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		EE44B0002484F933007275C3 /* CGMBLEKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -8976,7 +9098,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9XUNMSKCTD;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 2;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -9012,7 +9134,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9XUNMSKCTD;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 2;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -9072,11 +9194,11 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9XUNMSKCTD;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -9109,11 +9231,11 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9XUNMSKCTD;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

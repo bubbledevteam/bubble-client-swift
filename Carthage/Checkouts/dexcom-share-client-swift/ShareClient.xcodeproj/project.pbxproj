@@ -44,6 +44,9 @@
 		A9ED4D9E225EB4D30080DEBA /* ShareClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 432B0E8B1CDFC3C50045347B /* ShareClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9ED4DA0225EB4D30080DEBA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 43AB5125213315D300B3D58D /* Localizable.strings */; };
 		A9ED4DAF225EB93A0080DEBA /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9ED4DAE225EB9390080DEBA /* HealthKit.framework */; };
+		B40BF26623ABD4E700A43CEE /* ShareClientPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40BF26523ABD4E700A43CEE /* ShareClientPlugin.swift */; };
+		B40BF26823ABD55200A43CEE /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40BF26723ABD55200A43CEE /* OSLog.swift */; };
+		B40BF26923ABD55200A43CEE /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40BF26723ABD55200A43CEE /* OSLog.swift */; };
 		C17D3CC62184CC26003458C8 /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43A8EC7B210E661400A81379 /* LoopKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -61,6 +64,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 432B0E871CDFC3C50045347B;
 			remoteInfo = ShareClient;
+		};
+		B40BF26A23ABD5E100A43CEE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 432B0E7F1CDFC3C50045347B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 43A8EC81210E664300A81379;
+			remoteInfo = ShareClientUI;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -126,6 +136,11 @@
 		7D9BF1302336FFAF005DCFD6 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A9ED4DA4225EB4D30080DEBA /* ShareClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ShareClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9ED4DAE225EB9390080DEBA /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS.sdk/System/Library/Frameworks/HealthKit.framework; sourceTree = DEVELOPER_DIR; };
+		B40BF25E23ABD47400A43CEE /* ShareClientPlugin.loopplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShareClientPlugin.loopplugin; sourceTree = BUILT_PRODUCTS_DIR; };
+		B40BF26023ABD47400A43CEE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B40BF26423ABD4E600A43CEE /* ShareClientPlugin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ShareClientPlugin-Bridging-Header.h"; sourceTree = "<group>"; };
+		B40BF26523ABD4E700A43CEE /* ShareClientPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareClientPlugin.swift; sourceTree = "<group>"; };
+		B40BF26723ABD55200A43CEE /* OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSLog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +182,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B40BF25B23ABD47400A43CEE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -177,6 +199,7 @@
 				432B0E8A1CDFC3C50045347B /* ShareClient */,
 				432B0E961CDFC3C50045347B /* ShareClientTests */,
 				43A8EC83210E664300A81379 /* ShareClientUI */,
+				B40BF25F23ABD47400A43CEE /* ShareClientPlugin */,
 				432B0E891CDFC3C50045347B /* Products */,
 				43A8EC7A210E661300A81379 /* Frameworks */,
 			);
@@ -189,6 +212,7 @@
 				432B0E921CDFC3C50045347B /* ShareClientTests.xctest */,
 				43A8EC82210E664300A81379 /* ShareClientUI.framework */,
 				A9ED4DA4225EB4D30080DEBA /* ShareClient.framework */,
+				B40BF25E23ABD47400A43CEE /* ShareClientPlugin.loopplugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -205,6 +229,7 @@
 				4325E9D0210E6A3D00969CE5 /* TimeInterval.swift */,
 				432B0E8B1CDFC3C50045347B /* ShareClient.h */,
 				432B0E8D1CDFC3C50045347B /* Info.plist */,
+				B40BF26723ABD55200A43CEE /* OSLog.swift */,
 			);
 			path = ShareClient;
 			sourceTree = "<group>";
@@ -251,6 +276,16 @@
 				43AB51352133177800B3D58D /* LocalizedString.swift */,
 			);
 			path = Common;
+			sourceTree = "<group>";
+		};
+		B40BF25F23ABD47400A43CEE /* ShareClientPlugin */ = {
+			isa = PBXGroup;
+			children = (
+				B40BF26023ABD47400A43CEE /* Info.plist */,
+				B40BF26523ABD4E700A43CEE /* ShareClientPlugin.swift */,
+				B40BF26423ABD4E600A43CEE /* ShareClientPlugin-Bridging-Header.h */,
+			);
+			path = ShareClientPlugin;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -357,6 +392,24 @@
 			productReference = A9ED4DA4225EB4D30080DEBA /* ShareClient.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		B40BF25D23ABD47400A43CEE /* ShareClientPlugin */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B40BF26323ABD47400A43CEE /* Build configuration list for PBXNativeTarget "ShareClientPlugin" */;
+			buildPhases = (
+				B40BF25A23ABD47400A43CEE /* Sources */,
+				B40BF25B23ABD47400A43CEE /* Frameworks */,
+				B40BF25C23ABD47400A43CEE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B40BF26B23ABD5E100A43CEE /* PBXTargetDependency */,
+			);
+			name = ShareClientPlugin;
+			productName = ShareClientPlugin;
+			productReference = B40BF25E23ABD47400A43CEE /* ShareClientPlugin.loopplugin */;
+			productType = "com.apple.product-type.bundle";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -380,6 +433,11 @@
 						LastSwiftMigration = 1020;
 						ProvisioningStyle = Automatic;
 					};
+					B40BF25D23ABD47400A43CEE = {
+						CreatedOnToolsVersion = 11.0;
+						LastSwiftMigration = 1100;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 432B0E821CDFC3C50045347B /* Build configuration list for PBXProject "ShareClient" */;
@@ -387,6 +445,7 @@
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 				fr,
@@ -415,6 +474,7 @@
 				A9ED4D91225EB4D30080DEBA /* ShareClient-watchOS */,
 				432B0E911CDFC3C50045347B /* ShareClientTests */,
 				43A8EC81210E664300A81379 /* ShareClientUI */,
+				B40BF25D23ABD47400A43CEE /* ShareClientPlugin */,
 			);
 		};
 /* End PBXProject section */
@@ -451,6 +511,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B40BF25C23ABD47400A43CEE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -483,6 +550,7 @@
 			files = (
 				4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */,
 				4325E9D1210E6A3D00969CE5 /* TimeInterval.swift in Sources */,
+				B40BF26823ABD55200A43CEE /* OSLog.swift in Sources */,
 				43A8EC9D210E68CE00A81379 /* ShareClientManager.swift in Sources */,
 				43AB51362133177800B3D58D /* LocalizedString.swift in Sources */,
 				43A8EC9B210E68BA00A81379 /* ShareGlucose+GlucoseKit.swift in Sources */,
@@ -527,6 +595,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B40BF25A23ABD47400A43CEE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B40BF26923ABD55200A43CEE /* OSLog.swift in Sources */,
+				B40BF26623ABD4E700A43CEE /* ShareClientPlugin.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -539,6 +616,11 @@
 			isa = PBXTargetDependency;
 			target = 432B0E871CDFC3C50045347B /* ShareClient */;
 			targetProxy = A9E521F6225E949400EDDEF2 /* PBXContainerItemProxy */;
+		};
+		B40BF26B23ABD5E100A43CEE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 43A8EC81210E664300A81379 /* ShareClientUI */;
+			targetProxy = B40BF26A23ABD5E100A43CEE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -643,7 +725,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LOCALIZED_STRING_MACRO_NAMES = (
 					NSLocalizedString,
 					CFLocalizedString,
@@ -704,7 +786,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LOCALIZED_STRING_MACRO_NAMES = (
 					NSLocalizedString,
 					CFLocalizedString,
@@ -886,6 +968,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchos watchsimulator";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
 			};
 			name = Debug;
@@ -914,6 +997,66 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchos watchsimulator";
 				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Release;
+		};
+		B40BF26123ABD47400A43CEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = ShareClientPlugin/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = mh_dylib;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.loopkit.ShareClientPlugin;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "ShareClientPlugin/ShareClientPlugin-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				WRAPPER_EXTENSION = loopplugin;
+			};
+			name = Debug;
+		};
+		B40BF26223ABD47400A43CEE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = ShareClientPlugin/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = mh_dylib;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.loopkit.ShareClientPlugin;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "ShareClientPlugin/ShareClientPlugin-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				WRAPPER_EXTENSION = loopplugin;
 			};
 			name = Release;
 		};
@@ -961,6 +1104,15 @@
 			buildConfigurations = (
 				A9ED4DA2225EB4D30080DEBA /* Debug */,
 				A9ED4DA3225EB4D30080DEBA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B40BF26323ABD47400A43CEE /* Build configuration list for PBXNativeTarget "ShareClientPlugin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B40BF26123ABD47400A43CEE /* Debug */,
+				B40BF26223ABD47400A43CEE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

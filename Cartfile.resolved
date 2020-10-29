@@ -1,3 +1,4 @@
-github "LoopKit/CGMBLEKit" "7b4c1022eb6b91ae3975bfc8ce93fde8e496b4f3"
-github "LoopKit/LoopKit" "953b58e617379354b89ea33e0fd8f220ccc2d366"
-github "LoopKit/dexcom-share-client-swift" "68ea5d08588e00bf148518b126416b8352dbef64"
+github "LoopKit/CGMBLEKit" "3906d75180cd27b87b53953e9e126eab4d5e5edf"
+github "LoopKit/LoopKit" "e358cbc4fe7023cc20f3deee12d295e0f4ef9a0c"
+github "LoopKit/dexcom-share-client-swift" "786e5f0c1398ddacc6964314455d55a0ac10e544"
+github "i-schuetz/SwiftCharts" "0.6.5"

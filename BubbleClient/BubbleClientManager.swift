@@ -16,6 +16,8 @@ import os.log
 import HealthKit
 
 public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelegate {
+    public var glucoseDisplay: GlucoseDisplayable?
+    
     public let delegate = WeakSynchronizedDelegate<CGMManagerDelegate>()
     public var cgmManagerDelegate: CGMManagerDelegate? {
         get {
@@ -40,7 +42,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         }
     }
     
-    public var sensorState: SensorDisplayable? {
+    public var sensorState: GlucoseDisplayable? {
         return latestBackfill
     }
     
@@ -396,7 +398,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             }
             
             let newGlucose = filterred.map {
-                return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
+                return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, wasUserEntered: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
             }
             
             // update current glucose value every time.
@@ -444,4 +446,15 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     func BubbleBluetoothManagerMessageChanged() {
         reloadData?()
     }
+}
+
+// MARK: - AlertResponder implementation
+extension BubbleClientManager {
+    public func acknowledgeAlert(alertIdentifier: Alert.AlertIdentifier) { }
+}
+
+// MARK: - AlertSoundVendor implementation
+extension BubbleClientManager {
+    public func getSoundBaseURL() -> URL? { return nil }
+    public func getSounds() -> [Alert.Sound] { return [] }
 }

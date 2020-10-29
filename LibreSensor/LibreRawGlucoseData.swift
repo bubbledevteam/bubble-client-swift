@@ -71,7 +71,12 @@ extension GlucoseData: GlucoseValue {
     }
 }
 
-extension GlucoseData: SensorDisplayable {
+extension GlucoseData: GlucoseDisplayable {
+    /// todo:
+    public var glucoseRangeCategory: GlucoseRangeCategory? {
+        return nil
+    }
+    
     public var isStateValid: Bool {
         return glucoseLevelRaw >= 39
     }

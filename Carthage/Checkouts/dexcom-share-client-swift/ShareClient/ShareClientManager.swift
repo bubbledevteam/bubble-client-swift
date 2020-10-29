@@ -10,6 +10,7 @@ import HealthKit
 
 
 public class ShareClientManager: CGMManager {
+
     public static var managerIdentifier = "DexShareClient"
 
     public init() {
@@ -60,7 +61,7 @@ public class ShareClientManager: CGMManager {
 
     public let shouldSyncToRemoteService = false
 
-    public var sensorState: SensorDisplayable? {
+    public var glucoseDisplay: GlucoseDisplayable? {
         return latestBackfill
     }
 
@@ -96,7 +97,7 @@ public class ShareClientManager: CGMManager {
             }
             let newGlucose = glucose.filterDateRange(startDate, nil)
             let newSamples = newGlucose.filter({ $0.isStateValid }).map {
-                return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
+                return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, wasUserEntered: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
             }
 
             self.latestBackfill = newGlucose.first
@@ -119,3 +120,15 @@ public class ShareClientManager: CGMManager {
         ].joined(separator: "\n")
     }
 }
+
+// MARK: - AlertResponder implementation
+extension ShareClientManager {
+    public func acknowledgeAlert(alertIdentifier: Alert.AlertIdentifier) { }
+}
+
+// MARK: - AlertSoundVendor implementation
+extension ShareClientManager {
+    public func getSoundBaseURL() -> URL? { return nil }
+    public func getSounds() -> [Alert.Sound] { return [] }
+}
+
