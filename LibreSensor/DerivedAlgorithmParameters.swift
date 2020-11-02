@@ -16,7 +16,7 @@ public struct LibreDerivedAlgorithmParameters: Codable, CustomStringConvertible 
     public var serialNumber: String?
     
     // change the parameters when version changed
-    public var version: Int? = 3
+    public var version: Int? = 4
     
     public var versionChanged: Bool {
         let p = LibreDerivedAlgorithmParameters.init(slope_slope: 0, slope_offset: 0, offset_slope: 0, offset_offset: 0)

@@ -217,7 +217,9 @@ public class LibreOOPClient {
                 }
             }
         } else {
-            oop(sensorData: sensorData, serialNumber: serialNumber,  callback)
+            if sensorData.isFirstSensor || sensorData.isDecryptedDataPacket {
+                oop(sensorData: sensorData, serialNumber: serialNumber,  callback)
+            }
         }
     }
     
@@ -291,40 +293,14 @@ public class LibreOOPClient {
     
     private static func calibrateSensor(sensorData: SensorData, serialNumber: String,  callback: @escaping (LibreDerivedAlgorithmParameters?) -> Void) {
         if let response = keychain.getLibreCalibrationData(),
-            response.serialNumber == sensorData.serialNumber {
+            response.serialNumber == sensorData.serialNumber,
+            !response.versionChanged
+        {
             LogsAccessor.log("parameters from keychain")
             callback(response)
-            return
+        } else {
+            callback(nil)
         }
-        
-        post(bytes: sensorData.bytes, { (data, str, can) in
-            let decoder = JSONDecoder()
-            do {
-                let response = try decoder.decode(GetCalibrationStatus.self, from: data)
-                if let slope = response.slope {
-                    var p = LibreDerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope ?? 0,
-                                                                 slope_offset: slope.slopeOffset ?? 0,
-                                                                 offset_slope: slope.offsetSlope ?? 0,
-                                                                 offset_offset: slope.offsetOffset ?? 0)
-                    p.serialNumber = serialNumber
-                    if p.slope_slope != 0 ||
-                        p.slope_offset != 0 ||
-                        p.offset_slope != 0 ||
-                        p.offset_offset != 0 {
-                        LogsAccessor.log("parameters: \(p.description)")
-                        try? keychain.setLibreCalibrationData(p)
-                        callback(p)
-                    } else {
-                        callback(nil)
-                    }
-                } else {
-                    callback(nil)
-                }
-            } catch {
-                LogsAccessor.log("calibrateSensor decode: \(error.localizedDescription)")
-                callback(nil)
-            }
-        })
     }
     
     // MARK: - private functions
