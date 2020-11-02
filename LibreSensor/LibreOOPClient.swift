@@ -28,7 +28,7 @@ public class LibreOOPClient {
         let bytesAsData = Data(sensorData.bytes)
         var patchUid = patchUid
         var patchInfo = patchInfo
-        if !sensorData.isFirstSensor && (bubble.firmware.toDouble() ?? 0) >= 2.6 {
+        if !sensorData.isFirstSensor {
             patchUid = "7683376000A007E0"
             patchInfo = "DF0000080000"
         }
@@ -36,10 +36,7 @@ public class LibreOOPClient {
         let item1 = URLQueryItem(name: "patchUid", value: patchUid)
         let item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
         let item3 = URLQueryItem(name: "content", value: bytesAsData.hexEncodedString())
-        var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2")!
-        if sensorData.isDecryptedDataPacket {
-            urlComponents = URLComponents(string: "\(baseUrl)/libreoop2AndCalibrate")!
-        }
+        var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2AndCalibrate")!
         urlComponents.queryItems = [item, item1, item2, item3]
         if let uploadURL = URL.init(string: urlComponents.url?.absoluteString.removingPercentEncoding ?? "") {
             let request = NSMutableURLRequest(url: uploadURL)
