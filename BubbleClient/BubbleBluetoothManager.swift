@@ -335,6 +335,10 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     var latestUpdateDate = Date(timeIntervalSince1970: 0)
     func handleCompleteMessage() {
+        guard isDecryptedDataPacket else {
+            return
+        }
+        
         guard latestUpdateDate.addingTimeInterval(60 * 4) < Date() else { return }
         guard rxBuffer.count >= 352, let bubble = bubble else {
             return
