@@ -343,11 +343,13 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         LogsAccessor.log("receive 344")
         let data = rxBuffer.subdata(in: 8 ..< 352)
         sensorData = SensorData(uuid: rxBuffer.subdata(in: 0..<8), bytes: [UInt8](data), date: Date(), patchInfo: patchInfo)
-        sensorData?.isDecryptedDataPacket = isDecryptedDataPacket
-        guard let sensorData = sensorData else { return }
+        guard var sensorData = sensorData else { return }
         
-        // Inform delegate that new data is available
-        delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
+        if isDecryptedDataPacket || sensorData.isFirstSensor {
+            sensorData.isDecryptedDataPacket = true
+            // Inform delegate that new data is available
+            delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
+        }
     }
     
     deinit {

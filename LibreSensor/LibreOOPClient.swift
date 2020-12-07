@@ -28,7 +28,7 @@ public class LibreOOPClient {
         let bytesAsData = Data(sensorData.bytes)
         var patchUid = patchUid
         var patchInfo = patchInfo
-        if !sensorData.isFirstSensor && (bubble.firmware.toDouble() ?? 0) >= 2.6 {
+        if !sensorData.isFirstSensor {
             patchUid = "7683376000A007E0"
             patchInfo = "DF0000080000"
         }
@@ -36,10 +36,7 @@ public class LibreOOPClient {
         let item1 = URLQueryItem(name: "patchUid", value: patchUid)
         let item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
         let item3 = URLQueryItem(name: "content", value: bytesAsData.hexEncodedString())
-        var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2")!
-        if sensorData.isDecryptedDataPacket {
-            urlComponents = URLComponents(string: "\(baseUrl)/libreoop2AndCalibrate")!
-        }
+        var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2AndCalibrate")!
         urlComponents.queryItems = [item, item1, item2, item3]
         if let uploadURL = URL.init(string: urlComponents.url?.absoluteString.removingPercentEncoding ?? "") {
             let request = NSMutableURLRequest(url: uploadURL)
@@ -217,10 +214,8 @@ public class LibreOOPClient {
                 }
             }
         } else {
-            if sensorData.isFirstSensor {
+            if sensorData.isFirstSensor || sensorData.isDecryptedDataPacket {
                 oop(sensorData: sensorData, serialNumber: serialNumber,  callback)
-            } else {
-                callback(([], .failure, nil))
             }
         }
     }
@@ -295,40 +290,14 @@ public class LibreOOPClient {
     
     private static func calibrateSensor(sensorData: SensorData, serialNumber: String,  callback: @escaping (LibreDerivedAlgorithmParameters?) -> Void) {
         if let response = keychain.getLibreCalibrationData(),
-            response.serialNumber == sensorData.serialNumber {
+            response.serialNumber == sensorData.serialNumber,
+            !response.versionChanged
+        {
             LogsAccessor.log("parameters from keychain")
             callback(response)
-            return
+        } else {
+            callback(nil)
         }
-        
-        post(bytes: sensorData.bytes, { (data, str, can) in
-            let decoder = JSONDecoder()
-            do {
-                let response = try decoder.decode(GetCalibrationStatus.self, from: data)
-                if let slope = response.slope {
-                    var p = LibreDerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope ?? 0,
-                                                                 slope_offset: slope.slopeOffset ?? 0,
-                                                                 offset_slope: slope.offsetSlope ?? 0,
-                                                                 offset_offset: slope.offsetOffset ?? 0)
-                    p.serialNumber = serialNumber
-                    if p.slope_slope != 0 ||
-                        p.slope_offset != 0 ||
-                        p.offset_slope != 0 ||
-                        p.offset_offset != 0 {
-                        LogsAccessor.log("parameters: \(p.description)")
-                        try? keychain.setLibreCalibrationData(p)
-                        callback(p)
-                    } else {
-                        callback(nil)
-                    }
-                } else {
-                    callback(nil)
-                }
-            } catch {
-                LogsAccessor.log("calibrateSensor decode: \(error.localizedDescription)")
-                callback(nil)
-            }
-        })
     }
     
     // MARK: - private functions
