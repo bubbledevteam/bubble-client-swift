@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1020"
+   LastUpgradeVersion = "1220"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "NO">
+      buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A9AD37DE225EEE850058C179"
-               BuildableName = "CGMBLEKit.framework"
-               BlueprintName = "CGMBLEKit-watchOS"
+               BlueprintIdentifier = "B4D40D2D23A3E91800D7ECB5"
+               BuildableName = "CGMBLEKitG6Plugin.loopplugin"
+               BlueprintName = "CGMBLEKitG6Plugin"
                ReferencedContainer = "container:CGMBLEKit.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -40,15 +40,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A9AD37DE225EEE850058C179"
-            BuildableName = "CGMBLEKit.framework"
-            BlueprintName = "CGMBLEKit-watchOS"
-            ReferencedContainer = "container:CGMBLEKit.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -59,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A9AD37DE225EEE850058C179"
-            BuildableName = "CGMBLEKit.framework"
-            BlueprintName = "CGMBLEKit-watchOS"
+            BlueprintIdentifier = "B4D40D2D23A3E91800D7ECB5"
+            BuildableName = "CGMBLEKitG6Plugin.loopplugin"
+            BlueprintName = "CGMBLEKitG6Plugin"
             ReferencedContainer = "container:CGMBLEKit.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1020"
+   LastUpgradeVersion = "1220"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "NO">
+      buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A9AD37DE225EEE850058C179"
-               BuildableName = "CGMBLEKit.framework"
-               BlueprintName = "CGMBLEKit-watchOS"
-               ReferencedContainer = "container:CGMBLEKit.xcodeproj">
+               BlueprintIdentifier = "B40BF25D23ABD47400A43CEE"
+               BuildableName = "ShareClientPlugin.loopplugin"
+               BlueprintName = "ShareClientPlugin"
+               ReferencedContainer = "container:ShareClient.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -40,15 +40,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A9AD37DE225EEE850058C179"
-            BuildableName = "CGMBLEKit.framework"
-            BlueprintName = "CGMBLEKit-watchOS"
-            ReferencedContainer = "container:CGMBLEKit.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -59,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A9AD37DE225EEE850058C179"
-            BuildableName = "CGMBLEKit.framework"
-            BlueprintName = "CGMBLEKit-watchOS"
-            ReferencedContainer = "container:CGMBLEKit.xcodeproj">
+            BlueprintIdentifier = "B40BF25D23ABD47400A43CEE"
+            BuildableName = "ShareClientPlugin.loopplugin"
+            BlueprintName = "ShareClientPlugin"
+            ReferencedContainer = "container:ShareClient.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
