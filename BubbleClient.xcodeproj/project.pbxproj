@@ -100,22 +100,6 @@
 		27E3C397222EE9450036AAC7 /* LibreOOPResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreOOPResponse.swift; sourceTree = "<group>"; };
 		27E3C39E222EE9A80036AAC7 /* LibreOOPWebExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreOOPWebExtensions.swift; sourceTree = "<group>"; };
 		27E3C3A1222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivedAlgorithmParameters.swift; sourceTree = "<group>"; };
-		2C8FAD13257E825100BE8191 /* sadfApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sadfApp.swift; sourceTree = "<group>"; };
-		2C8FAD14257E825100BE8191 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		2C8FAD15257E825300BE8191 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		2C8FAD1C257E825300BE8191 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2C8FAD23257E825400BE8191 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2C8FAD24257E825400BE8191 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
-		2C8FAD2D257E825400BE8191 /* Tests_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_iOS.swift; sourceTree = "<group>"; };
-		2C8FAD2F257E825400BE8191 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2C8FAD38257E825400BE8191 /* Tests_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_macOS.swift; sourceTree = "<group>"; };
-		2C8FAD3A257E825400BE8191 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2C8FAD5C257E827600BE8191 /* AAApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AAApp.swift; sourceTree = "<group>"; };
-		2C8FAD5D257E827600BE8191 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		2C8FAD5E257E827600BE8191 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		2C8FAD65257E827600BE8191 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2C8FAD6C257E827700BE8191 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2C8FAD6D257E827700BE8191 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		2CAB9AF2257E1D40008362E4 /* BubbleClientPlugin.loopplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BubbleClientPlugin.loopplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CAB9AF4257E1D40008362E4 /* BubbleClientPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BubbleClientPlugin.h; sourceTree = "<group>"; };
 		2CAB9AF5257E1D40008362E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -248,78 +232,6 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
-		2C8FAD12257E825100BE8191 /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				2C8FAD13257E825100BE8191 /* sadfApp.swift */,
-				2C8FAD14257E825100BE8191 /* ContentView.swift */,
-				2C8FAD15257E825300BE8191 /* Assets.xcassets */,
-			);
-			path = Shared;
-			sourceTree = "<group>";
-		};
-		2C8FAD1B257E825300BE8191 /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				2C8FAD1C257E825300BE8191 /* Info.plist */,
-			);
-			path = iOS;
-			sourceTree = "<group>";
-		};
-		2C8FAD22257E825300BE8191 /* macOS */ = {
-			isa = PBXGroup;
-			children = (
-				2C8FAD23257E825400BE8191 /* Info.plist */,
-				2C8FAD24257E825400BE8191 /* macOS.entitlements */,
-			);
-			path = macOS;
-			sourceTree = "<group>";
-		};
-		2C8FAD2C257E825400BE8191 /* Tests iOS */ = {
-			isa = PBXGroup;
-			children = (
-				2C8FAD2D257E825400BE8191 /* Tests_iOS.swift */,
-				2C8FAD2F257E825400BE8191 /* Info.plist */,
-			);
-			path = "Tests iOS";
-			sourceTree = "<group>";
-		};
-		2C8FAD37257E825400BE8191 /* Tests macOS */ = {
-			isa = PBXGroup;
-			children = (
-				2C8FAD38257E825400BE8191 /* Tests_macOS.swift */,
-				2C8FAD3A257E825400BE8191 /* Info.plist */,
-			);
-			path = "Tests macOS";
-			sourceTree = "<group>";
-		};
-		2C8FAD5B257E827600BE8191 /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				2C8FAD5C257E827600BE8191 /* AAApp.swift */,
-				2C8FAD5D257E827600BE8191 /* ContentView.swift */,
-				2C8FAD5E257E827600BE8191 /* Assets.xcassets */,
-			);
-			path = Shared;
-			sourceTree = "<group>";
-		};
-		2C8FAD64257E827600BE8191 /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				2C8FAD65257E827600BE8191 /* Info.plist */,
-			);
-			path = iOS;
-			sourceTree = "<group>";
-		};
-		2C8FAD6B257E827700BE8191 /* macOS */ = {
-			isa = PBXGroup;
-			children = (
-				2C8FAD6C257E827700BE8191 /* Info.plist */,
-				2C8FAD6D257E827700BE8191 /* macOS.entitlements */,
-			);
-			path = macOS;
-			sourceTree = "<group>";
-		};
 		2CAB9AF3257E1D40008362E4 /* BubbleClientPlugin */ = {
 			isa = PBXGroup;
 			children = (
@@ -341,14 +253,6 @@
 				43A8EC83210E664300A81379 /* BubbleClientUI */,
 				43AB51342133176B00B3D58D /* Common */,
 				2CAB9AF3257E1D40008362E4 /* BubbleClientPlugin */,
-				2C8FAD12257E825100BE8191 /* Shared */,
-				2C8FAD1B257E825300BE8191 /* iOS */,
-				2C8FAD22257E825300BE8191 /* macOS */,
-				2C8FAD2C257E825400BE8191 /* Tests iOS */,
-				2C8FAD37257E825400BE8191 /* Tests macOS */,
-				2C8FAD5B257E827600BE8191 /* Shared */,
-				2C8FAD64257E827600BE8191 /* iOS */,
-				2C8FAD6B257E827700BE8191 /* macOS */,
 				432B0E891CDFC3C50045347B /* Products */,
 				43A8EC7A210E661300A81379 /* Frameworks */,
 			);
