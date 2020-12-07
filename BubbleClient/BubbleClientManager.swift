@@ -16,6 +16,11 @@ import os.log
 import HealthKit
 
 public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelegate {
+    public var cgmStatus: CGMManagerStatus {
+        // todo
+        return CGMManagerStatus(hasValidSensorSession: true)
+    }
+    
     public var glucoseDisplay: GlucoseDisplayable?
     
     public let delegate = WeakSynchronizedDelegate<CGMManagerDelegate>()
@@ -82,7 +87,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             ].joined(separator: "\n")
     }
     
-    public func fetchNewDataIfNeeded(_ completion: @escaping (CGMResult) -> Void) {
+    public func fetchNewDataIfNeeded(_ completion: @escaping (CGMReadingResult) -> Void) {
         LogsAccessor.log("fetchNewDataIfNeeded")
         completion(.noData)
     }
@@ -435,7 +440,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                 }
                 
                 self.delegate.notify { (delegate) in
-                    delegate?.cgmManager(self, didUpdateWith: .newData(newGlucose))
+                    delegate?.cgmManager(self, hasNew: .newData(newGlucose))
                     LogsAccessor.log("update glucose success")
                 }
             }

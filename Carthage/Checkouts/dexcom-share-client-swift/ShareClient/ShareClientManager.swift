@@ -10,6 +10,7 @@ import HealthKit
 
 
 public class ShareClientManager: CGMManager {
+    
 
     public static var managerIdentifier = "DexShareClient"
 
@@ -64,12 +65,20 @@ public class ShareClientManager: CGMManager {
     public var glucoseDisplay: GlucoseDisplayable? {
         return latestBackfill
     }
+    
+    public var cgmStatus: CGMManagerStatus {
+        return CGMManagerStatus(hasValidSensorSession: hasValidSensorSession)
+    }
+
+    public var hasValidSensorSession: Bool {
+        return shareService.isAuthorized
+    }
 
     public let managedDataInterval: TimeInterval? = nil
 
     public private(set) var latestBackfill: ShareGlucose?
 
-    public func fetchNewDataIfNeeded(_ completion: @escaping (CGMResult) -> Void) {
+    public func fetchNewDataIfNeeded(_ completion: @escaping (CGMReadingResult) -> Void) {
         guard let shareClient = shareService.client else {
             completion(.noData)
             return

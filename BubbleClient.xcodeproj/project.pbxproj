@@ -54,13 +54,11 @@
 		2CAB9B08257E1D40008362E4 /* BubbleClientPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2CAB9AF2257E1D40008362E4 /* BubbleClientPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2CAB9B10257E1D56008362E4 /* BubbleClientPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAB9B0F257E1D56008362E4 /* BubbleClientPlugin.swift */; };
 		2CAB9B11257E1D97008362E4 /* BubbleClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; };
-		2CAB9B12257E1D97008362E4 /* BubbleClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 432B0E881CDFC3C50045347B /* BubbleClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2CAB9B15257E1D97008362E4 /* BubbleClientUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43A8EC82210E664300A81379 /* BubbleClientUI.framework */; };
-		2CAB9B16257E1D97008362E4 /* BubbleClientUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43A8EC82210E664300A81379 /* BubbleClientUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2CAB9B19257E1D97008362E4 /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE44B0162484F933007275C3 /* LoopKit.framework */; };
-		2CAB9B1A257E1D97008362E4 /* LoopKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE44B0162484F933007275C3 /* LoopKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2CAB9B1B257E1D97008362E4 /* LoopKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE44B01C2484F933007275C3 /* LoopKitUI.framework */; };
-		2CAB9B1C257E1D97008362E4 /* LoopKitUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE44B01C2484F933007275C3 /* LoopKitUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2CAB9BA4257E2C7D008362E4 /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAB9BA3257E2C7D008362E4 /* OSLog.swift */; };
+		2CAB9BF3257E2D2C008362E4 /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAB9BA3257E2C7D008362E4 /* OSLog.swift */; };
 		4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9CE210E6A0A00969CE5 /* HKUnit.swift */; };
 		4325E9D3210E6ADA00969CE5 /* IdentifiableClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */; };
 		4325E9D5210E6B4400969CE5 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D4210E6B4300969CE5 /* UIColor.swift */; };
@@ -140,6 +138,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = 43A8EC81210E664300A81379;
 			remoteInfo = BubbleClientUI;
+		};
+		2CAB9BB8257E2C7D008362E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE44AB6C2484F930007275C3 /* LoopKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B4CEE2E0257129780093111B;
+			remoteInfo = MockKitTests;
+		};
+		2CAB9BC5257E2C7D008362E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE44AE412484F932007275C3 /* LoopKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B4CEE2E0257129780093111B;
+			remoteInfo = MockKitTests;
+		};
+		2CAB9BD2257E2C7D008362E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE44A8EA2484F92E007275C3 /* LoopKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B4CEE2E0257129780093111B;
+			remoteInfo = MockKitTests;
+		};
+		2CAB9BDF257E2C7D008362E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE44A5902484F92B007275C3 /* LoopKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B4CEE2E0257129780093111B;
+			remoteInfo = MockKitTests;
 		};
 		2CF3D428254B213B009CB01F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -536,20 +562,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		2CAB9B1D257E1D97008362E4 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				2CAB9B12257E1D97008362E4 /* BubbleClient.framework in Embed Frameworks */,
-				2CAB9B1A257E1D97008362E4 /* LoopKit.framework in Embed Frameworks */,
-				2CAB9B16257E1D97008362E4 /* BubbleClientUI.framework in Embed Frameworks */,
-				2CAB9B1C257E1D97008362E4 /* LoopKitUI.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		EE72B071230CD6AB00D67B8F /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -608,6 +620,7 @@
 		2CAB9B01257E1D40008362E4 /* BubbleClientPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleClientPluginTests.swift; sourceTree = "<group>"; };
 		2CAB9B03257E1D40008362E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2CAB9B0F257E1D56008362E4 /* BubbleClientPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleClientPlugin.swift; sourceTree = "<group>"; };
+		2CAB9BA3257E2C7D008362E4 /* OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSLog.swift; sourceTree = "<group>"; };
 		4325E9CE210E6A0A00969CE5 /* HKUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKUnit.swift; sourceTree = "<group>"; };
 		4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentifiableClass.swift; sourceTree = "<group>"; };
 		4325E9D4210E6B4300969CE5 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
@@ -3514,6 +3527,7 @@
 				2729D6A722248BDD0030E1B8 /* BubbleClientManager.swift */,
 				275C3DA2229FCED400E27439 /* NotificationHelper.swift */,
 				EEC805EB244016BD0092C718 /* UserDefaults.swift */,
+				2CAB9BA3257E2C7D008362E4 /* OSLog.swift */,
 				432B0E8D1CDFC3C50045347B /* Info.plist */,
 				43AB5125213315D300B3D58D /* Localizable.strings */,
 			);
@@ -3903,6 +3917,7 @@
 				2CF3D437254B213B009CB01F /* LoopKitHostedTests.xctest */,
 				EE44B0642484F933007275C3 /* LoopKitUI.framework */,
 				EE44B0662484F933007275C3 /* MockKit.framework */,
+				2CAB9BE0257E2C7D008362E4 /* MockKitTests.xctest */,
 				EE44B0682484F933007275C3 /* MockKitUI.framework */,
 				EE44B06A2484F933007275C3 /* LoopTestingKit.framework */,
 			);
@@ -4899,6 +4914,7 @@
 				2CF3D434254B213B009CB01F /* LoopKitHostedTests.xctest */,
 				EE44B04C2484F933007275C3 /* LoopKitUI.framework */,
 				EE44B04E2484F933007275C3 /* MockKit.framework */,
+				2CAB9BD3257E2C7D008362E4 /* MockKitTests.xctest */,
 				EE44B0502484F933007275C3 /* MockKitUI.framework */,
 				EE44B0522484F933007275C3 /* LoopTestingKit.framework */,
 			);
@@ -5714,6 +5730,7 @@
 				2CF3D42E254B213B009CB01F /* LoopKitHostedTests.xctest */,
 				EE44B01C2484F933007275C3 /* LoopKitUI.framework */,
 				EE44B01E2484F933007275C3 /* MockKit.framework */,
+				2CAB9BB9257E2C7D008362E4 /* MockKitTests.xctest */,
 				EE44B0202484F933007275C3 /* MockKitUI.framework */,
 				EE44B0222484F933007275C3 /* LoopTestingKit.framework */,
 			);
@@ -6616,6 +6633,7 @@
 				2CF3D431254B213B009CB01F /* LoopKitHostedTests.xctest */,
 				EE44B0342484F933007275C3 /* LoopKitUI.framework */,
 				EE44B0362484F933007275C3 /* MockKit.framework */,
+				2CAB9BC6257E2C7D008362E4 /* MockKitTests.xctest */,
 				EE44B0382484F933007275C3 /* MockKitUI.framework */,
 				EE44B03A2484F933007275C3 /* LoopTestingKit.framework */,
 			);
@@ -7243,7 +7261,6 @@
 				2CAB9AEE257E1D40008362E4 /* Sources */,
 				2CAB9AEF257E1D40008362E4 /* Frameworks */,
 				2CAB9AF0257E1D40008362E4 /* Resources */,
-				2CAB9B1D257E1D97008362E4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -7447,6 +7464,34 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		2CAB9BB9257E2C7D008362E4 /* MockKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = MockKitTests.xctest;
+			remoteRef = 2CAB9BB8257E2C7D008362E4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2CAB9BC6257E2C7D008362E4 /* MockKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = MockKitTests.xctest;
+			remoteRef = 2CAB9BC5257E2C7D008362E4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2CAB9BD3257E2C7D008362E4 /* MockKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = MockKitTests.xctest;
+			remoteRef = 2CAB9BD2257E2C7D008362E4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2CAB9BE0257E2C7D008362E4 /* MockKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = MockKitTests.xctest;
+			remoteRef = 2CAB9BDF257E2C7D008362E4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		2CF3D429254B213B009CB01F /* CGMBLEKitG5Plugin.loopplugin */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -7892,6 +7937,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2CAB9BF3257E2D2C008362E4 /* OSLog.swift in Sources */,
 				2CAB9B10257E1D56008362E4 /* BubbleClientPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7932,6 +7978,7 @@
 				270C266F226A5A6E005B27F3 /* GlucoseSchedules.swift in Sources */,
 				2729D677221F421C0030E1B8 /* Bubble.swift in Sources */,
 				EE0C352224BEFAA200072FD7 /* KalmanFilter.swift in Sources */,
+				2CAB9BA4257E2C7D008362E4 /* OSLog.swift in Sources */,
 				2729D6A822248BDD0030E1B8 /* BubbleClientManager.swift in Sources */,
 				EEED17B52446A51A00070523 /* CoreDataManager.swift in Sources */,
 				EEED17B32446A4EB00070523 /* LogsAccessor.swift in Sources */,
