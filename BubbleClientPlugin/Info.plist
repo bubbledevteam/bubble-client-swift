@@ -18,5 +18,11 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>com.loopkit.Loop.CGMManagerIdentifier</key>
+	<string>BubbleClientManager</string>
+	<key>NSPrincipalClass</key>
+	<string>BubbleClientPlugin</string>
+	<key>com.loopkit.Loop.CGMManagerDisplayName</key>
+	<string>DiaBox</string>
 </dict>
 </plist>

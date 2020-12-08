@@ -389,6 +389,7 @@
 				2C688765257F5FA9005E197A /* Sources */,
 				2C688766257F5FA9005E197A /* Frameworks */,
 				2C688767257F5FA9005E197A /* Resources */,
+				2C6887D7257F68AD005E197A /* Copy Frameworks with Carthage */,
 			);
 			buildRules = (
 			);
@@ -524,6 +525,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2C6887D7257F68AD005E197A /* Copy Frameworks with Carthage */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/BubbleClient.framework",
+				"$(BUILT_PRODUCTS_DIR)/BubbleClientUI.framework",
+			);
+			name = "Copy Frameworks with Carthage";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n${SRCROOT}/Scripts/copy-frameworks.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		2C688765257F5FA9005E197A /* Sources */ = {
