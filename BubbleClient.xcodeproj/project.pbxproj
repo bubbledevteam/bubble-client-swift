@@ -81,6 +81,13 @@
 			remoteGlobalIDString = 43A8EC81210E664300A81379;
 			remoteInfo = BubbleClientUI;
 		};
+		2C688884257F6DB1005E197A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 432B0E7F1CDFC3C50045347B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 432B0E871CDFC3C50045347B;
+			remoteInfo = BubbleClient;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -394,6 +401,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2C688885257F6DB1005E197A /* PBXTargetDependency */,
 				2C68877E257F6163005E197A /* PBXTargetDependency */,
 			);
 			name = BubbleClientPlugin;
@@ -634,6 +642,11 @@
 			isa = PBXTargetDependency;
 			target = 43A8EC81210E664300A81379 /* BubbleClientUI */;
 			targetProxy = 2C68877D257F6163005E197A /* PBXContainerItemProxy */;
+		};
+		2C688885257F6DB1005E197A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 432B0E871CDFC3C50045347B /* BubbleClient */;
+			targetProxy = 2C688884257F6DB1005E197A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
