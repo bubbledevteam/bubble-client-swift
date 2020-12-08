@@ -16,6 +16,8 @@ import os.log
 import HealthKit
 
 public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelegate {
+    public static let managerIdentifier: String = "BubbleClientManager"
+    
     public var cgmStatus: CGMManagerStatus {
         // todo
         return CGMManagerStatus(hasValidSensorSession: true)
@@ -101,8 +103,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         }
         get { UserDefaultsUnit.latestGlucose }
     }
-    
-    public static var managerIdentifier = "DexBubbleClient1"
     
     required convenience public init?(rawState: CGMManager.RawStateValue) {
         self.init()
