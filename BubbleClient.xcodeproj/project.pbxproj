@@ -74,6 +74,23 @@
 		EEED17C42446B2FD00070523 /* LocalLog+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED17BE2446A94C00070523 /* LocalLog+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		2CAB9DB8257F1C8C008362E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 432B0E7F1CDFC3C50045347B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 432B0E871CDFC3C50045347B;
+			remoteInfo = BubbleClient;
+		};
+		2CAB9DBA257F1C8C008362E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 432B0E7F1CDFC3C50045347B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 43A8EC81210E664300A81379;
+			remoteInfo = BubbleClientUI;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		270C266E226A5A6E005B27F3 /* GlucoseSchedules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlucoseSchedules.swift; sourceTree = "<group>"; };
 		2729D676221F421C0030E1B8 /* Bubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bubble.swift; sourceTree = "<group>"; };
@@ -395,6 +412,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				2CAB9DB9257F1C8C008362E4 /* PBXTargetDependency */,
+				2CAB9DBB257F1C8C008362E4 /* PBXTargetDependency */,
 			);
 			name = BubbleClientPlugin;
 			productName = BubbleClientPlugin;
@@ -606,6 +625,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2CAB9DB9257F1C8C008362E4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 432B0E871CDFC3C50045347B /* BubbleClient */;
+			targetProxy = 2CAB9DB8257F1C8C008362E4 /* PBXContainerItemProxy */;
+		};
+		2CAB9DBB257F1C8C008362E4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 43A8EC81210E664300A81379 /* BubbleClientUI */;
+			targetProxy = 2CAB9DBA257F1C8C008362E4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		43AB511921330D1400B3D58D /* Localizable.strings */ = {
