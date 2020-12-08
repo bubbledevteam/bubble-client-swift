@@ -2,7 +2,7 @@
 //  BubbleClientPlugin.swift
 //  BubbleClientPlugin
 //
-//  Created by Yan on 2020/12/7.
+//  Created by Yan on 2020/12/8.
 //  Copyright © 2020 Mark Wilson. All rights reserved.
 //
 
@@ -29,3 +29,4 @@ class BubbleClientPlugin: NSObject, LoopUIPlugin {
         log.default("BubbleClientPlugin Instantiated")
     }
 }
+
