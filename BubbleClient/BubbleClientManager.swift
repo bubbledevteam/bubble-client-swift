@@ -99,6 +99,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     public private(set) var latestBackfill: GlucoseData? {
         set {
+            glucoseDisplay = newValue
             UserDefaultsUnit.latestGlucose = newValue
         }
         get { UserDefaultsUnit.latestGlucose }
