@@ -9,7 +9,7 @@
 import UIKit
 import CoreNFC
 
-class NFCManager: NSObject, NFCReceive {
+public class NFCManager: NSObject, NFCReceive {
     var patchUid: String?
     var patchInfo: String?
     
@@ -28,7 +28,7 @@ class NFCManager: NSObject, NFCReceive {
 //        super.init()
 //    }
     
-    func action(request: ActionRequest) {
+    public func action(request: ActionRequest) {
         #if canImport(Combine)
         manager.delegate = self
         cancellable = manager.perform(request)
@@ -39,7 +39,7 @@ class NFCManager: NSObject, NFCReceive {
         #endif
     }
     
-    func handleLibre2CalibrationInfo(data: Data) {
+    public func handleLibre2CalibrationInfo(data: Data) {
         LogsAccessor.log("handleLibre2CalibrationInfo receive 344")
         LogsAccessor.log(data.hexEncodedString())
         if let uid = patchUid?.hexadecimal?.bytes,
@@ -66,7 +66,7 @@ class NFCManager: NSObject, NFCReceive {
         }
     }
     
-    func set(sn value: Data, patchInfo: String) {
+    public func set(sn value: Data, patchInfo: String) {
         self.patchInfo = patchInfo
         UserDefaultsUnit.patchInfo = patchInfo
         
@@ -424,7 +424,7 @@ extension Publisher {
 
 #endif
 
-enum ActionRequest {
+public enum ActionRequest {
     case readState
     case readLibre2CalibrationInfo
 }

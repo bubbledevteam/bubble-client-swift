@@ -114,8 +114,8 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         case latestReading
         case kalman
         case share
-        case delete
         case libre2Direct
+        case delete
         static let count = 6
     }
 
@@ -301,6 +301,7 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         case .kalman:
             return
         case .libre2Direct:
+            cgmManager?.nfcManager.action(request: .readLibre2CalibrationInfo)
             break
         }
     }

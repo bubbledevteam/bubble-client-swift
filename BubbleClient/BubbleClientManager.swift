@@ -130,7 +130,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     public var useFilter = true
     
-    private(set) var nfcManager = NFCManager()
+    public var nfcManager = NFCManager()
     
     
     private(set) public var lastValidSensorData : SensorData? = nil
