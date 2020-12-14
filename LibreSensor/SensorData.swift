@@ -93,6 +93,8 @@ public struct SensorData {
     
     var isDecryptedDataPacket = false
     
+    var isDirectLibre2 = false
+    
     var isLikelyLibre1 : Bool {
         if bytes.count > 23 {
             let subset = bytes[9...23]
@@ -169,6 +171,29 @@ public struct SensorData {
         } else {
             sensorName = "Libre"
         }
+    }
+    
+    
+    public init?(bytes: [UInt8], date: Date = Date(), sn: String, patchUid: String?, patchInfo: String?) {
+        self.bytes = bytes
+        // we don't actually know when this reading was done, only that
+        // it was produced within the last minute
+        self.date = date.rounded(on: 1, .minute)
+        
+        self.header = []
+        self.body   = []
+        self.footer = []
+        
+        self.nextTrendBlock = 0
+        self.nextHistoryBlock = 0
+        self.minutesSinceStart = 0
+
+        self.uuid = Data()
+        self.patchUid = patchUid
+        self.patchInfo = patchInfo
+        self.serialNumber = sn
+        
+        sensorName = "Libre 2"
     }
     
     /// Get date of most recent history value.

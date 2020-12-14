@@ -84,6 +84,47 @@ public class LibreOOPClient {
         }
     }
     
+    public static func webOOPLibre2(sensorData: SensorData, patchUid: String, patchInfo: String, callback: ((LibreRawGlucoseOOPData?) -> Void)?) {
+        let bytesAsData = Data(sensorData.bytes)
+        let item = URLQueryItem(name: "accesstoken", value: token)
+        let item1 = URLQueryItem(name: "patchUid", value: patchUid)
+        let item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
+        let item3 = URLQueryItem(name: "content", value: bytesAsData.hexEncodedString())
+        let item4 = URLQueryItem(name: "appName", value: "Diabox")
+        let item5 = URLQueryItem(name: "cgmType", value: "libre2ble")
+        
+        var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2BleData")!
+        urlComponents.queryItems = [item, item1, item2, item3, item4, item5]
+        if let uploadURL = URL.init(string: urlComponents.url?.absoluteString.removingPercentEncoding ?? "") {
+            LogsAccessor.log(uploadURL.absoluteString)
+            let request = NSMutableURLRequest(url: uploadURL)
+            request.httpMethod = "POST"
+            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            let task = URLSession.shared.dataTask(with: request as URLRequest) {
+                data, response, error in
+                if let error = error {
+                    LogsAccessor.log( error.localizedDescription)
+                }
+                
+                guard let data = data else {
+                    callback?(nil)
+                    return
+                }
+                
+                if let response = String(data: data, encoding: String.Encoding.utf8) {
+                    LogsAccessor.log(response)
+                }
+                
+                let decoder = JSONDecoder.init()
+                let oopValue = try? decoder.decode(LibreGlucoseData.self, from: data)
+                callback?(oopValue?.data)
+            }
+            task.resume()
+        } else {
+            callback?(nil)
+        }
+    }
+    
     public static func handleLibreA2Data(sensorData: SensorData, callback: ((LibreRawGlucoseOOPA2Data?) -> Void)?) {
         let bytesAsData = Data(sensorData.bytes)
         if let uploadURL = URL.init(string: "\(baseUrl)/callnoxAndCalibrate") {
@@ -247,6 +288,10 @@ public class LibreOOPClient {
                             }
                         }
                     }
+                }
+            } else if sensorData.isDirectLibre2 {
+                webOOPLibre2(sensorData: sensorData, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                    handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
                 }
             } else {
                 webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in

@@ -79,8 +79,8 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     var isDecryptedDataPacket = false
     
     //    fileprivate let serviceUUIDs:[CBUUID]? = [CBUUID(string: "6E400001B5A3F393E0A9E50E24DCCA9E")]
-    fileprivate let deviceName = "Bubble"
-    fileprivate let serviceUUIDs:[CBUUID] = [CBUUID(string: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E")]
+    fileprivate var deviceName = "Bubble"
+    fileprivate let serviceUUIDs:[CBUUID] = [CBUUID(string: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"), CBUUID(string: "FDE3")]
 
     var delegate: BubbleBluetoothManagerDelegate? {
         didSet {
@@ -165,11 +165,12 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     func retrievePeripherals() {
         guard peripheral?.state  != .connected else { return }
         if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: serviceUUIDs).first,
-            peripheral.name == deviceName {
+           let name = peripheral.name {
             self.peripheral = peripheral
             self.peripheral?.delegate = self
-            centralManager.connect(peripheral, options: [:])
             state = .Connecting
+            deviceName = name
+            centralManager.connect(peripheral, options: [:])
         }
     }
     
@@ -257,11 +258,22 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if let characteristics = service.characteristics {
             for characteristic in characteristics {
-                if (characteristic.properties.intersection(.notify)) == .notify && characteristic.uuid == CBUUID(string: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E") {
-                    peripheral.setNotifyValue(true, for: characteristic)
-                }
-                if (characteristic.uuid == CBUUID(string: "6E400002-B5A3-F393-E0A9-E50E24DCCA9E")) {
-                    writeCharacteristic = characteristic
+                if deviceName.uppercased().contains("BOTT") {
+                    let uuidString = characteristic.uuid.uuidString
+                    LogsAccessor.log("characteristics: \(uuidString)")
+                    if uuidString == "F002" {
+                        peripheral.setNotifyValue(true, for: characteristic)
+                    } else if uuidString == "F001" {
+                        writeCharacteristic = characteristic
+                    }
+                } else {
+                    if (characteristic.properties.intersection(.notify)) == .notify && characteristic.uuid == CBUUID(string: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E") {
+                        peripheral.setNotifyValue(true, for: characteristic)
+                    }
+                    
+                    if (characteristic.uuid == CBUUID(string: "6E400002-B5A3-F393-E0A9-E50E24DCCA9E")) {
+                        writeCharacteristic = characteristic
+                    }
                 }
             }
         } else {
@@ -284,33 +296,41 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         if let error = error {
             LogsAccessor.log("Characteristic update error: \(error.localizedDescription)")
         } else {
-            if characteristic.uuid == CBUUID(string: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"), let value = characteristic.value {
-                if let firstByte = value.first {
-                    if let bubbleResponseState = BubbleResponseType(rawValue: firstByte) {
-                        switch bubbleResponseState {
-                        case .bubbleInfo:
-                            let battery = Int(value[4])
-                            let firmware = "\(value[2]).\(value[3])"
-                            bubble = Bubble(hardware: "0", firmware: firmware, battery: battery)
-                            delegate?.BubbleBluetoothManagerMessageChanged()
-                            LogsAccessor.log("Battery: \(battery)")
-                        case .dataPacket, .decryptedDataPacket:
-                            isDecryptedDataPacket = bubbleResponseState == .decryptedDataPacket
-                            guard rxBuffer.count >= 8 else { return }
-                            rxBuffer.append(value.suffix(from: 4))
-                            if rxBuffer.count >= 352 {
-                                handleCompleteMessage()
-                                resetBuffer()
-                            }
-                        case .noSensor:
-                            delegate?.BubbleBluetoothManagerReceivedMessage(0x0000, txFlags: 0x34, payloadData: rxBuffer)
+            if characteristic.uuid == CBUUID(string: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E") {
+                handleBubbleData(characteristic: characteristic)
+            } else {
+                handleAbtData(characteristic: characteristic)
+            }
+        }
+    }
+    
+    func handleBubbleData(characteristic: CBCharacteristic) {
+        if let value = characteristic.value {
+            if let firstByte = value.first {
+                if let bubbleResponseState = BubbleResponseType(rawValue: firstByte) {
+                    switch bubbleResponseState {
+                    case .bubbleInfo:
+                        let battery = Int(value[4])
+                        let firmware = "\(value[2]).\(value[3])"
+                        bubble = Bubble(hardware: "0", firmware: firmware, battery: battery)
+                        delegate?.BubbleBluetoothManagerMessageChanged()
+                        LogsAccessor.log("Battery: \(battery)")
+                    case .dataPacket, .decryptedDataPacket:
+                        isDecryptedDataPacket = bubbleResponseState == .decryptedDataPacket
+                        guard rxBuffer.count >= 8 else { return }
+                        rxBuffer.append(value.suffix(from: 4))
+                        if rxBuffer.count >= 352 {
+                            handleCompleteMessage()
                             resetBuffer()
-                        case .serialNumber:
-                            rxBuffer.append(value.subdata(in: 2..<10))
-                        case .patchInfo:
-                            if value.count >= 10 {
-                                patchInfo = value.subdata(in: 5 ..< 11).hexEncodedString().uppercased()
-                            }
+                        }
+                    case .noSensor:
+                        delegate?.BubbleBluetoothManagerReceivedMessage(0x0000, txFlags: 0x34, payloadData: rxBuffer)
+                        resetBuffer()
+                    case .serialNumber:
+                        rxBuffer.append(value.subdata(in: 2..<10))
+                    case .patchInfo:
+                        if value.count >= 10 {
+                            patchInfo = value.subdata(in: 5 ..< 11).hexEncodedString().uppercased()
                         }
                     }
                 }
@@ -318,6 +338,43 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         }
     }
     
+    func handleAbtData(characteristic: CBCharacteristic) {
+        
+    }
+    
+    func read(_ data: Data, for uuid: String) {
+        
+        if "F002" == uuid {
+            if data.count == 20 {
+                firstBuffer = data
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
+                    self.resetBuffer()
+                }
+            } else if data.count == 18 {
+                secondBuffer = data
+            } else if data.count == 8 {
+                thirdBuffer = data
+            }
+            
+            if !firstBuffer.isEmpty, !secondBuffer.isEmpty, !thirdBuffer.isEmpty {
+                let data = firstBuffer + secondBuffer + thirdBuffer
+                resetBuffer()
+                LogsAccessor.log("receive data: \(data.hexEncodedString())")
+                
+                guard latestUpdateDate.addingTimeInterval(60 * 4) < Date() else { return }
+                guard let bubble = bubble else { return }
+                
+                sensorData = SensorData(bytes: [UInt8](data), sn: "", patchUid: "", patchInfo: patchInfo)
+                guard var sensorData = sensorData else { return }
+                
+                if isDecryptedDataPacket || sensorData.isFirstSensor {
+                    sensorData.isDirectLibre2 = true
+                    // Inform delegate that new data is available
+                    delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
+                }
+            }
+        }
+    }
     
     func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         
@@ -328,9 +385,15 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         
     }
     
+    var firstBuffer = Data()
+    var secondBuffer = Data()
+    var thirdBuffer = Data()
     
     func resetBuffer() {
         rxBuffer = Data()
+        firstBuffer = Data()
+        secondBuffer = Data()
+        thirdBuffer = Data()
     }
     
     var latestUpdateDate = Date(timeIntervalSince1970: 0)
