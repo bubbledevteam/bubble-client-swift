@@ -115,7 +115,8 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         case kalman
         case share
         case delete
-        static let count = 5
+        case libre2Direct
+        static let count = 6
     }
 
     override public func numberOfSections(in tableView: UITableView) -> Int {
@@ -146,6 +147,8 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         case .device:
             return 1
         case .kalman:
+            return 1
+        case .libre2Direct:
             return 1
         }
     }
@@ -232,6 +235,11 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             switchCell.switch?.addTarget(self, action: #selector(dosingEnabledChanged(_:)), for: .valueChanged)
 
             return switchCell
+            
+        case .libre2Direct:
+            let cell = tableView.dequeueReusableCell(withIdentifier: TextButtonTableViewCell.className, for: indexPath)
+            cell.textLabel?.text = LocalizedString("Libre2 Direct", comment: "Button title to open CGM app")
+            return cell
         }
     }
 
@@ -247,6 +255,8 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             return nil
         case .kalman:
             return NSLocalizedString("Use Kalman filter to smooth out a sensor noise.", comment: "Section title for Use glucose filter")
+        case .libre2Direct:
+            return nil
         }
     }
 
@@ -290,6 +300,8 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             tableView.deselectRow(at: indexPath, animated: true)
         case .kalman:
             return
+        case .libre2Direct:
+            break
         }
     }
     

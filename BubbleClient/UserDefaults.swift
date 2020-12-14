@@ -64,4 +64,22 @@ public struct UserDefaultsUnit {
     
     @UserDefaultWrapper("coreDataError", "")
     public static var coreDataError: String!
+    
+    @UserDefaultWrapper("patchInfo", "")
+    public static var patchInfo: String!
+    
+    @UserDefaultWrapper("patchUid", "")
+    public static var patchUid: String!
+    
+    @UserDefaultWrapper("unlockCount", 1)
+    static var unlockCount: UInt16!
+    
+    /// libre2 344 original data
+    @UserDefaultWrapper("libre2Nfc344OriginalData")
+    static var libre2Nfc344OriginalData: String?
+    
+    /// libre2 decryptFRAM 344 Libre2.calibrationInfo
+    @UserDefaultJsonWrapper("calibrationInfo")
+    static var calibrationInfo: CalibrationInfo?
 }
+

@@ -19,6 +19,8 @@ public class GlucoseData: Codable {
     /// The raw temperature as read from the sensor
     public var rawTemperature: Int?
     
+    public var temperatureAdjustment: Int?
+    
     /// The glucose value in mg/dl
     public var glucose: Double?
     
@@ -28,6 +30,8 @@ public class GlucoseData: Codable {
         }
         return glucoseLevelRaw
     }
+    
+    public var histories: [GlucoseData]?
     
     init(timeStamp:Date, glucoseLevelRaw:Double, glucoseLevelFiltered:Double, trend: UInt8 = 0) {
         self.lastDate = timeStamp

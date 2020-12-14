@@ -43,6 +43,7 @@
 		27E3C3A2222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E3C3A1222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift */; };
 		2C68876C257F5FA9005E197A /* BubbleClientPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C68876B257F5FA9005E197A /* BubbleClientPlugin.swift */; };
 		2C688785257F6364005E197A /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAB9BA3257E2C7D008362E4 /* OSLog.swift */; };
+		2C8FAF2A2587877600BE8191 /* NFCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8FAF292587877600BE8191 /* NFCManager.swift */; };
 		2CAB9BA4257E2C7D008362E4 /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAB9BA3257E2C7D008362E4 /* OSLog.swift */; };
 		4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9CE210E6A0A00969CE5 /* HKUnit.swift */; };
 		4325E9D3210E6ADA00969CE5 /* IdentifiableClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */; };
@@ -119,6 +120,7 @@
 		2C688769257F5FA9005E197A /* BubbleClientPlugin.loopplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BubbleClientPlugin.loopplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C68876B257F5FA9005E197A /* BubbleClientPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleClientPlugin.swift; sourceTree = "<group>"; };
 		2C68876D257F5FA9005E197A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2C8FAF292587877600BE8191 /* NFCManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NFCManager.swift; sourceTree = "<group>"; };
 		2CAB9BA3257E2C7D008362E4 /* OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSLog.swift; sourceTree = "<group>"; };
 		4325E9CE210E6A0A00969CE5 /* HKUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKUnit.swift; sourceTree = "<group>"; };
 		4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentifiableClass.swift; sourceTree = "<group>"; };
@@ -288,6 +290,7 @@
 				EE0C351E24BEFAA200072FD7 /* KalmanFilter */,
 				2729D67A221F421F0030E1B8 /* BubbleBluetoothManager.swift */,
 				2729D6A722248BDD0030E1B8 /* BubbleClientManager.swift */,
+				2C8FAF292587877600BE8191 /* NFCManager.swift */,
 				275C3DA2229FCED400E27439 /* NotificationHelper.swift */,
 				EEC805EB244016BD0092C718 /* UserDefaults.swift */,
 				2CAB9BA3257E2C7D008362E4 /* OSLog.swift */,
@@ -571,6 +574,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C8FAF2A2587877600BE8191 /* NFCManager.swift in Sources */,
 				EE97F5AF24778458005FD8F2 /* URLEncoder.swift in Sources */,
 				EEED17C32446B2FD00070523 /* LocalLog+CoreDataClass.swift in Sources */,
 				EEED17C42446B2FD00070523 /* LocalLog+CoreDataProperties.swift in Sources */,

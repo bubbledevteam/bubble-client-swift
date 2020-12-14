@@ -130,6 +130,8 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     public var useFilter = true
     
+    private(set) var nfcManager = NFCManager()
+    
     
     private(set) public var lastValidSensorData : SensorData? = nil
     
@@ -142,6 +144,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         //proxy?.connect()
         
         BubbleClientManager.instanceCount += 1
+        nfcManager.delegate = self
     }
     
     public var connectionState : String {
@@ -277,6 +280,13 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             break
         }
         reloadData?()
+    }
+    
+    public func BubbleBluetoothManagerLibre2Rescan() {
+        guard let proxy = BubbleClientManager.proxy else {
+            return
+        }
+        proxy.retrievePeripherals()
     }
     
     public func BubbleBluetoothManagerReceivedMessage(_ messageIdentifier: UInt16, txFlags: UInt8, payloadData: Data) {

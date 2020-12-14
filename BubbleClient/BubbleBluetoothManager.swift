@@ -50,6 +50,7 @@ protocol BubbleBluetoothManagerDelegate {
     func BubbleBluetoothManagerReceivedMessage(_ messageIdentifier:UInt16, txFlags:UInt8, payloadData:Data)
     func BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: SensorData, Bubble: Bubble) -> Void
     func BubbleBluetoothManagerMessageChanged()
+    func BubbleBluetoothManagerLibre2Rescan()
 }
 
 final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
@@ -71,6 +72,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     var peripheral: CBPeripheral?
     //    var slipBuffer = SLIPBuffer()
     var writeCharacteristic: CBCharacteristic?
+    var receiveCharacteristic: CBCharacteristic?
     
     var rxBuffer = Data()
     private var proRxBuffer = Data()
@@ -254,6 +256,27 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         }
     }
     
+    func unlock() {
+        #if !WATCH
+        
+        let unlockCount = UserDefaultsUnit.unlockCount!
+        
+        if let uid = UserDefaultsUnit.patchUid, let info = UserDefaultsUnit.patchInfo {
+            if var uidData = uid.hexadecimal, let infoData = info.hexadecimal {
+                uidData = Data(uidData.reversed())
+                LogsAccessor.log("info: \(infoData.hexEncodedString()), uid: \(uidData.hexEncodedString())")
+                // connectToDevice===1e85a80100a407e0==9d0830012413
+                let payload = Libre2.streamingUnlockPayload(id: uidData, info: infoData, enableTime: 42, unlockCount: unlockCount)
+
+                LogsAccessor.log("Bluetooth: writing streaming unlock payload: \(Data(payload).hexEncodedString()) unlock code: \(42), unlock count: \(unlockCount)")
+                
+                if let peripheral = peripheral, let writeCharacteristic = writeCharacteristic {
+                    peripheral.writeValue(Data(payload), for: writeCharacteristic, type: .withResponse)
+                }
+            }
+        }
+        #endif
+    }
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if let characteristics = service.characteristics {
@@ -262,9 +285,10 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                     let uuidString = characteristic.uuid.uuidString
                     LogsAccessor.log("characteristics: \(uuidString)")
                     if uuidString == "F002" {
-                        peripheral.setNotifyValue(true, for: characteristic)
+                        receiveCharacteristic = characteristic
                     } else if uuidString == "F001" {
                         writeCharacteristic = characteristic
+                        unlock()
                     }
                 } else {
                     if (characteristic.properties.intersection(.notify)) == .notify && characteristic.uuid == CBUUID(string: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E") {
@@ -278,6 +302,16 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
             }
         } else {
             LogsAccessor.log("Discovered characteristics, but no characteristics listed.")
+        }
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+        LogsAccessor.log("didWriteValueFor: \(characteristic.uuid.uuidString)")
+        if characteristic.uuid.uuidString == "F001" {
+            var unlockCount = UserDefaultsUnit.unlockCount!
+            unlockCount += 1
+            UserDefaultsUnit.unlockCount = unlockCount
+            peripheral.setNotifyValue(true, for: receiveCharacteristic!)
         }
     }
     
@@ -339,7 +373,10 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     }
     
     func handleAbtData(characteristic: CBCharacteristic) {
-        
+        guard let data = characteristic.value else {
+            return
+        }
+        read(data, for: characteristic.uuid.uuidString)
     }
     
     func read(_ data: Data, for uuid: String) {
@@ -374,10 +411,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 }
             }
         }
-    }
-    
-    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
-        
     }
     
     // Bubble specific commands
