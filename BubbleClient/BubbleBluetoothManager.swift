@@ -400,9 +400,12 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 
                 guard latestUpdateDate.addingTimeInterval(60 * 4) < Date() else { return }
                 guard let bubble = bubble else { return }
+                guard let uid = UserDefaultsUnit.patchUid?.hexadecimal,
+                      let info = UserDefaultsUnit.patchInfo else {
+                    return
+                }
                 
-                sensorData = SensorData(bytes: [UInt8](data), sn: "", patchUid: "", patchInfo: patchInfo)
-                guard var sensorData = sensorData else { return }
+                var sensorData = SensorData(bytes: [UInt8](data), sn: UserDefaultsUnit.sensorSerialNumber, patchUid: Data(uid.reversed()).hexEncodedString(), patchInfo: info)
                 
                 if isDecryptedDataPacket || sensorData.isFirstSensor {
                     sensorData.isDirectLibre2 = true

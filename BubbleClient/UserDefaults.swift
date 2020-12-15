@@ -71,6 +71,9 @@ public struct UserDefaultsUnit {
     @UserDefaultWrapper("patchUid", "")
     public static var patchUid: String!
     
+    @UserDefaultWrapper("patchUid", "")
+    public static var sensorSerialNumber: String!
+    
     @UserDefaultWrapper("unlockCount", 1)
     static var unlockCount: UInt16!
     

@@ -50,7 +50,7 @@ public struct SensorData {
     /// Number of bytes of sensor data to be used (read only), i.e. 344 bytes (24 for header, 296 for body and 24 for footer)
     private let numberOfBytes = 344 // Header and body and footer of Freestyle Libre data (i.e. 40 blocks of 8 bytes)
     /// Array of 344 bytes as read via nfc
-    let bytes: [UInt8]
+    var bytes: [UInt8]
     /// Subarray of 24 header bytes
     let header: [UInt8]
     /// Subarray of 296 body bytes
@@ -174,7 +174,7 @@ public struct SensorData {
     }
     
     
-    public init?(bytes: [UInt8], date: Date = Date(), sn: String, patchUid: String?, patchInfo: String?) {
+    public init(bytes: [UInt8], date: Date = Date(), sn: String, patchUid: String?, patchInfo: String?) {
         self.bytes = bytes
         // we don't actually know when this reading was done, only that
         // it was produced within the last minute

@@ -26,16 +26,21 @@ public class LibreOOPClient {
     // MARK: - public functions
     public static func webOOP(sensorData: SensorData, bubble: Bubble, patchUid: String, patchInfo: String, callback: ((LibreRawGlucoseOOPData?) -> Void)?) {
         let bytesAsData = Data(sensorData.bytes)
-        var patchUid = patchUid
-        var patchInfo = patchInfo
-        if !sensorData.isFirstSensor {
-            patchUid = "7683376000A007E0"
-            patchInfo = "DF0000080000"
-        }
+        
         let item = URLQueryItem(name: "accesstoken", value: token)
-        let item1 = URLQueryItem(name: "patchUid", value: patchUid)
-        let item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
+        var item1 = URLQueryItem(name: "patchUid", value: patchUid)
+        var item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
         let item3 = URLQueryItem(name: "content", value: bytesAsData.hexEncodedString())
+        var items = [item, item1, item2, item3]
+        if sensorData.isDirectLibre2 {
+            items.append(URLQueryItem(name: "cgmType", value: "libre2ble"))
+        } else {
+            if !sensorData.isFirstSensor {
+                item1 = URLQueryItem(name: "patchUid", value: "7683376000A007E0")
+                item2 = URLQueryItem(name: "patchInfo", value: "DF0000080000")
+            }
+        }
+        
         var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2AndCalibrate")!
         urlComponents.queryItems = [item, item1, item2, item3]
         if let uploadURL = URL.init(string: urlComponents.url?.absoluteString.removingPercentEncoding ?? "") {
@@ -289,9 +294,23 @@ public class LibreOOPClient {
                         }
                     }
                 }
-            } else if sensorData.isDirectLibre2 {
-                webOOPLibre2(sensorData: sensorData, patchUid: patchUid, patchInfo: patchInfo) { (data) in
-                    handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
+            } else if sensorData.isDirectLibre2 && sensorData.bytes.count < 300 {
+                if let data = UserDefaultsUnit.libre2Nfc344OriginalData?.hexadecimal {
+                    let sData = SensorData(bytes: [UInt8](data), sn: sensorData.serialNumber, patchUid: patchUid, patchInfo: patchInfo)
+                    webOOP(sensorData: sData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                        if let data = data, !data.isError {
+                            UserDefaultsUnit.libre2Nfc344OriginalData = nil
+                            webOOPLibre2(sensorData: sensorData, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                                handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
+                            }
+                        } else {
+                            handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
+                        }
+                    }
+                } else {
+                    webOOPLibre2(sensorData: sensorData, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                        handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
+                    }
                 }
             } else {
                 webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in

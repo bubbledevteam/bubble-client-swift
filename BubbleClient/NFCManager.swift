@@ -24,10 +24,6 @@ public class NFCManager: NSObject, NFCReceive {
     var cancellable: AnyCancellable?
     #endif
     
-//    init() {
-//        super.init()
-//    }
-    
     public func action(request: ActionRequest) {
         #if canImport(Combine)
         manager.delegate = self
@@ -54,16 +50,17 @@ public class NFCManager: NSObject, NFCReceive {
     }
     
     private func handleLibre2Data(data: Data) {
-        guard patchUid != nil, patchInfo != nil else { return }
         UserDefaultsUnit.libre2Nfc344OriginalData = data.hexEncodedString()
+        guard let uid = UserDefaultsUnit.patchUid?.hexadecimal,
+              let info = UserDefaultsUnit.patchInfo else {
+            return
+        }
         LogsAccessor.log( "start network")
         
-        if var sensorData = SensorData(uuid: data.subdata(in: 0..<8), bytes: [UInt8](data), date: Date(), patchInfo: UserDefaultsUnit.patchInfo) {
-            let bubble = Bubble(hardware: "1.0", firmware: "1.0", battery: 100)
-            sensorData.isDecryptedDataPacket = true
-            delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
-            delegate?.BubbleBluetoothManagerLibre2Rescan()
-        }
+        let sensorData = SensorData(bytes: [UInt8](data), sn: UserDefaultsUnit.sensorSerialNumber, patchUid: Data(uid.reversed()).hexEncodedString(), patchInfo: info)
+        let bubble = Bubble(hardware: "1.0", firmware: "1.0", battery: 100)
+        delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
+        delegate?.BubbleBluetoothManagerLibre2Rescan()
     }
     
     public func set(sn value: Data, patchInfo: String) {
@@ -78,6 +75,9 @@ public class NFCManager: NSObject, NFCReceive {
         
         let reversed = Data(value.reversed())
         patchUid = reversed.hexEncodedString().uppercased()
+        if let sensorSerialNumber = SensorSerialNumber(withUID: reversed, patchInfo: patchInfo) {
+            UserDefaultsUnit.sensorSerialNumber = sensorSerialNumber.serialNumber
+        }
     }
 }
 
