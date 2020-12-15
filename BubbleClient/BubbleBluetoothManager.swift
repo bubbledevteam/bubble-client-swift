@@ -399,7 +399,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 LogsAccessor.log("receive data: \(data.hexEncodedString())")
                 
                 guard latestUpdateDate.addingTimeInterval(60 * 4) < Date() else { return }
-                guard let bubble = bubble else { return }
+                let bubble = Bubble(hardware: "1.0", firmware: "1.0", battery: 100)
                 guard let uid = UserDefaultsUnit.patchUid?.hexadecimal,
                       let info = UserDefaultsUnit.patchInfo else {
                     return
