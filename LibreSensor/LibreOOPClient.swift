@@ -42,8 +42,9 @@ public class LibreOOPClient {
         }
         
         var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2AndCalibrate")!
-        urlComponents.queryItems = [item, item1, item2, item3]
+        urlComponents.queryItems = items
         if let uploadURL = URL.init(string: urlComponents.url?.absoluteString.removingPercentEncoding ?? "") {
+            LogsAccessor.log(uploadURL.absoluteString)
             let request = NSMutableURLRequest(url: uploadURL)
             request.httpMethod = "POST"
             request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
