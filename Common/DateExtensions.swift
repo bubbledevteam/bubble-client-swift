@@ -28,7 +28,7 @@ public extension Date {
         // All components to round ordered by length
         let components = [Calendar.Component.year, .month, .day, .hour, .minute, .second, .nanosecond]
         
-        guard let index = components.index(of: component) else {
+        guard let index = components.firstIndex(of: component) else {
             fatalError("Wrong component")
         }
         
@@ -43,7 +43,7 @@ public extension Date {
         return date
     }
     
-    public static var LocaleWantsAMPM : Bool{
+    static var LocaleWantsAMPM : Bool{
         return DateFormatter.dateFormat(fromTemplate: "j", options:0, locale:NSLocale.current)!.contains("a")
     }
     
@@ -56,7 +56,7 @@ public extension Date {
 extension DateComponents {
     func ToTimeString(wantsAMPM: Bool=Date.LocaleWantsAMPM) -> String {
         
-        print("hour: \(self.hour) minute: \(self.minute)")
+        print("hour: \(String(describing: self.hour)) minute: \(String(describing: self.minute))")
         let date = Calendar.current.date(bySettingHour: self.hour ?? 0, minute: self.minute ?? 0, second: 0, of: Date())!
         
         

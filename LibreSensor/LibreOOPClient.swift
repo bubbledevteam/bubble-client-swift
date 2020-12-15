@@ -296,7 +296,7 @@ public class LibreOOPClient {
                 }
             } else if sensorData.isDirectLibre2 && sensorData.bytes.count < 300 {
                 if let data = UserDefaultsUnit.libre2Nfc344OriginalData?.hexadecimal {
-                    var sData = SensorData(bytes: [UInt8](data), sn: sensorData.serialNumber, patchUid: patchUid, patchInfo: patchInfo)
+                    let sData = SensorData(bytes: [UInt8](data), sn: sensorData.serialNumber, patchUid: patchUid, patchInfo: patchInfo)
                     webOOP(sensorData: sData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
                         if let data = data, !data.isError {
                             UserDefaultsUnit.libre2Nfc344OriginalData = nil

@@ -65,14 +65,14 @@ public struct UserDefaultsUnit {
     @UserDefaultWrapper("coreDataError", "")
     public static var coreDataError: String!
     
-    @UserDefaultWrapper("patchInfo", "")
-    public static var patchInfo: String!
+    @UserDefaultWrapper("patchInfo")
+    public static var patchInfo: String?
     
-    @UserDefaultWrapper("patchUid", "")
-    public static var patchUid: String!
+    @UserDefaultWrapper("patchUid")
+    public static var patchUid: String?
     
-    @UserDefaultWrapper("patchUid", "")
-    public static var sensorSerialNumber: String!
+    @UserDefaultWrapper("sensorSerialNumber")
+    public static var sensorSerialNumber: String?
     
     @UserDefaultWrapper("unlockCount", 1)
     static var unlockCount: UInt16!

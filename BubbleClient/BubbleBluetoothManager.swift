@@ -405,7 +405,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                     return
                 }
                 
-                let sensorData = SensorData(bytes: [UInt8](data), sn: UserDefaultsUnit.sensorSerialNumber, patchUid: Data(uid.reversed()).hexEncodedString(), patchInfo: info)
+                let sensorData = SensorData(bytes: [UInt8](data), sn: UserDefaultsUnit.sensorSerialNumber ?? "", patchUid: Data(uid.reversed()).hexEncodedString(), patchInfo: info)
                 
                 delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
             }

@@ -173,7 +173,7 @@ class NotificationHelper {
                 
                 
                 //these are just calculations so I can use the convenience of the glucoseformatter
-                var diff = glucose.glucoseLevelRaw - oldValue.glucoseLevelRaw
+                let diff = glucose.glucoseLevelRaw - oldValue.glucoseLevelRaw
                 
                 if diff == 0 {
                     content.body += ", + 0"

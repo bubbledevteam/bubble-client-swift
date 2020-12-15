@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		270C266D226A2F8E005B27F3 /* HKUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9CE210E6A0A00969CE5 /* HKUnit.swift */; };
-		270C266F226A5A6E005B27F3 /* GlucoseSchedules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 270C266E226A5A6E005B27F3 /* GlucoseSchedules.swift */; };
-		270C2670226A5A6E005B27F3 /* GlucoseSchedules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 270C266E226A5A6E005B27F3 /* GlucoseSchedules.swift */; };
 		2729D677221F421C0030E1B8 /* Bubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D676221F421C0030E1B8 /* Bubble.swift */; };
 		2729D67B221F421F0030E1B8 /* BubbleBluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D67A221F421F0030E1B8 /* BubbleBluetoothManager.swift */; };
 		2729D687221F43150030E1B8 /* SensorData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2729D686221F43150030E1B8 /* SensorData.swift */; };
@@ -44,6 +42,8 @@
 		2C68876C257F5FA9005E197A /* BubbleClientPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C68876B257F5FA9005E197A /* BubbleClientPlugin.swift */; };
 		2C688785257F6364005E197A /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAB9BA3257E2C7D008362E4 /* OSLog.swift */; };
 		2C8FAF2A2587877600BE8191 /* NFCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8FAF292587877600BE8191 /* NFCManager.swift */; };
+		2CA4478725889EA40083C30D /* GlucoseSchedules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 270C266E226A5A6E005B27F3 /* GlucoseSchedules.swift */; };
+		2CA4478E25889ED60083C30D /* GlucoseSchedules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 270C266E226A5A6E005B27F3 /* GlucoseSchedules.swift */; };
 		2CAB9BA4257E2C7D008362E4 /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAB9BA3257E2C7D008362E4 /* OSLog.swift */; };
 		4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9CE210E6A0A00969CE5 /* HKUnit.swift */; };
 		4325E9D3210E6ADA00969CE5 /* IdentifiableClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */; };
@@ -578,6 +578,7 @@
 				EE97F5AF24778458005FD8F2 /* URLEncoder.swift in Sources */,
 				EEED17C32446B2FD00070523 /* LocalLog+CoreDataClass.swift in Sources */,
 				EEED17C42446B2FD00070523 /* LocalLog+CoreDataProperties.swift in Sources */,
+				2CA4478E25889ED60083C30D /* GlucoseSchedules.swift in Sources */,
 				27E3C39F222EE9A80036AAC7 /* LibreOOPWebExtensions.swift in Sources */,
 				27CFAB5F224AB27B006DEFE3 /* CollectionExtensions.swift in Sources */,
 				EE0C352324BEFAA200072FD7 /* KalmanFilterType.swift in Sources */,
@@ -596,7 +597,6 @@
 				27CFAB5622496CBB006DEFE3 /* DoubleExtensions.swift in Sources */,
 				43AB51362133177800B3D58D /* LocalizedString.swift in Sources */,
 				2729D67B221F421F0030E1B8 /* BubbleBluetoothManager.swift in Sources */,
-				270C266F226A5A6E005B27F3 /* GlucoseSchedules.swift in Sources */,
 				2729D677221F421C0030E1B8 /* Bubble.swift in Sources */,
 				EE0C352224BEFAA200072FD7 /* KalmanFilter.swift in Sources */,
 				2CAB9BA4257E2C7D008362E4 /* OSLog.swift in Sources */,
@@ -623,6 +623,7 @@
 				43A8EC92210E676500A81379 /* BubbleClientSettingsViewController.swift in Sources */,
 				4325E9D5210E6B4400969CE5 /* UIColor.swift in Sources */,
 				43AB51372133177800B3D58D /* LocalizedString.swift in Sources */,
+				2CA4478725889EA40083C30D /* GlucoseSchedules.swift in Sources */,
 				277DAD11226C986000422ADA /* GlucoseAlarmType.swift in Sources */,
 				27CFAB5E224AB265006DEFE3 /* CollectionExtensions.swift in Sources */,
 				27CBEB3C225FB3A7004F7BF5 /* NibLoadable.swift in Sources */,
@@ -633,7 +634,6 @@
 				4325E9D3210E6ADA00969CE5 /* IdentifiableClass.swift in Sources */,
 				27E0968D22A9806200B3164D /* CGFLoat+Double.swift in Sources */,
 				277DAD12226C9FA800422ADA /* DateExtensions.swift in Sources */,
-				270C2670226A5A6E005B27F3 /* GlucoseSchedules.swift in Sources */,
 				43A8EC91210E676500A81379 /* BubbleClientManager+UI.swift in Sources */,
 				270C266D226A2F8E005B27F3 /* HKUnit.swift in Sources */,
 			);

@@ -9,6 +9,7 @@
 import Foundation
 import HealthKit
 import BubbleClient
+
 public enum GlucoseScheduleAlarmResult : Int, CaseIterable{
 
     case none = 0
@@ -270,7 +271,7 @@ class GlucoseSchedule: Codable, CustomStringConvertible{
     
     var description : String {
         get {
-            return "(from: \(from), to: \(to), low: \(lowAlarm), high: \(highAlarm), enabled: \(enabled))"
+            return "(from: \(String(describing: from)), to: \(String(describing: to)), low: \(String(describing: lowAlarm)), high: \(String(describing: highAlarm)), enabled: \(String(describing: enabled)))"
         }
     }
 }

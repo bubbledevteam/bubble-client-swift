@@ -57,7 +57,7 @@ public class NFCManager: NSObject, NFCReceive {
         }
         LogsAccessor.log( "start network")
         
-        let sensorData = SensorData(bytes: [UInt8](data), sn: UserDefaultsUnit.sensorSerialNumber, patchUid: Data(uid.reversed()).hexEncodedString(), patchInfo: info)
+        let sensorData = SensorData(bytes: [UInt8](data), sn: UserDefaultsUnit.sensorSerialNumber ?? "", patchUid: Data(uid.reversed()).hexEncodedString(), patchInfo: info)
         let bubble = Bubble(hardware: "1.0", firmware: "1.0", battery: 100)
         delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
         delegate?.BubbleBluetoothManagerLibre2Rescan()
