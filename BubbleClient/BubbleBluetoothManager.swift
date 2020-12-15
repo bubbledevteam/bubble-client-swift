@@ -405,13 +405,9 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                     return
                 }
                 
-                var sensorData = SensorData(bytes: [UInt8](data), sn: UserDefaultsUnit.sensorSerialNumber, patchUid: Data(uid.reversed()).hexEncodedString(), patchInfo: info)
+                let sensorData = SensorData(bytes: [UInt8](data), sn: UserDefaultsUnit.sensorSerialNumber, patchUid: Data(uid.reversed()).hexEncodedString(), patchInfo: info)
                 
-                if isDecryptedDataPacket || sensorData.isFirstSensor {
-                    sensorData.isDirectLibre2 = true
-                    // Inform delegate that new data is available
-                    delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
-                }
+                delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
             }
         }
     }

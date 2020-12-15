@@ -192,7 +192,7 @@ public struct SensorData {
         self.patchUid = patchUid
         self.patchInfo = patchInfo
         self.serialNumber = sn
-        
+        isDirectLibre2 = true
         sensorName = "Libre 2"
     }
     
