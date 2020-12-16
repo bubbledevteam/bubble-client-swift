@@ -64,23 +64,16 @@ public class LibreOOPClient {
                         LogsAccessor.log(response)
                     }
                     
-                    let decoder = JSONDecoder.init()
-                    if (bubble.firmware.toDouble() ?? 0) >= 2.6 {
-                        if let oopValue = try? decoder.decode(LibreGlucoseData.self, from: data) {
-                            callback?(oopValue.data)
-                            if var parameters = oopValue.slopeValue {
-                                parameters.serialNumber = sensorData.serialNumber
-                                try? keychain.setLibreCalibrationData(parameters)
-                            }
-                        } else {
-                            callback?(nil)
+                    let decoder = JSONDecoder()
+                    do {
+                        let oopValue = try decoder.decode(LibreGlucoseData.self, from: data)
+                        callback?(oopValue.data)
+                        if var parameters = oopValue.slopeValue {
+                            parameters.serialNumber = sensorData.serialNumber
+                            try? keychain.setLibreCalibrationData(parameters)
                         }
-                    } else {
-                        if let oopValue = try? decoder.decode(LibreRawGlucoseOOPData.self, from: data) {
-                            callback?(oopValue)
-                        } else {
-                            callback?(nil)
-                        }
+                    } catch {
+                        callback?(nil)
                     }
                 }
             }
@@ -315,6 +308,9 @@ public class LibreOOPClient {
                 }
             } else {
                 webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                    if let data = data, !data.isError {
+                        UserDefaultsUnit.libre2Nfc344OriginalData = nil
+                    }
                     handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
                 }
             }

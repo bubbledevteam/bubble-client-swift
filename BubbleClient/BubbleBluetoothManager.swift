@@ -146,7 +146,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         sensorData?.isDecryptedDataPacket = true
         // Check if sensor data is valid and, if this is not the case, request data again after thirty second
         if let sensorData = sensorData {
-            let bubble = Bubble(hardware: "0", firmware: "2.6", battery: 20)
+            let bubble = Bubble(hardware: "1", firmware: "1", battery: 20)
             // Inform delegate that new data is available
             delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
         }
