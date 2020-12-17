@@ -330,8 +330,39 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         }
         
         LibreOOPClient.handleLibreData(sensorData: data, bubble: bubble) { result in
-            guard let glucose = result?.glucoseData, !glucose.isEmpty else { return }
+            guard let glucose = result?.glucoseData, !glucose.isEmpty else {
+                if data.isDirectLibre2 && data.bytes.count < 300 {
+                    self.localParse(data: Data(data.bytes), callback)
+                }
+                return
+            }
             callback(nil, glucose)
+        }
+    }
+    
+    func localParse(data: Data, _ callback: @escaping (LibreError?, [GlucoseData]?) -> Void) {
+        if let uid = UserDefaultsUnit.patchUid,
+           let uidData = uid.hexadecimal,
+           let calibrationInfo = UserDefaultsUnit.calibrationInfo {
+            do {
+                let bytes = try Libre2.decryptBLE(id: Data(uidData.reversed()), data: data)
+                LogsAccessor.log("decryptBLE data: \(Data(bytes).hexEncodedString())")
+                let glucoses = Libre2.parseBLEData(Data(bytes), info: calibrationInfo)
+                if !glucoses.isEmpty {
+                    var valueValid = true
+                    for g in glucoses {
+                        if g.glucoseLevelRaw < 39 || g.glucoseLevelRaw > 501 {
+                            valueValid = false
+                        }
+                    }
+                    
+                    if valueValid {
+                        callback(nil, glucoses)
+                    }
+                }
+            } catch {
+                LogsAccessor.log("libre2 decryptBLE error: \(error.localizedDescription)")
+            }
         }
     }
     
