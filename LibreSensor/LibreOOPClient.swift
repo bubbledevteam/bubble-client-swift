@@ -254,7 +254,9 @@ public class LibreOOPClient {
                 }
             }
         } else {
-            if sensorData.isFirstSensor || sensorData.isDecryptedDataPacket {
+            if sensorData.isDirectLibre2 {
+                callback(([], nil, nil))
+            } else if sensorData.isFirstSensor || sensorData.isDecryptedDataPacket {
                 oop(sensorData: sensorData, serialNumber: serialNumber,  callback)
             }
         }
