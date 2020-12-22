@@ -19,7 +19,7 @@ import SpriteKit
 import UserNotifications
 import LoopKit
 
-let baseUrl = "http://www.glucose.space"
+let baseUrl = "https://www.glucose.space"
 let token = "bubble-201907"
 
 public class LibreOOPClient {
