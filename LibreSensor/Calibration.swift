@@ -34,66 +34,7 @@ extension KeychainManager {
     }
 }
 
-func post(bytes: [UInt8],_ completion:@escaping (( _ data_: Data, _ response: String, _ success: Bool ) -> Void)) {
-    let date = Int(Date().timeIntervalSince1970 * 1000)
-    let json: [String: String] = [
-        "token": "bubble-201907",
-        "content": "\(bytes.hex)",
-        "timestamp": "\(date)"]
-    if let uploadURL = URL.init(string: "http://www.glucose.space/calibrateSensor") {
-        let request = NSMutableURLRequest(url: uploadURL)
-        request.httpMethod = "POST"
-        
-        request.setBodyContent(contentMap: json)
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        
-        let task = URLSession.shared.dataTask(with: request as URLRequest) {
-            data, response, _ in
-            
-            guard let data = data else {
-                completion("network error".data(using: .utf8)!, "network error", false)
-                return
-            }
-            
-            if let response = String(data: data, encoding: String.Encoding.utf8) {
-                completion(data, response, true)
-            }
-            
-        }
-        task.resume()
-    }
-}
-
 public let keychain = KeychainManager()
-public func calibrateSensor(sensordata: SensorData,  callback: @escaping (LibreDerivedAlgorithmParameters?) -> Void) {
-    if let response = keychain.getLibreCalibrationData(), response.serialNumber == sensordata.serialNumber {
-        callback(response)
-        return
-    }
-    
-    post(bytes: sensordata.bytes, { (data, str, can) in
-        let decoder = JSONDecoder()
-        do {
-            let response = try decoder.decode(GetCalibrationStatus.self, from: data)
-            print(response)
-            if let slope = response.slope {
-                var para = LibreDerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope ?? 0, slope_offset: slope.slopeOffset ?? 0, offset_slope: slope.offsetSlope ?? 0, offset_offset: slope.offsetOffset ?? 0)
-                para.serialNumber = sensordata.serialNumber
-                do {
-                    try keychain.setLibreCalibrationData(para)
-                } catch {
-                    NSLog("dabear:: could not save calibrationdata")
-                }
-                callback(para)
-            } else {
-                callback(nil)
-            }
-        } catch {
-            print("got error trying to decode GetCalibrationStatus")
-            callback(nil)
-        }
-    })
-}
 
 private func serializeAlgorithmParameters(_ params: LibreDerivedAlgorithmParameters) -> String {
     let encoder = JSONEncoder()

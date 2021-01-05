@@ -19,7 +19,7 @@ import SpriteKit
 import UserNotifications
 import LoopKit
 
-let baseUrl = "http://www.glucose.space"
+let baseUrl = "https://www.glucose.space"
 let token = "bubble-201907"
 
 public class LibreOOPClient {
@@ -254,7 +254,9 @@ public class LibreOOPClient {
                 }
             }
         } else {
-            if sensorData.isFirstSensor || sensorData.isDecryptedDataPacket {
+            if sensorData.isDirectLibre2 {
+                callback(([], nil, nil))
+            } else if sensorData.isFirstSensor || sensorData.isDecryptedDataPacket {
                 oop(sensorData: sensorData, serialNumber: serialNumber,  callback)
             }
         }
