@@ -370,19 +370,11 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     public func BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: SensorData, Bubble: Bubble) {
         reloadData?()
         LogsAccessor.log("name: \(sensorData.sensorName), patchInfo: \(sensorData.patchInfo ?? ""), patchUid: \(sensorData.patchUid ?? ""), \ncontent: \(Data(sensorData.bytes).hexEncodedString()), state: \(sensorData.state.description)")
-        if sensorData.isDecryptedDataPacket {
-            guard sensorData.hasValidCRCs else {
-                LogsAccessor.log("crc failed")
-                return
-            }
-        } else {
-            if sensorData.isFirstSensor {
-                if sensorData.state != .ready { return }
-                guard sensorData.hasValidCRCs else {
-                    LogsAccessor.log("crc failed")
-                    return
-                }
-            }
+        if sensorData.state != .ready { return }
+        
+        guard sensorData.hasValidCRCs else {
+            LogsAccessor.log("crc failed")
+            return
         }
         
         self.lastValidSensorData = sensorData
