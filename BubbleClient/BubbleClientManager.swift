@@ -372,7 +372,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         LogsAccessor.log("name: \(sensorData.sensorName), patchInfo: \(sensorData.patchInfo ?? ""), patchUid: \(sensorData.patchUid ?? ""), \ncontent: \(Data(sensorData.bytes).hexEncodedString()), state: \(sensorData.state.description)")
         if sensorData.state != .ready { return }
         
-        guard sensorData.hasValidCRCs else {
+        if !sensorData.isDirectLibre2 && !sensorData.hasValidCRCs {
             LogsAccessor.log("crc failed")
             return
         }
