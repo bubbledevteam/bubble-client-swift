@@ -302,6 +302,10 @@ public class LibreRawGlucoseOOPData: NSObject, Codable, LibreRawGlucoseWeb {
         }
         return false
     }
+    
+    var currentError: Bool {
+        return (realTimeGlucose?.dataQuality ?? -1) != 0
+    }
 }
 
 class HistoricGlucose: NSObject, Codable {

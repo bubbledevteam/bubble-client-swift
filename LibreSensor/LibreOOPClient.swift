@@ -273,14 +273,14 @@ public class LibreOOPClient {
             oop(sensorData: sensorData, serialNumber: sensorData.serialNumber,  callback)
         } else {
             if patchInfo.hasPrefix("A2") {
-                if lastA2Time.addingTimeInterval(30 * 60) > Date() {
+                if lastA2Time.addingTimeInterval(60 * 60 * 30) > Date() {
                     handleLibreA2Data(sensorData: sensorData) { (data) in
                         handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
                     }
                 } else {
                     webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
                         
-                        if let data = data {
+                        if let data = data, !data.currentError {
                             handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
                         } else {
                             lastA2Time = Date()
