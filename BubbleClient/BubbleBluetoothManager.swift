@@ -166,7 +166,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     func retrievePeripherals() {
         guard peripheral?.state  != .connected else { return }
-        if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: serviceUUIDs).first,
+        if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: serviceUUIDs).first(where: { ($0.name?.lowercased().contains("bubble") ?? false) || ($0.name?.lowercased().contains("bott") ?? false) } ),
            let name = peripheral.name {
             self.peripheral = peripheral
             self.peripheral?.delegate = self
