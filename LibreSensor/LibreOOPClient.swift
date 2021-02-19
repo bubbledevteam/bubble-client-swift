@@ -25,6 +25,7 @@ let token = "bubble-201907"
 public class LibreOOPClient {
     // MARK: - public functions
     public static func webOOP(sensorData: SensorData, bubble: Bubble, patchUid: String, patchInfo: String, callback: ((LibreRawGlucoseOOPData?) -> Void)?) {
+        LogsAccessor.log("libreoop2AndCalibrate")
         let bytesAsData = Data(sensorData.bytes)
         
         let item = URLQueryItem(name: "accesstoken", value: token)
@@ -84,6 +85,7 @@ public class LibreOOPClient {
     }
     
     public static func webOOPLibre2(sensorData: SensorData, patchUid: String, patchInfo: String, callback: ((LibreRawGlucoseOOPData?) -> Void)?) {
+        LogsAccessor.log("libreoop2BleData")
         let bytesAsData = Data(sensorData.bytes)
         let item = URLQueryItem(name: "accesstoken", value: token)
         let item1 = URLQueryItem(name: "patchUid", value: patchUid)
@@ -125,6 +127,7 @@ public class LibreOOPClient {
     }
     
     public static func handleLibreA2Data(sensorData: SensorData, callback: ((LibreRawGlucoseOOPA2Data?) -> Void)?) {
+        LogsAccessor.log("callnoxAndCalibrate")
         let bytesAsData = Data(sensorData.bytes)
         if let uploadURL = URL.init(string: "\(baseUrl)/callnoxAndCalibrate") {
             var request = URLRequest(url: uploadURL)
@@ -155,26 +158,9 @@ public class LibreOOPClient {
                         let oopValue = try decoder.decode(LibreA2GlucoseData.self, from: data)
                         if var parameters = oopValue.slopeValue {
                             parameters.serialNumber = sensorData.serialNumber
-                            try? keychain.setLibreCalibrationData(parameters)
+                            try keychain.setLibreCalibrationData(parameters)
                         }
                         callback?(oopValue.data)
-                    } catch {
-                        callback?(nil)
-                        LogsAccessor.log("handleLibreA2Data: \(error.localizedDescription)")
-                    }
-                    
-                    do {
-                        guard let data = data else {
-                            callback?(nil)
-                            return
-                        }
-                        
-                        if let response = String(data: data, encoding: String.Encoding.utf8) {
-                            LogsAccessor.log(response)
-                        }
-                        let decoder = JSONDecoder.init()
-                        let oopValue = try decoder.decode(LibreRawGlucoseOOPA2Data.self, from: data)
-                        callback?(oopValue)
                     } catch {
                         callback?(nil)
                         LogsAccessor.log("handleLibreA2Data: \(error.localizedDescription)")
@@ -273,7 +259,7 @@ public class LibreOOPClient {
             oop(sensorData: sensorData, serialNumber: sensorData.serialNumber,  callback)
         } else {
             if patchInfo.hasPrefix("A2") {
-                if lastA2Time.addingTimeInterval(60 * 60 * 30) > Date() {
+                if lastA2Time.addingTimeInterval(60 * 30) > Date() {
                     handleLibreA2Data(sensorData: sensorData) { (data) in
                         handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
                     }
