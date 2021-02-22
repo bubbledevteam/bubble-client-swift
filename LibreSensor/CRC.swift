@@ -84,6 +84,41 @@ final class Crc {
         return correctedBytes
     }
     
+    public static func computeCRC16(_ bytes: [UInt8],_ start: Int, _ size: Int) -> Int {
+        var crc: UInt16 = 0xffff
+        for i in (start + 2) ..< (start + size) {
+            let temp = (crc ^ UInt16(bytes[i]))
+            crc = ((crc >> 8) ^ crc16table[Int(temp & 0xff)])
+        }
+        
+        var reverseCrc = 0
+        for _ in 0 ..< 16 {
+            reverseCrc = (reverseCrc << 1) | Int(crc & 1)
+            crc >>= 1
+        }
+        return reverseCrc
+    }
+    
+    
+    public static func bytesWithCorrectCRC(data: [UInt8]) -> [UInt8] {
+        let headerCrc = computeCRC16(data, 0, 24)
+        let bodyCrc = computeCRC16(data, 24, 296)
+        let footerCrc = computeCRC16(data, 320, 24)
+        let headerCorrectedByte0 = UInt8(headerCrc & 0x00FF)
+        let headerCorrectedByte1 = UInt8(headerCrc >> 8)
+        let bodyCorrectedByte0 = UInt8(bodyCrc & 0x00FF)
+        let bodyCorrectedByte1 = UInt8(bodyCrc >> 8)
+        let footerCorrectedByte0 = UInt8(footerCrc & 0x00FF)
+        let footerCorrectedByte1 = UInt8(footerCrc >> 8)
+        var copy = data
+        copy[0] = headerCorrectedByte0
+        copy[1] = headerCorrectedByte1
+        copy[24] = bodyCorrectedByte0
+        copy[25] = bodyCorrectedByte1
+        copy[320] = footerCorrectedByte0
+        copy[321] = footerCorrectedByte1
+        return copy;
+    }
 }
 
 /// Struct BytesSequence, taken from https://github.com/krzyzanowskim/CryptoSwift

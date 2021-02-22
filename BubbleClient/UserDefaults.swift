@@ -81,6 +81,10 @@ public struct UserDefaultsUnit {
     @UserDefaultWrapper("libre2Nfc344OriginalData")
     static var libre2Nfc344OriginalData: String?
     
+    /// sensor name, change by saveSensorName: function
+    @UserDefaultWrapper("proOriginal344Data")
+    static var proOriginal344Data: Data?
+    
     /// libre2 decryptFRAM 344 Libre2.calibrationInfo
     @UserDefaultJsonWrapper("calibrationInfo")
     static var calibrationInfo: CalibrationInfo?

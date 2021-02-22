@@ -440,6 +440,12 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         sensorData = SensorData(uuid: rxBuffer.subdata(in: 0..<8), bytes: [UInt8](data), date: Date(), patchInfo: patchInfo)
         guard var sensorData = sensorData else { return }
         
+        if sensorData.isProSensor {
+            if !isDecryptedDataPacket {
+                UserDefaultsUnit.proOriginal344Data = data
+            }
+        }
+        
         if isDecryptedDataPacket || sensorData.isFirstSensor {
             sensorData.isDecryptedDataPacket = true
             // Inform delegate that new data is available

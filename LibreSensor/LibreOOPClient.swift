@@ -190,28 +190,6 @@ public class LibreOOPClient {
         }
     }
     
-    public static func oop(sensorData: SensorData, serialNumber: String, _ callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
-        LogsAccessor.log("start calibrateSensor")
-        let libreData = sensorData.bytes
-        let sensorState = LibreSensorState(stateByte: libreData[4])
-        let body = Array(libreData[24 ..< 320])
-        let sensorTime = Int(body[293]) << 8 + Int(body[292])
-        guard sensorTime >= 60 else {
-            callback(([], .starting, sensorTime))
-            LogsAccessor.log("sensorTime < 60")
-            return
-        }
-        
-        calibrateSensor(sensorData: sensorData, serialNumber: sensorData.serialNumber) {
-            (calibrationparams)  in
-            if let calibrationparams = calibrationparams {
-                LogsAccessor.log("calibrateSensor params: \(calibrationparams.description)")
-            }
-            callback((oopParams(libreData: libreData, params: calibrationparams),
-            sensorState,
-            sensorTime))
-        }
-    }
     
     static func handleGlucose(sensorData: SensorData, oopValue: LibreRawGlucoseWeb?, serialNumber: String, _ callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
         if let oopValue = oopValue, !oopValue.isError {
@@ -240,9 +218,7 @@ public class LibreOOPClient {
                 }
             }
         } else {
-            if sensorData.isDirectLibre2 {
-                callback(([], nil, nil))
-            } else if sensorData.isFirstSensor || sensorData.isDecryptedDataPacket {
+            if !sensorData.isDirectLibre2 || sensorData.bytes.count < 300 {
                 oop(sensorData: sensorData, serialNumber: serialNumber,  callback)
             }
         }
@@ -255,52 +231,48 @@ public class LibreOOPClient {
             return
         }
         
-        if sensorData.isProSensor {
-            oop(sensorData: sensorData, serialNumber: sensorData.serialNumber,  callback)
-        } else {
-            if patchInfo.hasPrefix("A2") {
-                if lastA2Time.addingTimeInterval(60 * 30) > Date() {
-                    handleLibreA2Data(sensorData: sensorData) { (data) in
+        if patchInfo.hasPrefix("A2") {
+            if lastA2Time.addingTimeInterval(60 * 30) > Date() {
+                handleLibreA2Data(sensorData: sensorData) { (data) in
+                    handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
+                }
+            } else {
+                webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                    
+                    if let data = data, !data.currentError {
                         handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
-                    }
-                } else {
-                    webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
-                        
-                        if let data = data, !data.currentError {
+                    } else {
+                        lastA2Time = Date()
+                        handleLibreA2Data(sensorData: sensorData) { (data) in
                             handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
-                        } else {
-                            lastA2Time = Date()
-                            handleLibreA2Data(sensorData: sensorData) { (data) in
-                                handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
-                            }
                         }
                     }
                 }
-            } else if sensorData.isDirectLibre2 && sensorData.bytes.count < 300 {
-                if let data = UserDefaultsUnit.libre2Nfc344OriginalData?.hexadecimal {
-                    let sData = SensorData(bytes: [UInt8](data), sn: sensorData.serialNumber, patchUid: patchUid, patchInfo: patchInfo)
-                    webOOP(sensorData: sData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
-                        if let data = data, !data.isError {
-                            UserDefaultsUnit.libre2Nfc344OriginalData = nil
-                            webOOPLibre2(sensorData: sensorData, patchUid: patchUid, patchInfo: patchInfo) { (data) in
-                                handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
-                            }
-                        } else {
+            }
+        } else if sensorData.isDirectLibre2 && sensorData.bytes.count < 300 {
+            if let data = UserDefaultsUnit.libre2Nfc344OriginalData?.hexadecimal {
+                let sData = SensorData(bytes: [UInt8](data), sn: sensorData.serialNumber, patchUid: patchUid, patchInfo: patchInfo)
+                webOOP(sensorData: sData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                    if let data = data, !data.isError {
+                        UserDefaultsUnit.libre2Nfc344OriginalData = nil
+                        webOOPLibre2(sensorData: sensorData, patchUid: patchUid, patchInfo: patchInfo) { (data) in
                             handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
                         }
-                    }
-                } else {
-                    webOOPLibre2(sensorData: sensorData, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                    } else {
                         handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
                     }
                 }
             } else {
-                webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
-                    if let data = data, !data.isError {
-                        UserDefaultsUnit.libre2Nfc344OriginalData = nil
-                    }
+                webOOPLibre2(sensorData: sensorData, patchUid: patchUid, patchInfo: patchInfo) { (data) in
                     handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
                 }
+            }
+        } else {
+            webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                if let data = data, !data.isError {
+                    UserDefaultsUnit.libre2Nfc344OriginalData = nil
+                }
+                handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
             }
         }
     }
@@ -336,6 +308,97 @@ public class LibreOOPClient {
         }
         return items
     }
+    
+}
+
+
+extension LibreOOPClient {
+    public static func localParse(sensorData: SensorData, _ callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState, sensorTimeInMinutes: Int?)) -> Void) {
+        if sensorData.bytes.count == 344 {
+            let body = Array(sensorData.bytes[24 ..< 320])
+            let sensorTime = Int(body[293]) << 8 + Int(body[292])
+            
+            guard sensorTime >= 60 else {
+                callback(([], .starting, sensorTime))
+                return
+            }
+            
+            let data = Data(sensorData.bytes)
+            let calibrationInfo: CalibrationInfo
+            if sensorData.isProSensor {
+                if let proOriginal344Data = UserDefaultsUnit.proOriginal344Data {
+                    LogsAccessor.log("proOriginal344Data: \(proOriginal344Data.hexEncodedString())")
+                    calibrationInfo = Libre2.calibrationInfo2(fram: proOriginal344Data)
+                } else {
+                    callback(([], .ready, sensorTime))
+                    LogsAccessor.log("no proOriginal344Data")
+                    return
+                }
+            } else {
+                calibrationInfo = Libre2.calibrationInfo(fram: data)
+            }
+            LogsAccessor.log("\(calibrationInfo)")
+            
+            let current = Libre2.readTrendValues(data: data, calibrationInfo: calibrationInfo)
+            if current.glucoseLevelRaw < 39 || current.glucoseLevelRaw > 501 {
+                if sensorTime < 60 {
+                    callback(([], .starting, sensorTime))
+                } else {
+                    callback(([], .failure, sensorTime))
+                }
+            } else {
+                var last32 = Libre2.readHistoricalValues(data: data, calibrationInfo: calibrationInfo).filter { $0.glucoseLevelRaw >= 39 && $0.glucoseLevelRaw <= 501 && $0.timeStamp >= Date().adding(.minute, value: -sensorTime) }
+                last32.reverse()
+                let last96 = split(current: current, glucoseData: last32)
+                
+                for value in last96 {
+                    for local in last32 {
+                        if Int(value.timeStamp.timeIntervalSince1970) - Int(local.timeStamp.timeIntervalSince1970) == 0 {
+                            value.rawTemperature = local.rawTemperature
+                            value.rawGlucose = local.rawGlucose
+                            break
+                        }
+                    }
+                }
+                callback((last96, .ready, sensorTime))
+            }
+        } else if sensorData.bytes.count == 46 {
+            if let uid = UserDefaultsUnit.patchUid,
+               let uidData = uid.hexadecimal,
+               let calibrationInfo = UserDefaultsUnit.calibrationInfo,
+               let bytes = try? Libre2.decryptBLE(id: Data(uidData.reversed()), data: Data(sensorData.bytes)) {
+                
+                LogsAccessor.log("decryptBLE data: \(Data(bytes).hexEncodedString())")
+                LogsAccessor.log("calibrationInfo: \(calibrationInfo)")
+                let result = Libre2.parseBLEData(Data(bytes), info: calibrationInfo)
+                if !result.glucoses.isEmpty {
+                    var valueValid = true
+                    for g in result.glucoses {
+                        if g.glucoseLevelRaw < 39 || g.glucoseLevelRaw > 501 {
+                            valueValid = false
+                        }
+                    }
+                    
+                    if valueValid {
+                        callback((result.glucoses, .ready, nil))
+                    } else {
+                        callback((result.glucoses, .failure, nil))
+                    }
+                } else {
+                    callback(([], .ready, nil))
+                }
+            } else {
+                callback(([], .ready, nil))
+            }
+        }
+    }
+    
+    public static func oop(sensorData: SensorData, serialNumber: String, _ callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
+        localParse(sensorData: sensorData, callback)
+    }
+}
+
+extension LibreOOPClient {
     
     private static func calibrateSensor(sensorData: SensorData, serialNumber: String,  callback: @escaping (LibreDerivedAlgorithmParameters?) -> Void) {
         if let response = keychain.getLibreCalibrationData(),

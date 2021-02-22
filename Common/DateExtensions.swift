@@ -51,6 +51,35 @@ public extension Date {
     func toMillisecondsAsInt64() -> Int64 {
         return Int64((self.timeIntervalSince1970 * 1000.0).rounded())
     }
+    
+    func localString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = .current
+        dateFormatter.timeZone = .current
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return dateFormatter.string(from: self)
+    }
+    
+    /// SwifterSwift: User’s current calendar.
+    var calendar: Calendar {
+        return Calendar(identifier: Calendar.current.identifier) // Workaround to segfault on corelibs foundation https://bugs.swift.org/browse/SR-10147
+    }
+    
+    /// SwifterSwift: Date by adding multiples of calendar component.
+    ///
+    ///     let date = Date() // "Jan 12, 2017, 7:07 PM"
+    ///     let date2 = date.adding(.minute, value: -10) // "Jan 12, 2017, 6:57 PM"
+    ///     let date3 = date.adding(.day, value: 4) // "Jan 16, 2017, 7:07 PM"
+    ///     let date4 = date.adding(.month, value: 2) // "Mar 12, 2017, 7:07 PM"
+    ///     let date5 = date.adding(.year, value: 13) // "Jan 12, 2030, 7:07 PM"
+    ///
+    /// - Parameters:
+    ///   - component: component type.
+    ///   - value: multiples of components to add.
+    /// - Returns: original date + multiples of component added.
+    func adding(_ component: Calendar.Component, value: Int) -> Date {
+        return calendar.date(byAdding: component, value: value, to: self)!
+    }
 }
 
 extension DateComponents {

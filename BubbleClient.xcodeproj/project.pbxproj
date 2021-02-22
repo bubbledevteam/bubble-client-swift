@@ -45,6 +45,8 @@
 		2CA4478725889EA40083C30D /* GlucoseSchedules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 270C266E226A5A6E005B27F3 /* GlucoseSchedules.swift */; };
 		2CA4478E25889ED60083C30D /* GlucoseSchedules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 270C266E226A5A6E005B27F3 /* GlucoseSchedules.swift */; };
 		2CAB9BA4257E2C7D008362E4 /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAB9BA3257E2C7D008362E4 /* OSLog.swift */; };
+		2CC4412725E3E7C00044C477 /* LibrePro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC4412525E3E7BF0044C477 /* LibrePro.swift */; };
+		2CC4412825E3E7C00044C477 /* PreLibre2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC4412625E3E7C00044C477 /* PreLibre2.swift */; };
 		4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9CE210E6A0A00969CE5 /* HKUnit.swift */; };
 		4325E9D3210E6ADA00969CE5 /* IdentifiableClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */; };
 		4325E9D5210E6B4400969CE5 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D4210E6B4300969CE5 /* UIColor.swift */; };
@@ -122,6 +124,8 @@
 		2C68876D257F5FA9005E197A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2C8FAF292587877600BE8191 /* NFCManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NFCManager.swift; sourceTree = "<group>"; };
 		2CAB9BA3257E2C7D008362E4 /* OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSLog.swift; sourceTree = "<group>"; };
+		2CC4412525E3E7BF0044C477 /* LibrePro.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibrePro.swift; sourceTree = "<group>"; };
+		2CC4412625E3E7C00044C477 /* PreLibre2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreLibre2.swift; sourceTree = "<group>"; };
 		4325E9CE210E6A0A00969CE5 /* HKUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKUnit.swift; sourceTree = "<group>"; };
 		4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentifiableClass.swift; sourceTree = "<group>"; };
 		4325E9D4210E6B4300969CE5 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
@@ -291,6 +295,8 @@
 				2729D67A221F421F0030E1B8 /* BubbleBluetoothManager.swift */,
 				2729D6A722248BDD0030E1B8 /* BubbleClientManager.swift */,
 				2C8FAF292587877600BE8191 /* NFCManager.swift */,
+				2CC4412525E3E7BF0044C477 /* LibrePro.swift */,
+				2CC4412625E3E7C00044C477 /* PreLibre2.swift */,
 				275C3DA2229FCED400E27439 /* NotificationHelper.swift */,
 				EEC805EB244016BD0092C718 /* UserDefaults.swift */,
 				2CAB9BA3257E2C7D008362E4 /* OSLog.swift */,
@@ -582,6 +588,7 @@
 				27E3C39F222EE9A80036AAC7 /* LibreOOPWebExtensions.swift in Sources */,
 				27CFAB5F224AB27B006DEFE3 /* CollectionExtensions.swift in Sources */,
 				EE0C352324BEFAA200072FD7 /* KalmanFilterType.swift in Sources */,
+				2CC4412725E3E7C00044C477 /* LibrePro.swift in Sources */,
 				27E3C390222EDF560036AAC7 /* LibreError.swift in Sources */,
 				4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */,
 				27E3C39A222EE9450036AAC7 /* LibreOOPClient.swift in Sources */,
@@ -613,6 +620,7 @@
 				2729D687221F43150030E1B8 /* SensorData.swift in Sources */,
 				277DAD14226CACF300422ADA /* MessagePassing.swift in Sources */,
 				27E3C39C222EE9450036AAC7 /* LibreOOPResponse.swift in Sources */,
+				2CC4412825E3E7C00044C477 /* PreLibre2.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
