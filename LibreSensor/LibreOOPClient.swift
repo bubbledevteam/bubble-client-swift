@@ -24,7 +24,7 @@ let token = "bubble-201907"
 
 public class LibreOOPClient {
     // MARK: - public functions
-    public static func webOOP(sensorData: SensorData, bubble: Bubble, patchUid: String, patchInfo: String, callback: ((LibreRawGlucoseOOPData?) -> Void)?) {
+    public static func webOOP(sensorData: SensorData, bubble: Bubble, patchUid: String, patchInfo: String, callback: ((LibreRawGlucoseWeb?) -> Void)?) {
         LogsAccessor.log("libreoop2AndCalibrate")
         let bytesAsData = Data(sensorData.bytes)
         
@@ -32,7 +32,9 @@ public class LibreOOPClient {
         var item1 = URLQueryItem(name: "patchUid", value: patchUid)
         var item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
         let item3 = URLQueryItem(name: "content", value: bytesAsData.hexEncodedString())
-        var items = [item, item1, item2, item3]
+        let item5 = URLQueryItem(name: "oopType", value: "OOP1AndOOP2")
+        let item6 = URLQueryItem(name: "session", value: UUID().uuidString)
+        var items = [item, item1, item2, item3, item5, item6]
         if sensorData.isDirectLibre2 {
             items.append(URLQueryItem(name: "cgmType", value: "libre2ble"))
         } else {
@@ -65,16 +67,14 @@ public class LibreOOPClient {
                         LogsAccessor.log(response)
                     }
                     
-                    let decoder = JSONDecoder()
-                    do {
-                        let oopValue = try decoder.decode(LibreGlucoseData.self, from: data)
-                        callback?(oopValue.data)
-                        if var parameters = oopValue.slopeValue {
-                            parameters.serialNumber = sensorData.serialNumber
-                            try? keychain.setLibreCalibrationData(parameters)
-                        }
-                    } catch {
-                        callback?(nil)
+                    let decoder = JSONDecoder.init()
+                    
+                    if let oopValue = try? decoder.decode(LibreGlucoseData.self, from: data),
+                       let data = oopValue.data {
+                        callback?(data)
+                    } else {
+                        let oopValue = try? decoder.decode(LibreRawGlucoseOOPA2Data.self, from: data)
+                        callback?(oopValue)
                     }
                 }
             }
@@ -231,25 +231,7 @@ public class LibreOOPClient {
             return
         }
         
-        if patchInfo.hasPrefix("A2") {
-            if lastA2Time.addingTimeInterval(60 * 30) > Date() {
-                handleLibreA2Data(sensorData: sensorData) { (data) in
-                    handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
-                }
-            } else {
-                webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
-                    
-                    if let data = data, !data.currentError {
-                        handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
-                    } else {
-                        lastA2Time = Date()
-                        handleLibreA2Data(sensorData: sensorData) { (data) in
-                            handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
-                        }
-                    }
-                }
-            }
-        } else if sensorData.isDirectLibre2 && sensorData.bytes.count < 300 {
+        if sensorData.isDirectLibre2 && sensorData.bytes.count < 300 {
             if let data = UserDefaultsUnit.libre2Nfc344OriginalData?.hexadecimal {
                 let sData = SensorData(bytes: [UInt8](data), sn: sensorData.serialNumber, patchUid: patchUid, patchInfo: patchInfo)
                 webOOP(sensorData: sData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in

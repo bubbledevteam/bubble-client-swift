@@ -117,7 +117,7 @@ public class LibreRawGlucoseData: GlucoseData {
     
 }
 
-protocol LibreRawGlucoseWeb {
+public protocol LibreRawGlucoseWeb {
     var isError: Bool { get }
     var sensorTime: Int? { get }
     var canGetParameters: Bool { get }
@@ -194,7 +194,7 @@ public class LibreRawGlucoseOOPData: NSObject, Codable, LibreRawGlucoseWeb {
         case TYPE_SENSOR_DETERMINED
     }
     
-    var isError: Bool {
+    public var isError: Bool {
         if let msg = msg {
             switch Error(rawValue: msg) {
             case .TERMINATE_SENSOR_CORRUPT_PAYLOAD,
@@ -208,14 +208,14 @@ public class LibreRawGlucoseOOPData: NSObject, Codable, LibreRawGlucoseWeb {
         return historicGlucose?.isEmpty ?? true
     }
     
-    var sensorTime: Int? {
+    public var sensorTime: Int? {
         if let endTime = endTime, endTime < 0 {
             return 24 * 6 * 149
         }
         return realTimeGlucose?.id
     }
     
-    var canGetParameters: Bool {
+    public var canGetParameters: Bool {
         if let dataQuality = realTimeGlucose?.dataQuality, let id = realTimeGlucose?.id {
             if dataQuality == 0 && id >= 60 {
                 return true
@@ -224,7 +224,7 @@ public class LibreRawGlucoseOOPData: NSObject, Codable, LibreRawGlucoseWeb {
         return false
     }
     
-    var sensorState: String {
+    public var sensorState: String {
         if let dataQuality = realTimeGlucose?.dataQuality, let id = realTimeGlucose?.id {
             if dataQuality != 0 && id < 60 {
                 return LibreSensorState.starting.identify
@@ -267,7 +267,7 @@ public class LibreRawGlucoseOOPData: NSObject, Codable, LibreRawGlucoseWeb {
         return state.identify
     }
     
-    func glucoseData(date: Date) ->(LibreRawGlucoseData?, [LibreRawGlucoseData]) {
+    public func glucoseData(date: Date) ->(LibreRawGlucoseData?, [LibreRawGlucoseData]) {
         if endTime ?? 0 < 0 {
             return (nil, [])
         }
@@ -292,7 +292,7 @@ public class LibreRawGlucoseOOPData: NSObject, Codable, LibreRawGlucoseWeb {
         return (current ,array)
     }
     
-    var valueError: Bool {
+    public var valueError: Bool {
         if let id = realTimeGlucose?.id, id < 60 {
             return false
         }
@@ -303,7 +303,7 @@ public class LibreRawGlucoseOOPData: NSObject, Codable, LibreRawGlucoseWeb {
         return false
     }
     
-    var currentError: Bool {
+    public var currentError: Bool {
         return (realTimeGlucose?.dataQuality ?? -1) != 0
     }
 }
@@ -361,18 +361,18 @@ public class LibreRawGlucoseOOPA2Data: NSObject, Codable, LibreRawGlucoseWeb {
         return list?.first?.content
     }
     
-    var isError: Bool {
+    public var isError: Bool {
         if content?.currentBg ?? 0 <= 10 {
             return true
         }
         return list?.first?.content?.historicBg?.isEmpty ?? true
     }
     
-    var sensorTime: Int? {
+    public var sensorTime: Int? {
         return content?.currentTime
     }
     
-    var canGetParameters: Bool {
+    public var canGetParameters: Bool {
         if let id = content?.currentTime {
             if id >= 60 {
                 return true
@@ -381,7 +381,7 @@ public class LibreRawGlucoseOOPA2Data: NSObject, Codable, LibreRawGlucoseWeb {
         return false
     }
     
-    var sensorState: String {
+    public var sensorState: String {
         if let id = content?.currentTime {
             if id < 60 {
                 return LibreSensorState.starting.identify
@@ -394,7 +394,7 @@ public class LibreRawGlucoseOOPA2Data: NSObject, Codable, LibreRawGlucoseWeb {
         return state.identify
     }
     
-    func glucoseData(date: Date) ->(LibreRawGlucoseData?, [LibreRawGlucoseData]) {
+    public func glucoseData(date: Date) ->(LibreRawGlucoseData?, [LibreRawGlucoseData]) {
         var current: LibreRawGlucoseData?
         guard !isError else { return(nil, []) }
         current = LibreRawGlucoseData.init(timeStamp: date, glucoseLevelRaw: content?.currentBg ?? 0)
@@ -416,7 +416,7 @@ public class LibreRawGlucoseOOPA2Data: NSObject, Codable, LibreRawGlucoseWeb {
         return (current ,array)
     }
     
-    var valueError: Bool {
+    public var valueError: Bool {
         if let id = content?.currentTime, id < 60 {
             return false
         }
