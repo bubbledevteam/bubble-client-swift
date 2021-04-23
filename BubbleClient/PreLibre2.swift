@@ -414,9 +414,9 @@ open class Libre2 {
         let startIndex = readBits(data, 26, 0, 8)
         let indexTrend = Int(data[26])
         let i = indexTrend - 0 - 1
-        let address = ((i + startIndex + 16) % 16) * 6 + 28
+        let address = i * 6 + 28
         let value = readGlucoseValue(data, address, i, calibrationInfo)
-        LogsAccessor.log("current: raw: \(value.glucoseLevelRaw), ts: \(value.timeStamp.localString())")
+        LogsAccessor.log("current: raw: \(value.glucoseLevelRaw), ts: \(value.timeStamp.localString()), address: \(address), startIndex: \(startIndex)")
         return value
     }
     
