@@ -21,6 +21,7 @@ import LoopKit
 
 let baseUrl = "https://www.glucose.space"
 let token = "bubble-201907"
+let timeout: TimeInterval = 8
 
 public class LibreOOPClient {
     // MARK: - public functions
@@ -50,6 +51,7 @@ public class LibreOOPClient {
             LogsAccessor.log(uploadURL.absoluteString)
             let request = NSMutableURLRequest(url: uploadURL)
             request.httpMethod = "POST"
+            request.timeoutInterval = timeout
             request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             let task = URLSession.shared.dataTask(with: request as URLRequest) {
                 data, response, error in
@@ -100,6 +102,7 @@ public class LibreOOPClient {
             LogsAccessor.log(uploadURL.absoluteString)
             let request = NSMutableURLRequest(url: uploadURL)
             request.httpMethod = "POST"
+            request.timeoutInterval = timeout
             request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             let task = URLSession.shared.dataTask(with: request as URLRequest) {
                 data, response, error in
@@ -131,6 +134,7 @@ public class LibreOOPClient {
         let bytesAsData = Data(sensorData.bytes)
         if let uploadURL = URL.init(string: "\(baseUrl)/callnoxAndCalibrate") {
             var request = URLRequest(url: uploadURL)
+            request.timeoutInterval = timeout
             request.httpMethod = "POST"
             do {
                 let data = try JSONSerialization.data(withJSONObject: [["timestamp": "\(Int(Date().timeIntervalSince1970 * 1000))",
@@ -393,52 +397,6 @@ extension LibreOOPClient {
             callback(nil)
         }
     }
-    
-    // MARK: - private functions
-    
-    public static func post(bytes: [UInt8],_ completion:@escaping (( _ data_: Data, _ response: String, _ success: Bool ) -> Void)) {
-        let date = Date().toMillisecondsAsInt64()
-        let bytesAsData = Data(bytes: bytes, count: bytes.count)
-        let json: [String: String] = [
-            "token": token,
-            "content": "\(bytesAsData.hexEncodedString())",
-            "timestamp": "\(date)",
-        ]
-        LogsAccessor.log("start calibrateSensor")
-        if let uploadURL = URL.init(string: "\(baseUrl)/calibrateSensor") {
-            let request = NSMutableURLRequest(url: uploadURL)
-            request.httpMethod = "POST"
-            request.setBodyContent(contentMap: json)
-            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-            
-            let task = URLSession.shared.dataTask(with: request as URLRequest) {
-                data, response, error in
-                
-                guard let data = data else {
-                    DispatchQueue.main.sync {
-                        completion("network error".data(using: .utf8)!, "network error", false)
-                    }
-                    return
-                    
-                }
-                
-                if let response = String(data: data, encoding: String.Encoding.utf8) {
-                    DispatchQueue.main.sync {
-                        LogsAccessor.log(response)
-                        completion(data, response, true)
-                    }
-                    return
-                }
-                
-                DispatchQueue.main.sync {
-                    completion("response error".data(using: .utf8)!, "response error", false)
-                }
-                
-            }
-            task.resume()
-        }
-    }
-    
     
     private static func trendMeasurements(bytes: [UInt8], date: Date, _ offset: Double = 0.0, slope: Double = 0.1, LibreDerivedAlgorithmParameterSet: LibreDerivedAlgorithmParameters?) -> [LibreMeasurement] {
         guard bytes.count >= 320 else { return [] }
