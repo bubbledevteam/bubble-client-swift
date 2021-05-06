@@ -11,7 +11,7 @@ import LoopKit
 import LoopKitUI
 import BubbleClient
 
-public protocol SubViewControllerWillDisappear: class {
+public protocol SubViewControllerWillDisappear: AnyObject {
     func onDisappear() -> Void
 }
 
@@ -27,18 +27,22 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
     
     private let isDemoMode = false
     public var cgmManager: BubbleClientManager?
+    
+    private let displayGlucoseUnitObservable: DisplayGlucoseUnitObservable
 
-    public let glucoseUnit: HKUnit
+    private var glucoseUnit: HKUnit {
+        displayGlucoseUnitObservable.displayGlucoseUnit
+    }
 
     public let allowsDeletion: Bool
 
-    public init(cgmManager: BubbleClientManager, glucoseUnit: HKUnit, allowsDeletion: Bool) {
+    public init(cgmManager: BubbleClientManager, displayGlucoseUnitObservable: DisplayGlucoseUnitObservable, allowsDeletion: Bool) {
         self.cgmManager = cgmManager
-        self.glucoseUnit = glucoseUnit
+        self.displayGlucoseUnitObservable = displayGlucoseUnitObservable
         
         //only override savedglucose unit if we haven't saved this locally before
         if UserDefaults.standard.mmGlucoseUnit == nil {
-            UserDefaults.standard.mmGlucoseUnit = glucoseUnit
+            UserDefaults.standard.mmGlucoseUnit = displayGlucoseUnitObservable.displayGlucoseUnit
         }
         
         self.allowsDeletion = allowsDeletion
