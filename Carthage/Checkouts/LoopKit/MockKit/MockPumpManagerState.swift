@@ -160,8 +160,49 @@ public struct MockPumpManagerState {
     public var progressWarningThresholdPercentValue: Double?
     public var progressCriticalThresholdPercentValue: Double?
     
+    public var insulinType: InsulinType
+    
     public var dosesToStore: [UnfinalizedDose] {
         return finalizedDoses + [unfinalizedTempBasal, unfinalizedBolus].compactMap {$0}
+    }
+
+    public init(deliverableIncrements: DeliverableIncrements = .medtronicX22,
+                reservoirUnitsRemaining: Double = 200.0,
+                tempBasalEnactmentShouldError: Bool = false,
+                bolusEnactmentShouldError: Bool = false,
+                bolusCancelShouldError: Bool = false,
+                deliverySuspensionShouldError: Bool = false,
+                deliveryResumptionShouldError: Bool = false,
+                deliveryCommandsShouldTriggerUncertainDelivery: Bool = false,
+                maximumBolus: Double = 25.0,
+                maximumBasalRatePerHour: Double = 5.0,
+                suspendState: SuspendState = .resumed(Date()),
+                pumpBatteryChargeRemaining: Double? = 1,
+                unfinalizedBolus: UnfinalizedDose? = nil,
+                unfinalizedTempBasal: UnfinalizedDose? = nil,
+                finalizedDoses: [UnfinalizedDose] = [],
+                progressWarningThresholdPercentValue: Double? = 0.75,
+                progressCriticalThresholdPercentValue: Double? = 0.9,
+                insulinType: InsulinType = .novolog)
+    {
+        self.deliverableIncrements = deliverableIncrements
+        self.supportedBolusVolumes = deliverableIncrements.supportedBolusVolumes ?? []
+        self.supportedBasalRates = deliverableIncrements.supportedBasalRates ?? []
+        self.reservoirUnitsRemaining = reservoirUnitsRemaining
+        self.tempBasalEnactmentShouldError = tempBasalEnactmentShouldError
+        self.bolusEnactmentShouldError = bolusEnactmentShouldError
+        self.bolusCancelShouldError = bolusCancelShouldError
+        self.deliverySuspensionShouldError = deliverySuspensionShouldError
+        self.deliveryResumptionShouldError = deliveryResumptionShouldError
+        self.deliveryCommandsShouldTriggerUncertainDelivery = deliveryCommandsShouldTriggerUncertainDelivery
+        self.maximumBolus = maximumBolus
+        self.maximumBasalRatePerHour = maximumBasalRatePerHour
+        self.suspendState = suspendState
+        self.pumpBatteryChargeRemaining = pumpBatteryChargeRemaining
+        self.finalizedDoses = finalizedDoses
+        self.progressWarningThresholdPercentValue = progressWarningThresholdPercentValue
+        self.progressCriticalThresholdPercentValue = progressCriticalThresholdPercentValue
+        self.insulinType = insulinType
     }
 
     public mutating func finalizeFinishedDoses() {
@@ -231,6 +272,12 @@ extension MockPumpManagerState: RawRepresentable {
         } else {
             self.suspendState = .resumed(Date())
         }
+        
+        if let rawInsulinType = rawValue["insulinType"] as? InsulinType.RawValue, let insulinType = InsulinType(rawValue: rawInsulinType) {
+            self.insulinType = insulinType
+        } else {
+            self.insulinType = .novolog
+        }
     }
 
     public var rawValue: RawValue {
@@ -240,6 +287,7 @@ extension MockPumpManagerState: RawRepresentable {
             "supportedBolusVolumes": supportedBolusVolumes,
             "supportedBasalRates": supportedBasalRates,
             "reservoirUnitsRemaining": reservoirUnitsRemaining,
+            "insulinType": insulinType.rawValue
         ]
 
         raw["basalRateSchedule"] = basalRateSchedule?.rawValue
@@ -298,8 +346,7 @@ extension MockPumpManagerState: CustomDebugStringConvertible {
     public var debugDescription: String {
         return """
         ## MockPumpManagerState
-        * supportedBolusVolumes: \(supportedBolusVolumes)
-        * supportedBasalRates: \(supportedBasalRates)
+        * deliverableIncrements: \(deliverableIncrements)
         * reservoirUnitsRemaining: \(reservoirUnitsRemaining)
         * basalRateSchedule: \(basalRateSchedule as Any)
         * tempBasalEnactmentShouldError: \(tempBasalEnactmentShouldError)

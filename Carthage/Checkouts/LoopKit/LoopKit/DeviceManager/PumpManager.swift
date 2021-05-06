@@ -8,7 +8,6 @@
 import Foundation
 import HealthKit
 
-
 public enum PumpManagerResult<T> {
     case success(T)
     case failure(PumpManagerError)
@@ -130,10 +129,10 @@ public protocol PumpManager: DeviceManager {
     ///
     /// - Parameters:
     ///   - units: The number of units to deliver
-    ///   - startDate: The date the bolus command was originally set
+    ///   - automatic: Whether the dose was triggered automatically as opposed to commanded by user
     ///   - completion: A closure called after the command is complete
     ///   - result: A DoseEntry or an error describing why the command failed
-    func enactBolus(units: Double, at startDate: Date, completion: @escaping (_ result: PumpManagerResult<DoseEntry>) -> Void)
+    func enactBolus(units: Double, automatic: Bool, completion: @escaping (_ result: PumpManagerResult<DoseEntry>) -> Void)
 
     /// Cancels the current, in progress, bolus.
     ///

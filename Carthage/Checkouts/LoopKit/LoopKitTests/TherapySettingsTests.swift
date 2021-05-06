@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import HealthKit
 import LoopKit
 
 class TherapySettingsTests: XCTestCase {
@@ -72,18 +73,21 @@ class TherapySettingsTests: XCTestCase {
                          RepeatingScheduleValue(startTime: .hours(18), value: 8.0),
                          RepeatingScheduleValue(startTime: .hours(21), value: 10.0)],
             timeZone: timeZone)!
-        
+        let correctionRangeOverrides = CorrectionRangeOverrides(
+            preMeal: DoubleRange(minValue: 80.0, maxValue: 90.0),
+            workout: DoubleRange(minValue: 130.0, maxValue: 140.0),
+            unit: .milligramsPerDeciliter)
+
         return TherapySettings(
             glucoseTargetRangeSchedule: glucoseTargetRangeSchedule,
-            preMealTargetRange: DoubleRange(minValue: 80.0, maxValue: 90.0),
-            workoutTargetRange: DoubleRange(minValue: 130.0, maxValue: 140.0),
+            correctionRangeOverrides: correctionRangeOverrides,
             maximumBasalRatePerHour: 3,
             maximumBolus: 5,
             suspendThreshold: GlucoseThreshold(unit: .milligramsPerDeciliter, value: 80),
             insulinSensitivitySchedule: insulinSensitivitySchedule,
             carbRatioSchedule: carbRatioSchedule,
             basalRateSchedule: basalRateSchedule,
-            insulinModelSettings: InsulinModelSettings(model: ExponentialInsulinModelPreset.humalogNovologAdult)
+            insulinModelSettings: InsulinModelSettings(model: ExponentialInsulinModelPreset.rapidActingAdult)
         )
     }
 
@@ -174,6 +178,22 @@ class TherapySettingsTests: XCTestCase {
           }
         }
       },
+      "correctionRangeOverrides" : {
+        "preMealRange" : {
+          "bloodGlucoseUnit" : "mg/dL",
+          "range" : {
+            "maxValue" : 90,
+            "minValue" : 80
+          }
+        },
+        "workoutRange" : {
+          "bloodGlucoseUnit" : "mg/dL",
+          "range" : {
+            "maxValue" : 140,
+            "minValue" : 130
+          }
+        }
+      },
       "glucoseTargetRangeSchedule" : {
         "override" : {
           "end" : "1970-01-02T04:16:40Z",
@@ -239,7 +259,7 @@ class TherapySettingsTests: XCTestCase {
         }
       },
       "insulinModelSettings" : {
-        "exponential" : "humalogNovologAdult"
+        "exponential" : "rapidActingAdult"
       },
       "insulinSensitivitySchedule" : {
         "unit" : "mg/dL",
@@ -279,34 +299,26 @@ class TherapySettingsTests: XCTestCase {
       },
       "maximumBasalRatePerHour" : 3,
       "maximumBolus" : 5,
-      "preMealTargetRange" : {
-        "maxValue" : 90,
-        "minValue" : 80
-      },
       "suspendThreshold" : {
         "unit" : "mg/dL",
         "value" : 80
-      },
-      "workoutTargetRange" : {
-        "maxValue" : 140,
-        "minValue" : 130
       }
     }
     """
     
     func testInsulinModelEncoding() throws {
-        let adult = InsulinModelSettings.exponentialPreset(.humalogNovologAdult)
-        let child = InsulinModelSettings.exponentialPreset(.humalogNovologChild)
+        let adult = InsulinModelSettings.exponentialPreset(.rapidActingAdult)
+        let child = InsulinModelSettings.exponentialPreset(.rapidActingChild)
         let walsh = InsulinModelSettings.walsh(WalshInsulinModel(actionDuration: 10))
         
         XCTAssertEqual("""
         {
-          "exponential" : "humalogNovologAdult"
+          "exponential" : "rapidActingAdult"
         }
         """, String(data: try encoder.encode(adult), encoding: .utf8)!)
         XCTAssertEqual("""
         {
-          "exponential" : "humalogNovologChild"
+          "exponential" : "rapidActingChild"
         }
         """, String(data: try encoder.encode(child), encoding: .utf8)!)
         XCTAssertEqual("""
@@ -324,19 +336,17 @@ class TherapySettingsTests: XCTestCase {
         let data = try encoder.encode(original)
         XCTAssertEqual(encodedString, String(data: data, encoding: .utf8)!)
     }
-    
+
     func testTherapySettingDecoding() throws {
         let data = encodedString.data(using: .utf8)!
         let decoded = try decoder.decode(TherapySettings.self, from: data)
         let expected = getTherapySettings()
-        
+
         XCTAssertEqual(expected, decoded)
-        
+
         XCTAssertEqual(decoded.basalRateSchedule, expected.basalRateSchedule)
-        XCTAssertEqual(decoded.glucoseUnit, expected.glucoseUnit)
         XCTAssertEqual(decoded.insulinSensitivitySchedule, expected.insulinSensitivitySchedule)
-        XCTAssertEqual(decoded.preMealTargetRange, expected.preMealTargetRange)
-        XCTAssertEqual(decoded.workoutTargetRange, expected.workoutTargetRange)
+        XCTAssertEqual(decoded.correctionRangeOverrides, expected.correctionRangeOverrides)
         XCTAssertEqual(decoded.maximumBolus, expected.maximumBolus)
         XCTAssertEqual(decoded.maximumBasalRatePerHour, expected.maximumBasalRatePerHour)
         XCTAssertEqual(decoded.suspendThreshold, expected.suspendThreshold)

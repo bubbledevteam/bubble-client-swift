@@ -40,16 +40,16 @@ public struct CarbRatioScheduleEditor: View {
     }
     
     public init(
-        viewModel: TherapySettingsViewModel,
+        therapySettingsViewModel: TherapySettingsViewModel,
         didSave: (() -> Void)? = nil
     ) {
         self.init(
-            schedule: viewModel.therapySettings.carbRatioSchedule,
-            onSave: { [weak viewModel] in
-                viewModel?.saveCarbRatioSchedule(carbRatioSchedule: $0)
+            schedule: therapySettingsViewModel.therapySettings.carbRatioSchedule,
+            onSave: { [weak therapySettingsViewModel] in
+                therapySettingsViewModel?.saveCarbRatioSchedule(carbRatioSchedule: $0)
                 didSave?()
             },
-            mode: viewModel.mode
+            mode: therapySettingsViewModel.mode
         )
     }
 
@@ -60,7 +60,7 @@ public struct CarbRatioScheduleEditor: View {
             schedule: schedule,
             unit: .realCarbRatioScheduleUnit,
             guardrail: .carbRatio,
-            selectableValueStride: HKQuantity(unit: .realCarbRatioScheduleUnit, doubleValue: 0.01),
+            selectableValueStride: HKQuantity(unit: .realCarbRatioScheduleUnit, doubleValue: 0.1),
             quantitySelectionMode: .fractional,
             defaultFirstScheduleItemValue: Guardrail.carbRatio.startingSuggestion ?? Guardrail.carbRatio.recommendedBounds.upperBound,
             confirmationAlertContent: confirmationAlertContent,

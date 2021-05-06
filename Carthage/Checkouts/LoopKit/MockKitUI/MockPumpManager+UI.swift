@@ -14,31 +14,32 @@ import MockKit
 
 
 extension MockPumpManager: PumpManagerUI {
+    
     private var appName: String {
         return Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as! String
     }
     
     public var smallImage: UIImage? { return UIImage(named: "Pump Simulator", in: Bundle(for: MockPumpManagerSettingsViewController.self), compatibleWith: nil) }
     
-    public static func setupViewController(insulinTintColor: Color, guidanceColors: GuidanceColors) -> (UIViewController & CompletionNotifying & PumpManagerSetupViewController) {
-        return MockPumpManagerSetupViewController.instantiateFromStoryboard()
+    public static func setupViewController(initialSettings settings: PumpManagerSetupSettings, bluetoothProvider: BluetoothProvider, colorPalette: LoopUIColorPalette, allowedInsulinTypes: [InsulinType]) -> SetupUIResult<UIViewController & PumpManagerCreateNotifying & PumpManagerOnboardNotifying & CompletionNotifying, PumpManagerUI> {
+        return .createdAndOnboarded(MockPumpManager())
     }
 
-    public func settingsViewController(insulinTintColor: Color, guidanceColors: GuidanceColors) -> (UIViewController & CompletionNotifying) {
-        let settings = MockPumpManagerSettingsViewController(pumpManager: self)
-        let nav = SettingsNavigationViewController(rootViewController: settings)
+    public func settingsViewController(bluetoothProvider: BluetoothProvider, colorPalette: LoopUIColorPalette, allowedInsulinTypes: [InsulinType]) -> (UIViewController & PumpManagerOnboardNotifying & CompletionNotifying) {
+        let settings = MockPumpManagerSettingsViewController(pumpManager: self, supportedInsulinTypes: allowedInsulinTypes)
+        let nav = PumpManagerSettingsNavigationViewController(rootViewController: settings)
         return nav
     }
     
-    public func deliveryUncertaintyRecoveryViewController(insulinTintColor: Color, guidanceColors: GuidanceColors) -> (UIViewController & CompletionNotifying) {
+    public func deliveryUncertaintyRecoveryViewController(colorPalette: LoopUIColorPalette) -> (UIViewController & CompletionNotifying) {
         return DeliveryUncertaintyRecoveryViewController(appName: appName, uncertaintyStartedAt: Date()) {
             self.state.deliveryCommandsShouldTriggerUncertainDelivery = false
             self.state.deliveryIsUncertain = false
         }
     }
 
-    public func hudProvider(insulinTintColor: Color, guidanceColors: GuidanceColors) -> HUDProvider? {
-        return MockHUDProvider(pumpManager: self)
+    public func hudProvider(bluetoothProvider: BluetoothProvider, colorPalette: LoopUIColorPalette, allowedInsulinTypes: [InsulinType]) -> HUDProvider? {
+        return MockHUDProvider(pumpManager: self, allowedInsulinTypes: allowedInsulinTypes)
     }
 
     public static func createHUDView(rawValue: HUDProvider.HUDViewRawState) -> LevelHUDView? {

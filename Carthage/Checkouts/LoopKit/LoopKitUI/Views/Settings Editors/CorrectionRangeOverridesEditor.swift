@@ -11,15 +11,11 @@ import HealthKit
 import LoopKit
 
 public struct CorrectionRangeOverridesEditor: View {
-    let initialValue: CorrectionRangeOverrides
-    let preset: CorrectionRangeOverrides.Preset
-    let suspendThreshold: GlucoseThreshold?
-    let unit: HKUnit
-    var correctionRangeScheduleRange: ClosedRange<HKQuantity>
-    var minValue: HKQuantity?
-    var save: (_ overrides: CorrectionRangeOverrides) -> Void
-    var sensitivityOverridesEnabled: Bool
-    var mode: SettingsPresentationMode
+    @EnvironmentObject private var displayGlucoseUnitObservable: DisplayGlucoseUnitObservable
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.authenticate) var authenticate
+
+    let viewModel: CorrectionRangeOverridesEditorViewModel
 
     @State private var userDidTap: Bool = false
 
@@ -34,65 +30,34 @@ public struct CorrectionRangeOverridesEditor: View {
     }
 
     @State var showingConfirmationAlert = false
-    @Environment(\.dismiss) var dismiss
-    @Environment(\.authenticate) var authenticate
 
-    fileprivate init(
-        value: CorrectionRangeOverrides,
-        preset: CorrectionRangeOverrides.Preset,
-        unit: HKUnit,
-        correctionRangeScheduleRange: ClosedRange<HKQuantity>,
-        minValue: HKQuantity?,
-        onSave save: @escaping (_ overrides: CorrectionRangeOverrides) -> Void,
-        sensitivityOverridesEnabled: Bool,
-        suspendThreshold: GlucoseThreshold?,
-        mode: SettingsPresentationMode = .settings
-    ) {
-        self._value = State(initialValue: value)
-        self.initialValue = value
-        self.preset = preset
-        self.unit = unit
-        self.correctionRangeScheduleRange = correctionRangeScheduleRange
-        self.minValue = minValue
-        self.save = save
-        self.sensitivityOverridesEnabled = sensitivityOverridesEnabled
-        self.suspendThreshold = suspendThreshold
-        self.mode = mode
+    var initialValue: CorrectionRangeOverrides {
+        viewModel.correctionRangeOverrides
+    }
+
+    var preset: CorrectionRangeOverrides.Preset {
+        viewModel.preset
+    }
+
+    var displayGlucoseUnit: HKUnit {
+        displayGlucoseUnitObservable.displayGlucoseUnit
     }
     
     public init(
-        viewModel: TherapySettingsViewModel,
+        therapySettingsViewModel: TherapySettingsViewModel,
         preset: CorrectionRangeOverrides.Preset,
         didSave: (() -> Void)? = nil
     ) {
-        self.init(
-            value: CorrectionRangeOverrides(
-                preMeal: viewModel.therapySettings.preMealTargetRange,
-                workout: viewModel.therapySettings.workoutTargetRange,
-                unit: viewModel.therapySettings.glucoseUnit!
-            ),
+        let viewModel = CorrectionRangeOverridesEditorViewModel(
+            therapySettingsViewModel: therapySettingsViewModel,
             preset: preset,
-            unit: viewModel.therapySettings.glucoseUnit!,
-            correctionRangeScheduleRange: viewModel.therapySettings.glucoseTargetRangeSchedule!.scheduleRange(),
-            minValue: viewModel.therapySettings.suspendThreshold?.quantity,
-            onSave: { [weak viewModel] overrides in
-                let glucoseUnit = viewModel?.therapySettings.glucoseUnit ?? .milligramsPerDeciliter
-                switch preset {
-                case .preMeal:
-                    viewModel?.saveCorrectionRangeOverride(preMeal: overrides.preMeal, unit: glucoseUnit)
-                case .workout:
-                    viewModel?.saveCorrectionRangeOverride(workout: overrides.workout, unit: glucoseUnit)
-                }
-                didSave?()
-            },
-            sensitivityOverridesEnabled: viewModel.sensitivityOverridesEnabled,
-            suspendThreshold: viewModel.therapySettings.suspendThreshold,
-            mode: viewModel.mode
-        )
+            didSave: didSave)
+        self._value = State(initialValue: viewModel.correctionRangeOverrides)
+        self.viewModel = viewModel
     }
 
     public var body: some View {
-        switch mode {
+        switch viewModel.mode {
         case .settings: return AnyView(contentWithCancel)
         case .acceptanceFlow: return AnyView(content)
         }
@@ -119,8 +84,8 @@ public struct CorrectionRangeOverridesEditor: View {
     private var content: some View {
         ConfigurationPage(
             title: Text(preset.therapySetting.title),
-            actionButtonTitle: Text(mode.buttonText),
-            actionButtonState: value != initialValue || mode == .acceptanceFlow ? .enabled : .disabled,
+            actionButtonTitle: Text(viewModel.mode.buttonText),
+            actionButtonState: value != initialValue || viewModel.mode == .acceptanceFlow ? .enabled : .disabled,
             cards: {
                 // TODO: Figure out why I need to explicitly return a CardStack with 1 card here
                 CardStack(cards: [card(for: preset)])
@@ -139,9 +104,11 @@ public struct CorrectionRangeOverridesEditor: View {
         )
         .alert(isPresented: $showingConfirmationAlert, content: confirmationAlert)
         .navigationBarTitle("", displayMode: .inline)
-        .onTapGesture {
-            self.userDidTap = true
-        }
+        .simultaneousGesture(TapGesture().onEnded {
+            withAnimation {
+                self.userDidTap = true
+            }
+        })
     }
 
     private func card(for preset: CorrectionRangeOverrides.Preset) -> Card {
@@ -149,33 +116,34 @@ public struct CorrectionRangeOverridesEditor: View {
             SettingDescription(text: description(of: preset), informationalContent: { preset.therapySetting.helpScreen() })
             CorrectionRangeOverridesExpandableSetting(
                 isEditing: Binding(
-                    get: { self.presetBeingEdited == preset },
+                    get: { presetBeingEdited == preset },
                     set: { isEditing in
                         withAnimation {
-                            self.presetBeingEdited = isEditing ? preset : nil
+                            presetBeingEdited = isEditing ? preset : nil
                         }
                 }),
                 value: $value,
                 preset: preset,
-                unit: unit,
-                suspendThreshold: suspendThreshold,
-                correctionRangeScheduleRange: correctionRangeScheduleRange,
+                unit: displayGlucoseUnit,
+                suspendThreshold: viewModel.suspendThreshold,
+                correctionRangeScheduleRange: viewModel.correctionRangeScheduleRange,
                 expandedContent: {
                     GlucoseRangePicker(
                         range: Binding(
-                            get: { self.value.ranges[preset] ?? self.initiallySelectedValue(for: preset) },
+                            get: { value.ranges[preset] ?? initiallySelectedValue(for: preset) },
                             set: { newValue in
                                 withAnimation {
-                                    self.value.ranges[preset] = newValue
+                                    value.ranges[preset] = newValue
                                 }
                         }
                         ),
-                        unit: self.unit,
-                        minValue: self.selectableBounds(for: preset).lowerBound,
-                        maxValue: self.selectableBounds(for: preset).upperBound,
-                        guardrail: self.guardrail(for: preset)
+                        unit:
+                            displayGlucoseUnit,
+                        minValue: selectableBounds(for: preset).lowerBound,
+                        maxValue: selectableBounds(for: preset).upperBound,
+                        guardrail: viewModel.guardrail
                     )
-                    .accessibility(identifier: "\(self.accessibilityIdentifier(for: preset))_picker")
+                    .accessibility(identifier: "\(accessibilityIdentifier(for: preset))_picker")
             })
         }
     }
@@ -188,15 +156,10 @@ public struct CorrectionRangeOverridesEditor: View {
             return Text(preset.descriptiveText)
         }
     }
-    
-    private func guardrail(for preset: CorrectionRangeOverrides.Preset) -> Guardrail<HKQuantity> {
-        return Guardrail.correctionRangeOverride(for: preset, correctionRangeScheduleRange: correctionRangeScheduleRange,
-                                                 suspendThreshold: suspendThreshold)
-    }
-    
+
     private var instructionalContentIfNecessary: some View {
         return Group {
-            if mode == .acceptanceFlow && !userDidTap {
+            if viewModel.mode == .acceptanceFlow && !userDidTap {
                 instructionalContent
             }
         }
@@ -212,17 +175,17 @@ public struct CorrectionRangeOverridesEditor: View {
     }
 
     private func selectableBounds(for preset: CorrectionRangeOverrides.Preset) -> ClosedRange<HKQuantity> {
-        guardrail(for: preset).absoluteBounds
+        viewModel.guardrail.absoluteBounds
     }
 
     private func initiallySelectedValue(for preset: CorrectionRangeOverrides.Preset) -> ClosedRange<HKQuantity> {
-        guardrail(for: preset).recommendedBounds.clamped(to: selectableBounds(for: preset))
+        viewModel.guardrail.recommendedBounds.clamped(to: selectableBounds(for: preset))
     }
 
     private var guardrailWarningIfNecessary: some View {
         let crossedThresholds = self.crossedThresholds
         return Group {
-            if !crossedThresholds.isEmpty && (userDidTap || mode == .settings) {
+            if !crossedThresholds.isEmpty && (userDidTap || viewModel.mode == .settings) {
                 CorrectionRangeOverridesGuardrailWarning(crossedThresholds: crossedThresholds, preset: preset)
             }
         }
@@ -231,7 +194,7 @@ public struct CorrectionRangeOverridesEditor: View {
     private var crossedThresholds: [SafetyClassification.Threshold] {
         guard let range = value.ranges[preset] else { return [] }
         
-        let guardrail = self.guardrail(for: preset)
+        let guardrail = viewModel.guardrail
         let thresholds: [SafetyClassification.Threshold] = [range.lowerBound, range.upperBound].compactMap { bound in
             switch guardrail.classification(for: bound) {
             case .withinRecommendedRange:
@@ -266,7 +229,7 @@ public struct CorrectionRangeOverridesEditor: View {
     }
     
     private func startSaving() {
-        guard mode == .settings else {
+        guard viewModel.mode == .settings else {
             self.continueSaving()
             return
         }
@@ -279,7 +242,7 @@ public struct CorrectionRangeOverridesEditor: View {
     }
     
     private func continueSaving() {
-        self.save(self.value)
+        viewModel.saveCorrectionRangeOverride(value)
     }
 
     private func accessibilityIdentifier(for preset: CorrectionRangeOverrides.Preset) -> String {

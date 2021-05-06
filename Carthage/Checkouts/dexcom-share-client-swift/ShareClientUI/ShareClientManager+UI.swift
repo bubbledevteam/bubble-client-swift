@@ -12,26 +12,31 @@ import HealthKit
 import ShareClient
 
 extension ShareClientManager: CGMManagerUI {
-    public static func setupViewController(glucoseTintColor: Color, guidanceColors: GuidanceColors) -> (UIViewController & CGMManagerSetupViewController & CompletionNotifying)? {
-        return ShareClientSetupViewController()
+    public static func setupViewController(bluetoothProvider: BluetoothProvider, colorPalette: LoopUIColorPalette) -> SetupUIResult<UIViewController & CGMManagerCreateNotifying & CGMManagerOnboardNotifying & CompletionNotifying, CGMManagerUI> {
+        return .userInteractionRequired(ShareClientSetupViewController())
     }
 
-    public func settingsViewController(for glucoseUnit: HKUnit, glucoseTintColor: Color, guidanceColors: GuidanceColors) -> (UIViewController & CompletionNotifying) {
-        let settings = ShareClientSettingsViewController(cgmManager: self, glucoseUnit: glucoseUnit, allowsDeletion: true)
-        let nav = SettingsNavigationViewController(rootViewController: settings)
+    public func settingsViewController(for displayGlucoseUnitObservable: DisplayGlucoseUnitObservable, bluetoothProvider: BluetoothProvider, colorPalette: LoopUIColorPalette) -> (UIViewController & CGMManagerOnboardNotifying & CompletionNotifying) {
+        let settings = ShareClientSettingsViewController(cgmManager: self, displayGlucoseUnitObservable: displayGlucoseUnitObservable, allowsDeletion: true)
+        let nav = CGMManagerSettingsNavigationViewController(rootViewController: settings)
         return nav
     }
 
     public var smallImage: UIImage? {
         return nil
     }
-    
-    // TODO Placeholder. This functionality will come with LOOP-1311
+
+    // TODO Placeholder.
     public var cgmStatusHighlight: DeviceStatusHighlight? {
         return nil
     }
-    
-    // TODO Placeholder. This functionality will come with LOOP-1311
+
+    // TODO Placeholder.
+    public var cgmStatusBadge: DeviceStatusBadge? {
+        return nil
+    }
+
+    // TODO Placeholder.
     public var cgmLifecycleProgress: DeviceLifecycleProgress? {
         return nil
     }

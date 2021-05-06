@@ -59,7 +59,7 @@ public struct QuantityPicker: View {
         self.init(
             value: value,
             unit: unit,
-            selectableValues: selectableValues,
+            selectableValues: selectableValues.map { unit.roundForPicker(value: $0) },
             formatter: formatter,
             isUnitLabelVisible: isUnitLabelVisible,
             colorForValue: { value in
@@ -87,10 +87,21 @@ public struct QuantityPicker: View {
         }()
         self.isUnitLabelVisible = isUnitLabelVisible
         self.colorForValue = colorForValue
-    }   
+    }
+
+    private var selectedValue: Binding<Double> {
+        Binding(
+            get: {
+                unit.roundForPicker(value: value.doubleValue(for: unit))
+            },
+            set: { newValue in
+                self.value = HKQuantity(unit: unit, doubleValue: newValue)
+            }
+        )
+    }
 
     public var body: some View {
-        Picker("Quantity", selection: $value.doubleValue(for: unit)) {
+        Picker("Quantity", selection: selectedValue) {
             ForEach(selectableValues, id: \.self) { value in
                 Text(self.formatter.string(from: value) ?? "\(value)")
                     .foregroundColor(self.colorForValue(value))

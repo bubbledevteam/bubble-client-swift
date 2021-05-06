@@ -16,7 +16,13 @@ import os.log
 import HealthKit
 
 public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelegate {
-    public static let managerIdentifier: String = "BubbleClientManager"
+    public var cgmManagerStatus: CGMManagerStatus  {
+        return CGMManagerStatus(hasValidSensorSession: true)
+    }
+    
+    public var isOnboarded: Bool = true
+    
+    public let managerIdentifier: String = "BubbleClientManager"
     
     public var cgmStatus: CGMManagerStatus {
         // todo
@@ -120,7 +126,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     //public var BubbleService: BubbleService
     
-    public static let localizedTitle = LocalizedString("DiaBox", comment: "Title for the CGMManager option")
+    public var localizedTitle = LocalizedString("DiaBox", comment: "Title for the CGMManager option")
     
     public let appURL: URL? = URL(string: "diabox://")
     

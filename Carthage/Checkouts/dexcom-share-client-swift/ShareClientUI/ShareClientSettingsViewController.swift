@@ -6,26 +6,36 @@
 //
 
 import UIKit
+import Combine
 import HealthKit
 import LoopKit
 import LoopKitUI
 import ShareClient
 
-
 public class ShareClientSettingsViewController: UITableViewController {
 
     public let cgmManager: ShareClientManager
 
-    public let glucoseUnit: HKUnit
+    private let displayGlucoseUnitObservable: DisplayGlucoseUnitObservable
+
+    private lazy var cancellables = Set<AnyCancellable>()
+
+    private var glucoseUnit: HKUnit {
+        displayGlucoseUnitObservable.displayGlucoseUnit
+    }
 
     public let allowsDeletion: Bool
 
-    public init(cgmManager: ShareClientManager, glucoseUnit: HKUnit, allowsDeletion: Bool) {
+    public init(cgmManager: ShareClientManager, displayGlucoseUnitObservable: DisplayGlucoseUnitObservable, allowsDeletion: Bool) {
         self.cgmManager = cgmManager
-        self.glucoseUnit = glucoseUnit
+        self.displayGlucoseUnitObservable = displayGlucoseUnitObservable
         self.allowsDeletion = allowsDeletion
 
         super.init(style: .grouped)
+
+        displayGlucoseUnitObservable.$displayGlucoseUnit
+            .sink { [weak self] _ in self?.tableView.reloadData() }
+            .store(in: &cancellables)
     }
 
     required public init?(coder aDecoder: NSCoder) {

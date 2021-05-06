@@ -10,9 +10,8 @@ import HealthKit
 
 
 public class ShareClientManager: CGMManager {
-    
 
-    public static var managerIdentifier = "DexShareClient"
+    public let managerIdentifier = "DexShareClient"
 
     public init() {
         shareService = ShareService(keychainManager: keychain)
@@ -26,6 +25,8 @@ public class ShareClientManager: CGMManager {
         return [:]
     }
 
+    public let isOnboarded = true   // No distinction between created and onboarded
+
     private let keychain = KeychainManager()
 
     public var shareService: ShareService {
@@ -34,7 +35,7 @@ public class ShareClientManager: CGMManager {
         }
     }
 
-    public static let localizedTitle = LocalizedString("Dexcom Share", comment: "Title for the CGMManager option")
+    public let localizedTitle = LocalizedString("Dexcom Share", comment: "Title for the CGMManager option")
 
     public let appURL: URL? = nil
 
@@ -66,7 +67,7 @@ public class ShareClientManager: CGMManager {
         return latestBackfill
     }
     
-    public var cgmStatus: CGMManagerStatus {
+    public var cgmManagerStatus: CGMManagerStatus {
         return CGMManagerStatus(hasValidSensorSession: hasValidSensorSession)
     }
 
@@ -140,4 +141,3 @@ extension ShareClientManager {
     public func getSoundBaseURL() -> URL? { return nil }
     public func getSounds() -> [Alert.Sound] { return [] }
 }
-

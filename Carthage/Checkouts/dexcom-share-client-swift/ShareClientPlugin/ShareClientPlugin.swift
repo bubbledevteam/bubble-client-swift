@@ -6,19 +6,13 @@
 //  Copyright © 2019 Mark Wilson. All rights reserved.
 //
 
-import Foundation
+import os.log
 import LoopKitUI
 import ShareClient
 import ShareClientUI
-import os.log
 
-class ShareClientPlugin: NSObject, LoopUIPlugin {
-    
+class ShareClientPlugin: NSObject, CGMManagerUIPlugin {
     private let log = OSLog(category: "ShareClientPlugin")
-    
-    public var pumpManagerType: PumpManagerUI.Type? {
-        return nil
-    }
     
     public var cgmManagerType: CGMManagerUI.Type? {
         return ShareClientManager.self
@@ -26,6 +20,6 @@ class ShareClientPlugin: NSObject, LoopUIPlugin {
     
     override init() {
         super.init()
-        log.default("ShareClientPlugin Instantiated")
+        log.default("Instantiated")
     }
 }
