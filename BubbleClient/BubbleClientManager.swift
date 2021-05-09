@@ -96,7 +96,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         get { UserDefaultsUnit.latestGlucose }
     }
     
-    public static var managerIdentifier = "BubbleClient"
+    public static var managerIdentifier = "BubbleClientManager"
     
     required convenience public init?(rawState: CGMManager.RawStateValue) {
         self.init()
