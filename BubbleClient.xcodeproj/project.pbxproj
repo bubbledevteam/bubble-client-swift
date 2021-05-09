@@ -79,6 +79,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		2C8BF3B72647EECB00C412ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 432B0E7F1CDFC3C50045347B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 432B0E871CDFC3C50045347B;
+			remoteInfo = BubbleClient;
+		};
+		2C8BF3B92647EECB00C412ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 432B0E7F1CDFC3C50045347B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 43A8EC81210E664300A81379;
+			remoteInfo = BubbleClientUI;
+		};
 		EE44AFFF2484F933007275C3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EE44AD7A2484F931007275C3 /* CGMBLEKit.xcodeproj */;
@@ -6978,6 +6992,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				2C8BF3B82647EECB00C412ED /* PBXTargetDependency */,
+				2C8BF3BA2647EECB00C412ED /* PBXTargetDependency */,
 			);
 			name = BubbleClientPlugin;
 			productName = BubbleClientPlugin;
@@ -7546,6 +7562,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2C8BF3B82647EECB00C412ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 432B0E871CDFC3C50045347B /* BubbleClient */;
+			targetProxy = 2C8BF3B72647EECB00C412ED /* PBXContainerItemProxy */;
+		};
+		2C8BF3BA2647EECB00C412ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 43A8EC81210E664300A81379 /* BubbleClientUI */;
+			targetProxy = 2C8BF3B92647EECB00C412ED /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		43AB511921330D1400B3D58D /* Localizable.strings */ = {
