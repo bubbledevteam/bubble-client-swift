@@ -221,14 +221,14 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             os_log("dabear:: BubbleClientManager instanceCount changed to %s", type: .default, String(describing: instanceCount))
             if instanceCount < 1 {
                 os_log("dabear:: instancecount is 0, deiniting service", type: .default)
-                BubbleClientManager.sharedProxy = nil
                 disconnect()
+                BubbleClientManager.sharedProxy = nil
             }
             //this is another attempt to workaround a bug where multiple managers might exist
             if oldValue > instanceCount {
                 os_log("dabear:: BubbleClientManager decremented, stop all Bubble bluetooth services")
-                BubbleClientManager.sharedProxy = nil
                 disconnect()
+                BubbleClientManager.sharedProxy = nil
             }
         }
     }
