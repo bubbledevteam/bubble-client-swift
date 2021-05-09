@@ -48,6 +48,7 @@
 		2C8BF2E02647D10600C412ED /* SmoothValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C8BF2DA2647D10600C412ED /* SmoothValue.h */; };
 		2C8BF2E32647D2A600C412ED /* CoreNFC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C8BF2E22647D2A600C412ED /* CoreNFC.framework */; };
 		2C8BF3252647E68900C412ED /* BubbleClientPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8BF3242647E68900C412ED /* BubbleClientPlugin.swift */; };
+		2C8BF3952647EAD900C412ED /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8BF3942647EAD900C412ED /* OSLog.swift */; };
 		4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9CE210E6A0A00969CE5 /* HKUnit.swift */; };
 		4325E9D3210E6ADA00969CE5 /* IdentifiableClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */; };
 		4325E9D5210E6B4400969CE5 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D4210E6B4300969CE5 /* UIColor.swift */; };
@@ -438,6 +439,7 @@
 		2C8BF3222647E68900C412ED /* BubbleClientPlugin.loopplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BubbleClientPlugin.loopplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C8BF3242647E68900C412ED /* BubbleClientPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleClientPlugin.swift; sourceTree = "<group>"; };
 		2C8BF3262647E68900C412ED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2C8BF3942647EAD900C412ED /* OSLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OSLog.swift; sourceTree = "<group>"; };
 		4325E9CE210E6A0A00969CE5 /* HKUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKUnit.swift; sourceTree = "<group>"; };
 		4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentifiableClass.swift; sourceTree = "<group>"; };
 		4325E9D4210E6B4300969CE5 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
@@ -3287,6 +3289,7 @@
 				275C3DA2229FCED400E27439 /* NotificationHelper.swift */,
 				EEC805EB244016BD0092C718 /* UserDefaults.swift */,
 				432B0E8D1CDFC3C50045347B /* Info.plist */,
+				2C8BF3942647EAD900C412ED /* OSLog.swift */,
 				43AB5125213315D300B3D58D /* Localizable.strings */,
 			);
 			path = BubbleClient;
@@ -7506,6 +7509,7 @@
 				EEED17B32446A4EB00070523 /* LogsAccessor.swift in Sources */,
 				EEED17A624444D8800070523 /* Calibration.swift in Sources */,
 				EEC805EC244016BD0092C718 /* UserDefaults.swift in Sources */,
+				2C8BF3952647EAD900C412ED /* OSLog.swift in Sources */,
 				275C3DA3229FCED400E27439 /* NotificationHelper.swift in Sources */,
 				2729D699221F44670030E1B8 /* CRC.swift in Sources */,
 				2729D6A3221F44C80030E1B8 /* Data.swift in Sources */,
@@ -8647,6 +8651,7 @@
 				INFOPLIST_FILE = BubbleClientPlugin/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = mh_dylib;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = yan.BubbleClientPlugin;
@@ -8672,6 +8677,7 @@
 				INFOPLIST_FILE = BubbleClientPlugin/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = mh_dylib;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = yan.BubbleClientPlugin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
