@@ -49,6 +49,7 @@
 		2C8BF2E32647D2A600C412ED /* CoreNFC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C8BF2E22647D2A600C412ED /* CoreNFC.framework */; };
 		2C8BF3252647E68900C412ED /* BubbleClientPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8BF3242647E68900C412ED /* BubbleClientPlugin.swift */; };
 		2C8BF3952647EAD900C412ED /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8BF3942647EAD900C412ED /* OSLog.swift */; };
+		2C8BF3DC2647EF9B00C412ED /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8BF3942647EAD900C412ED /* OSLog.swift */; };
 		4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9CE210E6A0A00969CE5 /* HKUnit.swift */; };
 		4325E9D3210E6ADA00969CE5 /* IdentifiableClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */; };
 		4325E9D5210E6B4400969CE5 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D4210E6B4300969CE5 /* UIColor.swift */; };
@@ -6988,6 +6989,7 @@
 				2C8BF31E2647E68900C412ED /* Sources */,
 				2C8BF31F2647E68900C412ED /* Frameworks */,
 				2C8BF3202647E68900C412ED /* Resources */,
+				2C8BF3ED2647F5AE00C412ED /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -7480,11 +7482,34 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		2C8BF3ED2647F5AE00C412ED /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/BubbleClient.framework",
+				"$(BUILT_PRODUCTS_DIR)/BubbleClientUI.framework",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${SRCROOT}/Scripts/copy-frameworks.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		2C8BF31E2647E68900C412ED /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C8BF3DC2647EF9B00C412ED /* OSLog.swift in Sources */,
 				2C8BF3252647E68900C412ED /* BubbleClientPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
