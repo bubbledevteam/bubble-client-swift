@@ -332,7 +332,9 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         case .kalman, .correction:
             return
         case .libre2Direct:
-            cgmManager?.nfcManager.action(request: .readLibre2CalibrationInfo)
+            if #available(iOS 13.0, *) {
+                BubbleClientManager.nfcManager.action(request: .readLibre2CalibrationInfo)
+            }
             break
         }
     }
