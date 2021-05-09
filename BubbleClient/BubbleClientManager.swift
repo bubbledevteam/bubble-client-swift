@@ -137,11 +137,10 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         lastConnected = nil
         
         LogsAccessor.log("BubbleClientManager will be created now")
-        //proxy = BubbleBluetoothManager()
+        BubbleClientManager.sharedProxy = BubbleBluetoothManager()
         BubbleClientManager.proxy?.delegate = self
-        //proxy?.connect()
+//        BubbleClientManager.proxy?.connect()
         
-        BubbleClientManager.instanceCount += 1
         if #available(iOS 13.0, *) {
             BubbleClientManager.nfcManager.delegate = self
         }
@@ -198,7 +197,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         return keychain.getLibreCalibrationData()
     }
     
-    public func disconnect(){
+    static public func disconnect(){
         LogsAccessor.log("BubbleClientManager disconnect called")
         BubbleClientManager.proxy?.disconnectManually()
         BubbleClientManager.proxy?.delegate = nil
@@ -211,7 +210,6 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     deinit {
         LogsAccessor.log("BubbleClientManager deinit called")
         //cleanup any references to events to this class
-        disconnect()
         BubbleClientManager.instanceCount -= 1
     }
     
@@ -224,13 +222,13 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             if instanceCount < 1 {
                 os_log("dabear:: instancecount is 0, deiniting service", type: .default)
                 BubbleClientManager.sharedProxy = nil
-                //BubbleClientManager.sharedInstance = nil
+                disconnect()
             }
             //this is another attempt to workaround a bug where multiple managers might exist
             if oldValue > instanceCount {
                 os_log("dabear:: BubbleClientManager decremented, stop all Bubble bluetooth services")
                 BubbleClientManager.sharedProxy = nil
-                //BubbleClientManager.sharedInstance = nil
+                disconnect()
             }
         }
     }

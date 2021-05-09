@@ -297,7 +297,7 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             tableView.deselectRow(at: indexPath, animated: true)
         case .delete:
             let confirmVC = UIAlertController(cgmDeletionHandler: {
-                self.cgmManager?.disconnect()
+                BubbleClientManager.disconnect()
                 self.cgmManager?.notifyDelegateOfDeletion {
                     DispatchQueue.main.async {
                         self.complete()
