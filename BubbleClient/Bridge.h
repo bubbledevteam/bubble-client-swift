@@ -9,6 +9,6 @@
 #ifndef Bridge_h
 #define Bridge_h
 
-#include "SmoothValue.h"
+#include "Smooth/SmoothValue.h"
 
 #endif /* Bridge_h */

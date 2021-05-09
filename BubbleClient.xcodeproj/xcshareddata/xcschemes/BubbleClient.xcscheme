@@ -37,16 +37,6 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "432B0E911CDFC3C50045347B"
-               BuildableName = "BubbleClientTests.xctest"
-               BlueprintName = "BubbleClientTests"
-               ReferencedContainer = "container:BubbleClient.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
