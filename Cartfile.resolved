@@ -1,3 +1,3 @@
-github "LoopKit/CGMBLEKit" "7b4c1022eb6b91ae3975bfc8ce93fde8e496b4f3"
-github "LoopKit/LoopKit" "953b58e617379354b89ea33e0fd8f220ccc2d366"
-github "LoopKit/dexcom-share-client-swift" "68ea5d08588e00bf148518b126416b8352dbef64"
+github "LoopKit/CGMBLEKit" "66f52222e63a43cc2df543ebe4b7bc98597e0513"
+github "LoopKit/LoopKit" "62fa53e14eec7eaf9e28da07db19a54f36cc64e8"
+github "LoopKit/dexcom-share-client-swift" "v1.2"

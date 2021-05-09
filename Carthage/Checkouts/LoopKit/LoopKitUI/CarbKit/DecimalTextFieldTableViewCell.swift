@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class DecimalTextFieldTableViewCell: TextFieldTableViewCell {
+class DecimalTextFieldTableViewCell: TextFieldTableViewCell {
 
     @IBOutlet weak var titleLabel: UILabel!
     
@@ -19,7 +19,7 @@ public class DecimalTextFieldTableViewCell: TextFieldTableViewCell {
         return formatter
     }()
 
-    public var number: NSNumber? {
+    var number: NSNumber? {
         get {
             return numberFormatter.number(from: textField.text ?? "")
         }
@@ -34,7 +34,7 @@ public class DecimalTextFieldTableViewCell: TextFieldTableViewCell {
 
     // MARK: - UITextFieldDelegate
 
-    public override func textFieldDidEndEditing(_ textField: UITextField) {
+    override func textFieldDidEndEditing(_ textField: UITextField) {
         if let number = number {
             textField.text = numberFormatter.string(from: number)
         } else {

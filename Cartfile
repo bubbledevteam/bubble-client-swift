@@ -1,2 +1,2 @@
-github "LoopKit/LoopKit" "dev"
-github "LoopKit/CGMBLEKit" "dev"
+github "LoopKit/LoopKit" "master"
+github "LoopKit/CGMBLEKit" "master"

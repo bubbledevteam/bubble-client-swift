@@ -11,7 +11,7 @@ import LoopKit
 import LoopKitUI
 import BubbleClient
 
-public protocol SubViewControllerWillDisappear: class {
+public protocol SubViewControllerWillDisappear: AnyObject {
     func onDisappear() -> Void
 }
 
@@ -97,6 +97,23 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
     
     @objc private func dosingEnabledChanged(_ sender: UISwitch) {
         cgmManager?.useFilter = sender.isOn
+        if sender.isOn {
+            cgmManager?.useCorrection = !sender.isOn
+        }
+        cgmManager?.delegateQueue.async {
+            if let cgmManager = self.cgmManager {
+                cgmManager.cgmManagerDelegate?
+                .cgmManagerDidUpdateState(cgmManager)
+            }
+        }
+        tableView.reloadData()
+    }
+    
+    @objc private func dosingEnabledChanged1(_ sender: UISwitch) {
+        cgmManager?.useCorrection = sender.isOn
+        if sender.isOn {
+            cgmManager?.useFilter = !sender.isOn
+        }
         cgmManager?.delegateQueue.async {
             if let cgmManager = self.cgmManager {
                 cgmManager.cgmManagerDelegate?
@@ -113,9 +130,11 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         case device
         case latestReading
         case kalman
+        case correction
         case share
+        case libre2Direct
         case delete
-        static let count = 5
+        static let count = 7
     }
 
     override public func numberOfSections(in tableView: UITableView) -> Int {
@@ -146,6 +165,10 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
         case .device:
             return 1
         case .kalman:
+            return 1
+        case .libre2Direct:
+            return 1
+        case .correction:
             return 1
         }
     }
@@ -232,6 +255,20 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             switchCell.switch?.addTarget(self, action: #selector(dosingEnabledChanged(_:)), for: .valueChanged)
 
             return switchCell
+        case .correction:
+            let switchCell = tableView.dequeueReusableCell(withIdentifier: SwitchTableViewCell.className, for: indexPath) as! SwitchTableViewCell
+
+            switchCell.selectionStyle = .none
+            switchCell.switch?.isOn = cgmManager?.useCorrection ?? false
+            switchCell.textLabel?.text = NSLocalizedString("Noise Estimate Correction", comment: "Switch title to Use glucose filter")
+
+            switchCell.switch?.addTarget(self, action: #selector(dosingEnabledChanged1(_:)), for: .valueChanged)
+
+            return switchCell
+        case .libre2Direct:
+            let cell = tableView.dequeueReusableCell(withIdentifier: TextButtonTableViewCell.className, for: indexPath)
+            cell.textLabel?.text = LocalizedString("Libre2 Direct", comment: "Button title to open CGM app")
+            return cell
         }
     }
 
@@ -247,6 +284,10 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             return nil
         case .kalman:
             return NSLocalizedString("Use Kalman filter to smooth out a sensor noise.", comment: "Section title for Use glucose filter")
+        case .correction:
+            return nil
+        case .libre2Direct:
+            return nil
         }
     }
 
@@ -288,8 +329,11 @@ public class BubbleClientSettingsViewController: UITableViewController, SubViewC
             }
         case .device:
             tableView.deselectRow(at: indexPath, animated: true)
-        case .kalman:
+        case .kalman, .correction:
             return
+        case .libre2Direct:
+            cgmManager?.nfcManager.action(request: .readLibre2CalibrationInfo)
+            break
         }
     }
     
@@ -362,3 +406,4 @@ private extension UIAlertController {
         addAction(UIAlertAction(title: cancel, style: .cancel, handler: nil))
     }
 }
+

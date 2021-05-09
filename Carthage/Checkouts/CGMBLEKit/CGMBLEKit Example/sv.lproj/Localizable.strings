@@ -1,9 +1,9 @@
 /* Title displayed during backfill response */
-"Backfill" = "Fyller i historisk data";
+"Backfill" = "Återfyllning";
 
 /* Title displayed during error response */
 "Error" = "Fel";
 
 /* Title displayed during unknown data response */
-"Unknown Data" = "Okänd data";
+"Unknown Data" = "Okänt värde";
 

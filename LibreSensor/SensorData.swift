@@ -27,10 +27,10 @@ extension StringProtocol where Index == String.Index {
         var result: [Index] = []
         var start = startIndex
         while start < endIndex,
-            let range = self[start..<endIndex].range(of: string, options: options) {
-                result.append(range.lowerBound)
-                start = range.lowerBound < range.upperBound ? range.upperBound :
-                    index(range.lowerBound, offsetBy: 1, limitedBy: endIndex) ?? endIndex
+              let range = self[start..<endIndex].range(of: string, options: options) {
+            result.append(range.lowerBound)
+            start = range.lowerBound < range.upperBound ? range.upperBound :
+                index(range.lowerBound, offsetBy: 1, limitedBy: endIndex) ?? endIndex
         }
         return result
     }
@@ -50,7 +50,7 @@ public struct SensorData {
     /// Number of bytes of sensor data to be used (read only), i.e. 344 bytes (24 for header, 296 for body and 24 for footer)
     private let numberOfBytes = 344 // Header and body and footer of Freestyle Libre data (i.e. 40 blocks of 8 bytes)
     /// Array of 344 bytes as read via nfc
-    let bytes: [UInt8]
+    var bytes: [UInt8]
     /// Subarray of 24 header bytes
     let header: [UInt8]
     /// Subarray of 296 body bytes
@@ -83,15 +83,19 @@ public struct SensorData {
     }
     /// Footer crc needed for checking integrity of SwiftLibreOOPWeb response
     var footerCrc: UInt16 {
+        guard !footer.isEmpty else { return 0 }
         return  Crc.crc16(Array(footer.dropFirst(2)), seed: 0xffff)
     }
     
     /// Sensor state (ready, failure, starting etc.)
     var state: LibreSensorState {
+        guard !header.isEmpty else { return .ready }
         return LibreSensorState(stateByte: header[4])
     }
     
     var isDecryptedDataPacket = false
+    
+    var isDirectLibre2 = false
     
     var isLikelyLibre1 : Bool {
         if bytes.count > 23 {
@@ -99,7 +103,6 @@ public struct SensorData {
             return !subset.contains(where: { $0 > 0})
         }
         return false
-        
     }
     
     public var patchUid: String?
@@ -146,7 +149,7 @@ public struct SensorData {
         self.nextTrendBlock = Int(body[2])
         self.nextHistoryBlock = Int(body[3])
         self.minutesSinceStart = Int(body[293]) << 8 + Int(body[292])
-
+        
         self.uuid = uuid
         self.patchUid = uuid.hexEncodedString().uppercased()
         self.patchInfo = patchInfo
@@ -171,57 +174,27 @@ public struct SensorData {
         }
     }
     
-    /// Get date of most recent history value.
-    /// History values are updated every 15 minutes. Their corresponding time from start of the sensor in minutes is 15, 30, 45, 60, ..., but the value is delivered three minutes later, i.e. at the minutes 18, 33, 48, 63, ... and so on. So for instance if the current time in minutes (since start of sensor) is 67, the most recent value is 7 minutes old. This can be calculated from the minutes since start. Unfortunately sometimes the history index is incremented earlier than the minutes counter and they are not in sync. This has to be corrected.
-    ///
-    /// - Returns: the date of the most recent history value and the corresponding minute counter
-    func dateOfMostRecentHistoryValue() -> (date: Date, counter: Int) {
-        // Calculate correct date for the most recent history value.
-        //        date.addingTimeInterval( 60.0 * -Double( (minutesSinceStart - 3) % 15 + 3 ) )
-        let nextHistoryIndexCalculatedFromMinutesCounter = ( (minutesSinceStart - 3) / 15 ) % 32
-        let delay = (minutesSinceStart - 3) % 15 + 3 // in minutes
-        if nextHistoryIndexCalculatedFromMinutesCounter == nextHistoryBlock {
-            // Case when history index is incremented togehter with minutesSinceStart (in sync)
-            //            print("delay: \(delay), minutesSinceStart: \(minutesSinceStart), result: \(minutesSinceStart-delay)")
-            return (date: date.addingTimeInterval( 60.0 * -Double(delay) ), counter: minutesSinceStart - delay)
-        } else {
-            // Case when history index is incremented before minutesSinceStart (and they are async)
-            //            print("delay: \(delay), minutesSinceStart: \(minutesSinceStart), result: \(minutesSinceStart-delay-15)")
-            return (date: date.addingTimeInterval( 60.0 * -Double(delay - 15)), counter: minutesSinceStart - delay)
-        }
-    }
     
-    
-    /// Get date of most recent history value.
-    /// History values are updated every 15 minutes. Their corresponding time from start of the sensor in minutes is 15, 30, 45, 60, ..., but the value is delivered three minutes later, i.e. at the minutes 18, 33, 48, 63, ... and so on. So for instance if the current time in minutes (since start of sensor) is 67, the most recent value is 7 minutes old. This can be calculated from the minutes since start. Unfortunately sometimes the history index is incremented earlier than the minutes counter and they are not in sync. This has to be corrected.
-    ///
-    /// - Returns: the date of the most recent history value
-    func dateOfMostRecentHistoryValue() -> Date {
-        // Calculate correct date for the most recent history value.
-        //        date.addingTimeInterval( 60.0 * -Double( (minutesSinceStart - 3) % 15 + 3 ) )
-        let nextHistoryIndexCalculatedFromMinutesCounter = ( (minutesSinceStart - 3) / 15 ) % 32
-        let delay = (minutesSinceStart - 3) % 15 + 3 // in minutes
-        if nextHistoryIndexCalculatedFromMinutesCounter == nextHistoryBlock {
-            // Case when history index is incremented togehter with minutesSinceStart (in sync)
-            //            print("delay: \(delay), minutesSinceStart: \(minutesSinceStart), result: \(minutesSinceStart-delay)")
-            return date.addingTimeInterval( 60.0 * -Double(delay) )
-        } else {
-            // Case when history index is incremented before minutesSinceStart (and they are async)
-            //            print("delay: \(delay), minutesSinceStart: \(minutesSinceStart), result: \(minutesSinceStart-delay-15)")
-            return date.addingTimeInterval( 60.0 * -Double(delay - 15))
-        }
-    }
-    
-    func oopWebInterfaceInput() -> String {
-        return Data(bytes).base64EncodedString()
-    }
-    
-    /// Returns a new array of 344 bytes of FRAM with correct crc for header, body and footer.
-    ///
-    /// Usefull, if some bytes are modified in order to investigate how the OOP algorithm handles this modification.
-    /// - Returns: 344 bytes of FRAM with correct crcs
-    func bytesWithCorrectCRC() -> [UInt8] {
-        return Crc.bytesWithCorrectCRC(header) + Crc.bytesWithCorrectCRC(body) + Crc.bytesWithCorrectCRC(footer)
+    public init(bytes: [UInt8], date: Date = Date(), sn: String, patchUid: String?, patchInfo: String?) {
+        self.bytes = bytes
+        // we don't actually know when this reading was done, only that
+        // it was produced within the last minute
+        self.date = date.rounded(on: 1, .minute)
+        
+        self.header = []
+        self.body   = []
+        self.footer = []
+        
+        self.nextTrendBlock = 0
+        self.nextHistoryBlock = 0
+        self.minutesSinceStart = 0
+        
+        self.uuid = Data()
+        self.patchUid = patchUid
+        self.patchInfo = patchInfo
+        self.serialNumber = sn
+        isDirectLibre2 = true
+        sensorName = "Libre 2"
     }
 }
 

@@ -47,6 +47,13 @@
 		27E3C39C222EE9450036AAC7 /* LibreOOPResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E3C397222EE9450036AAC7 /* LibreOOPResponse.swift */; };
 		27E3C39F222EE9A80036AAC7 /* LibreOOPWebExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E3C39E222EE9A80036AAC7 /* LibreOOPWebExtensions.swift */; };
 		27E3C3A2222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E3C3A1222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift */; };
+		2C8BF2DC2647D10600C412ED /* LibrePro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8BF2A72647D10500C412ED /* LibrePro.swift */; };
+		2C8BF2DD2647D10600C412ED /* PreLibre2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8BF2D62647D10500C412ED /* PreLibre2.swift */; };
+		2C8BF2DE2647D10600C412ED /* NFCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8BF2D72647D10500C412ED /* NFCManager.swift */; };
+		2C8BF2DF2647D10600C412ED /* SmoothValue.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C8BF2D92647D10600C412ED /* SmoothValue.c */; };
+		2C8BF2E02647D10600C412ED /* SmoothValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C8BF2DA2647D10600C412ED /* SmoothValue.h */; };
+		2C8BF2E12647D10600C412ED /* Bridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C8BF2DB2647D10600C412ED /* Bridge.h */; };
+		2C8BF2E32647D2A600C412ED /* CoreNFC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C8BF2E22647D2A600C412ED /* CoreNFC.framework */; };
 		4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9CE210E6A0A00969CE5 /* HKUnit.swift */; };
 		4325E9D3210E6ADA00969CE5 /* IdentifiableClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */; };
 		4325E9D5210E6B4400969CE5 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D4210E6B4300969CE5 /* UIColor.swift */; };
@@ -481,6 +488,13 @@
 		27E3C397222EE9450036AAC7 /* LibreOOPResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreOOPResponse.swift; sourceTree = "<group>"; };
 		27E3C39E222EE9A80036AAC7 /* LibreOOPWebExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreOOPWebExtensions.swift; sourceTree = "<group>"; };
 		27E3C3A1222EEDCD0036AAC7 /* DerivedAlgorithmParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivedAlgorithmParameters.swift; sourceTree = "<group>"; };
+		2C8BF2A72647D10500C412ED /* LibrePro.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibrePro.swift; sourceTree = "<group>"; };
+		2C8BF2D62647D10500C412ED /* PreLibre2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreLibre2.swift; sourceTree = "<group>"; };
+		2C8BF2D72647D10500C412ED /* NFCManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NFCManager.swift; sourceTree = "<group>"; };
+		2C8BF2D92647D10600C412ED /* SmoothValue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SmoothValue.c; sourceTree = "<group>"; };
+		2C8BF2DA2647D10600C412ED /* SmoothValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmoothValue.h; sourceTree = "<group>"; };
+		2C8BF2DB2647D10600C412ED /* Bridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
+		2C8BF2E22647D2A600C412ED /* CoreNFC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreNFC.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/iOSSupport/System/Library/Frameworks/CoreNFC.framework; sourceTree = DEVELOPER_DIR; };
 		4325E9CE210E6A0A00969CE5 /* HKUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKUnit.swift; sourceTree = "<group>"; };
 		4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentifiableClass.swift; sourceTree = "<group>"; };
 		4325E9D4210E6B4300969CE5 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
@@ -3212,6 +3226,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE72B075230CDE0200D67B8F /* LoopKitUI.framework in Frameworks */,
+				2C8BF2E32647D2A600C412ED /* CoreNFC.framework in Frameworks */,
 				EE72B073230CDDF500D67B8F /* LoopKit.framework in Frameworks */,
 				43A8EC95210E67B000A81379 /* HealthKit.framework in Frameworks */,
 			);
@@ -3307,6 +3322,15 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
+		2C8BF2D82647D10600C412ED /* Smooth */ = {
+			isa = PBXGroup;
+			children = (
+				2C8BF2D92647D10600C412ED /* SmoothValue.c */,
+				2C8BF2DA2647D10600C412ED /* SmoothValue.h */,
+			);
+			path = Smooth;
+			sourceTree = "<group>";
+		};
 		432B0E7E1CDFC3C50045347B = {
 			isa = PBXGroup;
 			children = (
@@ -3340,6 +3364,11 @@
 			isa = PBXGroup;
 			children = (
 				EE0C351E24BEFAA200072FD7 /* KalmanFilter */,
+				2C8BF2D82647D10600C412ED /* Smooth */,
+				2C8BF2DB2647D10600C412ED /* Bridge.h */,
+				2C8BF2A72647D10500C412ED /* LibrePro.swift */,
+				2C8BF2D72647D10500C412ED /* NFCManager.swift */,
+				2C8BF2D62647D10500C412ED /* PreLibre2.swift */,
 				2729D67A221F421F0030E1B8 /* BubbleBluetoothManager.swift */,
 				2729D6A722248BDD0030E1B8 /* BubbleClientManager.swift */,
 				275C3DA2229FCED400E27439 /* NotificationHelper.swift */,
@@ -3362,6 +3391,7 @@
 		43A8EC7A210E661300A81379 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2C8BF2E22647D2A600C412ED /* CoreNFC.framework */,
 				EE44A4922484F92A007275C3 /* Carthage */,
 				EE72B074230CDE0200D67B8F /* LoopKitUI.framework */,
 				EE72B072230CDDF500D67B8F /* LoopKit.framework */,
@@ -7016,6 +7046,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C8BF2E02647D10600C412ED /* SmoothValue.h in Headers */,
+				2C8BF2E12647D10600C412ED /* Bridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7578,6 +7610,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C8BF2DF2647D10600C412ED /* SmoothValue.c in Sources */,
 				EE97F5AF24778458005FD8F2 /* URLEncoder.swift in Sources */,
 				EEED17C32446B2FD00070523 /* LocalLog+CoreDataClass.swift in Sources */,
 				EEED17C42446B2FD00070523 /* LocalLog+CoreDataProperties.swift in Sources */,
@@ -7588,6 +7621,7 @@
 				4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */,
 				27E3C39A222EE9450036AAC7 /* LibreOOPClient.swift in Sources */,
 				2729D69F221F44670030E1B8 /* SensorState.swift in Sources */,
+				2C8BF2DC2647D10600C412ED /* LibrePro.swift in Sources */,
 				EE0C352424BEFAA200072FD7 /* DoubleExtension.swift in Sources */,
 				27D0DA6B2231CBB7007BBB2C /* DateExtensions.swift in Sources */,
 				27E3C398222EE9450036AAC7 /* LibreOOPDefaults.swift in Sources */,
@@ -7598,6 +7632,7 @@
 				277DAD10226C93D000422ADA /* GlucoseAlarmType.swift in Sources */,
 				27CFAB5622496CBB006DEFE3 /* DoubleExtensions.swift in Sources */,
 				43AB51362133177800B3D58D /* LocalizedString.swift in Sources */,
+				2C8BF2DE2647D10600C412ED /* NFCManager.swift in Sources */,
 				2729D67B221F421F0030E1B8 /* BubbleBluetoothManager.swift in Sources */,
 				270C266F226A5A6E005B27F3 /* GlucoseSchedules.swift in Sources */,
 				2729D677221F421C0030E1B8 /* Bubble.swift in Sources */,
@@ -7612,6 +7647,7 @@
 				2729D6A3221F44C80030E1B8 /* Data.swift in Sources */,
 				EE10F6D4243C320400C5340C /* LibreMeasurement.swift in Sources */,
 				EE10F6D2243C31F900C5340C /* LibreRawGlucoseData.swift in Sources */,
+				2C8BF2DD2647D10600C412ED /* PreLibre2.swift in Sources */,
 				2729D687221F43150030E1B8 /* SensorData.swift in Sources */,
 				277DAD14226CACF300422ADA /* MessagePassing.swift in Sources */,
 				27E3C39C222EE9450036AAC7 /* LibreOOPResponse.swift in Sources */,
@@ -8969,7 +9005,7 @@
 		432B0E9D1CDFC3C50045347B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -8996,6 +9032,7 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_OBJC_BRIDGING_HEADER = BubbleClient/Bridge.h;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -9005,7 +9042,7 @@
 		432B0E9E1CDFC3C50045347B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -9033,6 +9070,7 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_OBJC_BRIDGING_HEADER = BubbleClient/Bridge.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

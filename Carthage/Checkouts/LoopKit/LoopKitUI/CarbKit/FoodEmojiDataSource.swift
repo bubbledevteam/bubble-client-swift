@@ -5,7 +5,7 @@
 //  Copyright © 2017 LoopKit Authors. All rights reserved.
 //
 
-public func CarbAbsorptionInputController() -> EmojiInputController {
+func CarbAbsorptionInputController() -> EmojiInputController {
     return EmojiInputController.instance(withEmojis: FoodEmojiDataSource())
 }
 

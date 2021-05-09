@@ -28,7 +28,7 @@ public extension Date {
         // All components to round ordered by length
         let components = [Calendar.Component.year, .month, .day, .hour, .minute, .second, .nanosecond]
         
-        guard let index = components.index(of: component) else {
+        guard let index = components.firstIndex(of: component) else {
             fatalError("Wrong component")
         }
         
@@ -43,7 +43,7 @@ public extension Date {
         return date
     }
     
-    public static var LocaleWantsAMPM : Bool{
+    static var LocaleWantsAMPM : Bool{
         return DateFormatter.dateFormat(fromTemplate: "j", options:0, locale:NSLocale.current)!.contains("a")
     }
     
@@ -51,12 +51,41 @@ public extension Date {
     func toMillisecondsAsInt64() -> Int64 {
         return Int64((self.timeIntervalSince1970 * 1000.0).rounded())
     }
+    
+    func localString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = .current
+        dateFormatter.timeZone = .current
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return dateFormatter.string(from: self)
+    }
+    
+    /// SwifterSwift: User’s current calendar.
+    var calendar: Calendar {
+        return Calendar(identifier: Calendar.current.identifier) // Workaround to segfault on corelibs foundation https://bugs.swift.org/browse/SR-10147
+    }
+    
+    /// SwifterSwift: Date by adding multiples of calendar component.
+    ///
+    ///     let date = Date() // "Jan 12, 2017, 7:07 PM"
+    ///     let date2 = date.adding(.minute, value: -10) // "Jan 12, 2017, 6:57 PM"
+    ///     let date3 = date.adding(.day, value: 4) // "Jan 16, 2017, 7:07 PM"
+    ///     let date4 = date.adding(.month, value: 2) // "Mar 12, 2017, 7:07 PM"
+    ///     let date5 = date.adding(.year, value: 13) // "Jan 12, 2030, 7:07 PM"
+    ///
+    /// - Parameters:
+    ///   - component: component type.
+    ///   - value: multiples of components to add.
+    /// - Returns: original date + multiples of component added.
+    func adding(_ component: Calendar.Component, value: Int) -> Date {
+        return calendar.date(byAdding: component, value: value, to: self)!
+    }
 }
 
 extension DateComponents {
     func ToTimeString(wantsAMPM: Bool=Date.LocaleWantsAMPM) -> String {
         
-        print("hour: \(self.hour) minute: \(self.minute)")
+        print("hour: \(String(describing: self.hour)) minute: \(String(describing: self.minute))")
         let date = Calendar.current.date(bySettingHour: self.hour ?? 0, minute: self.minute ?? 0, second: 0, of: Date())!
         
         

@@ -28,6 +28,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     private enum Config {
         static let useFilterKey = "BubbleClientManager.useFilter"
+        static let useCorrectionKey = "BubbleClientManager.Noise Estimate Correction"
         static let filterNoise = 2.5
     }
     
@@ -95,16 +96,18 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         get { UserDefaultsUnit.latestGlucose }
     }
     
-    public static var managerIdentifier = "DexBubbleClient1"
+    public static var managerIdentifier = "BubbleClient"
     
     required convenience public init?(rawState: CGMManager.RawStateValue) {
         self.init()
         useFilter = rawState[Config.useFilterKey] as? Bool ?? false
+        useCorrection = rawState[Config.useCorrectionKey] as? Bool ?? false
     }
     
     public var rawState: CGMManager.RawStateValue {
         [
-            Config.useFilterKey: useFilter
+            Config.useFilterKey: useFilter,
+            Config.useCorrectionKey: useCorrection
         ]
     }
     
@@ -122,6 +125,11 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     public var useFilter = false
     
+    public var useCorrection = false
+    
+    @available(iOS 13.0, *)
+    public static var nfcManager = NFCManager()
+    
     
     private(set) public var lastValidSensorData : SensorData? = nil
     
@@ -134,6 +142,9 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         //proxy?.connect()
         
         BubbleClientManager.instanceCount += 1
+        if #available(iOS 13.0, *) {
+            BubbleClientManager.nfcManager.delegate = self
+        }
     }
     
     public var connectionState : String {
@@ -271,6 +282,13 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         reloadData?()
     }
     
+    public func BubbleBluetoothManagerLibre2Rescan() {
+        guard let proxy = BubbleClientManager.proxy else {
+            return
+        }
+        proxy.retrievePeripherals()
+    }
+    
     public func BubbleBluetoothManagerReceivedMessage(_ messageIdentifier: UInt16, txFlags: UInt8, payloadData: Data) {
         guard let packet = BubbleResponseState.init(rawValue: txFlags) else {
             // Incomplete package?
@@ -312,7 +330,9 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         }
         
         LibreOOPClient.handleLibreData(sensorData: data, bubble: bubble) { result in
-            guard let glucose = result?.glucoseData, !glucose.isEmpty else { return }
+            guard let glucose = result?.glucoseData, !glucose.isEmpty else {
+                return
+            }
             callback(nil, glucose)
         }
     }
@@ -321,19 +341,11 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     public func BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: SensorData, Bubble: Bubble) {
         reloadData?()
         LogsAccessor.log("name: \(sensorData.sensorName), patchInfo: \(sensorData.patchInfo ?? ""), patchUid: \(sensorData.patchUid ?? ""), \ncontent: \(Data(sensorData.bytes).hexEncodedString()), state: \(sensorData.state.description)")
-        if sensorData.isDecryptedDataPacket {
-            guard sensorData.hasValidCRCs else {
-                LogsAccessor.log("crc failed")
-                return
-            }
-        } else {
-            if sensorData.isFirstSensor {
-                if sensorData.state != .ready { return }
-                guard sensorData.hasValidCRCs else {
-                    LogsAccessor.log("crc failed")
-                    return
-                }
-            }
+        if sensorData.state != .ready { return }
+        
+        if !sensorData.isDirectLibre2 && !sensorData.hasValidCRCs {
+            LogsAccessor.log("crc failed")
+            return
         }
         
         self.lastValidSensorData = sensorData
@@ -362,6 +374,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             
             var filteredGlucose = glucose
             LogsAccessor.log("useFilter: \(self.useFilter)")
+            LogsAccessor.log("useCorrection: \(self.useCorrection)")
             if self.useFilter {
                 var filter = KalmanFilter(stateEstimatePrior: glucose.last!.trueValue, errorCovariancePrior: Config.filterNoise)
                 filteredGlucose = []
@@ -370,6 +383,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                     let update = prediction.update(measurement: item.trueValue, observationModel: 1, covarienceOfObservationNoise: Config.filterNoise)
                     filter = update
                     item.glucoseLevelRaw = filter.stateEstimatePrior.rounded()
+                    item.lastValue = item.glucoseLevelRaw
                     filteredGlucose.append(item)
                 }
                 filteredGlucose = filteredGlucose.reversed()
@@ -383,6 +397,24 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
                 }
                 filterred += "]"
                 LogsAccessor.log(filterred)
+            } else if self.useCorrection {
+                if glucose.count == 6 {
+                    let readings = glucose.map { $0.toCReading() }
+                    var his = Array(readings[1..<6])
+                    let current = glucose.first!
+                    let value = smoothValue(readings.first!, &his, 5)
+                    let smooth = smoothValue1(value, &his, 5)
+                    if smooth > 0 {
+                        current.glucoseLevelRaw = smooth
+                        current.smooth = smooth
+                        current.correction = value
+                        current.lastValue = smooth
+                    }
+                    
+                    for g in glucose {
+                        LogsAccessor.log("ts: \(g.timeStamp.localString()), raw: \(current.originValue ?? 0), smoothed: \(current.glucoseLevelRaw)")
+                    }
+                }
             }
             
             if filteredGlucose.count > 5 {
@@ -443,5 +475,11 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     
     func BubbleBluetoothManagerMessageChanged() {
         reloadData?()
+    }
+}
+
+extension GlucoseData {
+    func toCReading() -> C_BgReading {
+        return C_BgReading(raw_data: glucoseLevelRaw, timestamp: timeStamp.toMillisecondsAsInt64())
     }
 }

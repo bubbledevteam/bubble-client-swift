@@ -56,8 +56,9 @@ public class TransmitterManager: TransmitterDelegate {
     private var state: TransmitterManagerState
 
     private let observers = WeakSynchronizedSet<TransmitterManagerObserver>()
-
     
+    
+
     public required init(state: TransmitterManagerState) {
         self.state = state
         self.transmitter = Transmitter(id: state.transmitterID, passiveModeEnabled: state.passiveModeEnabled)
@@ -108,9 +109,6 @@ public class TransmitterManager: TransmitterDelegate {
     public var rawState: CGMManager.RawStateValue {
         return state.rawValue
     }
-    
-    func logDeviceCommunication(_ message: String, type: DeviceLogEntryType = .send) {
-    }
 
     public var shouldSyncToRemoteService: Bool {
         get {
@@ -139,6 +137,8 @@ public class TransmitterManager: TransmitterDelegate {
             shareManager.delegateQueue = newValue
         }
     }
+
+    private let activityLog = ActivityLog()
 
     private(set) public var latestConnection: Date? {
         get {
@@ -226,6 +226,8 @@ public class TransmitterManager: TransmitterDelegate {
             shareManager.debugDescription,
             "observers.count: \(observers.cleanupDeallocatedElements().count)",
             String(reflecting: transmitter),
+            "### Activity log",
+            String(describing: activityLog),
         ].joined(separator: "\n")
     }
 
@@ -253,13 +255,13 @@ public class TransmitterManager: TransmitterDelegate {
     public func transmitterDidConnect(_ transmitter: Transmitter) {
         log.default("%{public}@", #function)
         latestConnection = Date()
-        logDeviceCommunication("Connected", type: .connection)
+        activityLog.append("Connected")
     }
 
     public func transmitter(_ transmitter: Transmitter, didError error: Error) {
         log.error("%{public}@: %{public}@", #function, String(describing: error))
         updateDelegate(with: .error(error))
-        logDeviceCommunication("Error: \(error)", type: .error)
+        activityLog.append("Error: \(error)")
     }
 
     public func transmitter(_ transmitter: Transmitter, didRead glucose: Glucose) {
@@ -270,7 +272,7 @@ public class TransmitterManager: TransmitterDelegate {
 
         latestReading = glucose
 
-        logDeviceCommunication("New reading: \(glucose.readDate)", type: .receive)
+        activityLog.append("New reading: \(glucose.readDate)")
 
         guard glucose.state.hasReliableGlucose else {
             log.default("%{public}@: Unreliable glucose: %{public}@", #function, String(describing: glucose.state))
@@ -317,14 +319,14 @@ public class TransmitterManager: TransmitterDelegate {
 
         updateDelegate(with: .newData(samples))
 
-        logDeviceCommunication("New backfill: \(String(describing: samples.first?.date))", type: .receive)
+        activityLog.append("New backfill: \(String(describing: samples.first?.date))")
     }
 
     public func transmitter(_ transmitter: Transmitter, didReadUnknownData data: Data) {
         log.error("Unknown sensor data: %{public}@", data.hexadecimalString)
         // This can be used for protocol discovery, but isn't necessary for normal operation
 
-        logDeviceCommunication("Unknown sensor data: \(data.hexadecimalString)", type: .error)
+        activityLog.append("Unknown sensor data: \(data.hexadecimalString)")
     }
 }
 
@@ -368,11 +370,6 @@ public class G5CGMManager: TransmitterManager, CGMManager {
             udiDeviceIdentifier: "00386270000002"
         )
     }
-    
-    override func logDeviceCommunication(_ message: String, type: DeviceLogEntryType = .send) {
-        self.cgmManagerDelegate?.deviceManager(self, logEventForDeviceIdentifier: transmitter.ID, type: type, message: message, completion: nil)
-    }
-
 }
 
 
@@ -396,10 +393,6 @@ public class G6CGMManager: TransmitterManager, CGMManager {
             localIdentifier: nil,
             udiDeviceIdentifier: "00386270000385"
         )
-    }
-    
-    override func logDeviceCommunication(_ message: String, type: DeviceLogEntryType = .send) {
-        self.cgmManagerDelegate?.deviceManager(self, logEventForDeviceIdentifier: transmitter.ID, type: type, message: message, completion: nil)
     }
 }
 
@@ -441,5 +434,24 @@ extension CalibrationState {
         case .unknown(let rawValue):
             return String(format: LocalizedString("Sensor is in unknown state %1$d", comment: "The description of sensor calibration state when raw value is unknown. (1: missing data details)"), rawValue)
         }
+    }
+}
+
+fileprivate class ActivityLog: CustomStringConvertible {
+    private var items: [String] = []
+
+    private lazy var activityLogTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .medium
+        return formatter
+    }()
+
+    func append(_ item: String, at date: Date = Date()) {
+        items.append("[\(activityLogTimeFormatter.string(from: date))] \(item)")
+    }
+
+    var description: String {
+        return items.joined(separator: "\n")
     }
 }

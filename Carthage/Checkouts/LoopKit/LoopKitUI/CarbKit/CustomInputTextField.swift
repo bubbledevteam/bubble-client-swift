@@ -7,11 +7,11 @@
 
 import UIKit
 
-public class CustomInputTextField: UITextField {
+class CustomInputTextField: UITextField {
 
-    public var customInput: UIInputViewController?
+    var customInput: UIInputViewController?
 
-    public override var inputViewController: UIInputViewController? {
+    override var inputViewController: UIInputViewController? {
         return customInput
     }
 

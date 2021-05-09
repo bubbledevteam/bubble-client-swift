@@ -77,7 +77,7 @@ open class SetupTableFooterView: UIView {
 
     public let primaryButton = SetupButton(type: .custom)
 
-    public override init(frame: CGRect) {
+    fileprivate override init(frame: CGRect) {
         let buttonStack = UIStackView(arrangedSubviews: [primaryButton])
 
         super.init(frame: frame)

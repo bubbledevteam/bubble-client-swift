@@ -10,8 +10,6 @@ import CoreData
 
 
 extension NSManagedObjectContext {
-    
-    
     internal func cachedGlucoseObjectsWithUUID(_ uuid: UUID, fetchLimit: Int? = nil) -> [CachedGlucoseObject] {
         let request: NSFetchRequest<CachedGlucoseObject> = CachedGlucoseObject.fetchRequest()
         if let limit = fetchLimit {

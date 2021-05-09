@@ -19,31 +19,39 @@ import SpriteKit
 import UserNotifications
 import LoopKit
 
-let baseUrl = "http://www.glucose.space"
+let baseUrl = "https://www.glucose.space"
 let token = "bubble-201907"
+let timeout: TimeInterval = 8
 
 public class LibreOOPClient {
     // MARK: - public functions
-    public static func webOOP(sensorData: SensorData, bubble: Bubble, patchUid: String, patchInfo: String, callback: ((LibreRawGlucoseOOPData?) -> Void)?) {
+    public static func webOOP(sensorData: SensorData, bubble: Bubble, patchUid: String, patchInfo: String, callback: ((LibreRawGlucoseWeb?) -> Void)?) {
+        LogsAccessor.log("libreoop2AndCalibrate")
         let bytesAsData = Data(sensorData.bytes)
-        var patchUid = patchUid
-        var patchInfo = patchInfo
-        if !sensorData.isFirstSensor && (bubble.firmware.toDouble() ?? 0) >= 2.6 {
-            patchUid = "7683376000A007E0"
-            patchInfo = "DF0000080000"
-        }
+        
         let item = URLQueryItem(name: "accesstoken", value: token)
-        let item1 = URLQueryItem(name: "patchUid", value: patchUid)
-        let item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
+        var item1 = URLQueryItem(name: "patchUid", value: patchUid)
+        var item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
         let item3 = URLQueryItem(name: "content", value: bytesAsData.hexEncodedString())
-        var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2")!
-        if sensorData.isDecryptedDataPacket {
-            urlComponents = URLComponents(string: "\(baseUrl)/libreoop2AndCalibrate")!
+        let item5 = URLQueryItem(name: "oopType", value: "OOP1AndOOP2")
+        let item6 = URLQueryItem(name: "session", value: UUID().uuidString)
+        var items = [item, item1, item2, item3, item5, item6]
+        if sensorData.isDirectLibre2 {
+            items.append(URLQueryItem(name: "cgmType", value: "libre2ble"))
+        } else {
+            if !sensorData.isFirstSensor {
+                item1 = URLQueryItem(name: "patchUid", value: "7683376000A007E0")
+                item2 = URLQueryItem(name: "patchInfo", value: "DF0000080000")
+            }
         }
-        urlComponents.queryItems = [item, item1, item2, item3]
+        
+        var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2AndCalibrate")!
+        urlComponents.queryItems = items
         if let uploadURL = URL.init(string: urlComponents.url?.absoluteString.removingPercentEncoding ?? "") {
+            LogsAccessor.log(uploadURL.absoluteString)
             let request = NSMutableURLRequest(url: uploadURL)
             request.httpMethod = "POST"
+            request.timeoutInterval = timeout
             request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             let task = URLSession.shared.dataTask(with: request as URLRequest) {
                 data, response, error in
@@ -62,22 +70,13 @@ public class LibreOOPClient {
                     }
                     
                     let decoder = JSONDecoder.init()
-                    if (bubble.firmware.toDouble() ?? 0) >= 2.6 {
-                        if let oopValue = try? decoder.decode(LibreGlucoseData.self, from: data) {
-                            callback?(oopValue.data)
-                            if var parameters = oopValue.slopeValue {
-                                parameters.serialNumber = sensorData.serialNumber
-                                try? keychain.setLibreCalibrationData(parameters)
-                            }
-                        } else {
-                            callback?(nil)
-                        }
+                    
+                    if let oopValue = try? decoder.decode(LibreGlucoseData.self, from: data),
+                       let data = oopValue.data {
+                        callback?(data)
                     } else {
-                        if let oopValue = try? decoder.decode(LibreRawGlucoseOOPData.self, from: data) {
-                            callback?(oopValue)
-                        } else {
-                            callback?(nil)
-                        }
+                        let oopValue = try? decoder.decode(LibreRawGlucoseOOPA2Data.self, from: data)
+                        callback?(oopValue)
                     }
                 }
             }
@@ -87,10 +86,55 @@ public class LibreOOPClient {
         }
     }
     
+    public static func webOOPLibre2(sensorData: SensorData, patchUid: String, patchInfo: String, callback: ((LibreRawGlucoseOOPData?) -> Void)?) {
+        LogsAccessor.log("libreoop2BleData")
+        let bytesAsData = Data(sensorData.bytes)
+        let item = URLQueryItem(name: "accesstoken", value: token)
+        let item1 = URLQueryItem(name: "patchUid", value: patchUid)
+        let item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
+        let item3 = URLQueryItem(name: "content", value: bytesAsData.hexEncodedString())
+        let item4 = URLQueryItem(name: "appName", value: "Diabox")
+        let item5 = URLQueryItem(name: "cgmType", value: "libre2ble")
+        
+        var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2BleData")!
+        urlComponents.queryItems = [item, item1, item2, item3, item4, item5]
+        if let uploadURL = URL.init(string: urlComponents.url?.absoluteString.removingPercentEncoding ?? "") {
+            LogsAccessor.log(uploadURL.absoluteString)
+            let request = NSMutableURLRequest(url: uploadURL)
+            request.httpMethod = "POST"
+            request.timeoutInterval = timeout
+            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            let task = URLSession.shared.dataTask(with: request as URLRequest) {
+                data, response, error in
+                if let error = error {
+                    LogsAccessor.log( error.localizedDescription)
+                }
+                
+                guard let data = data else {
+                    callback?(nil)
+                    return
+                }
+                
+                if let response = String(data: data, encoding: String.Encoding.utf8) {
+                    LogsAccessor.log(response)
+                }
+                
+                let decoder = JSONDecoder.init()
+                let oopValue = try? decoder.decode(LibreGlucoseData.self, from: data)
+                callback?(oopValue?.data)
+            }
+            task.resume()
+        } else {
+            callback?(nil)
+        }
+    }
+    
     public static func handleLibreA2Data(sensorData: SensorData, callback: ((LibreRawGlucoseOOPA2Data?) -> Void)?) {
+        LogsAccessor.log("callnoxAndCalibrate")
         let bytesAsData = Data(sensorData.bytes)
         if let uploadURL = URL.init(string: "\(baseUrl)/callnoxAndCalibrate") {
             var request = URLRequest(url: uploadURL)
+            request.timeoutInterval = timeout
             request.httpMethod = "POST"
             do {
                 let data = try JSONSerialization.data(withJSONObject: [["timestamp": "\(Int(Date().timeIntervalSince1970 * 1000))",
@@ -118,26 +162,9 @@ public class LibreOOPClient {
                         let oopValue = try decoder.decode(LibreA2GlucoseData.self, from: data)
                         if var parameters = oopValue.slopeValue {
                             parameters.serialNumber = sensorData.serialNumber
-                            try? keychain.setLibreCalibrationData(parameters)
+                            try keychain.setLibreCalibrationData(parameters)
                         }
                         callback?(oopValue.data)
-                    } catch {
-                        callback?(nil)
-                        LogsAccessor.log("handleLibreA2Data: \(error.localizedDescription)")
-                    }
-                    
-                    do {
-                        guard let data = data else {
-                            callback?(nil)
-                            return
-                        }
-                        
-                        if let response = String(data: data, encoding: String.Encoding.utf8) {
-                            LogsAccessor.log(response)
-                        }
-                        let decoder = JSONDecoder.init()
-                        let oopValue = try decoder.decode(LibreRawGlucoseOOPA2Data.self, from: data)
-                        callback?(oopValue)
                     } catch {
                         callback?(nil)
                         LogsAccessor.log("handleLibreA2Data: \(error.localizedDescription)")
@@ -167,28 +194,6 @@ public class LibreOOPClient {
         }
     }
     
-    public static func oop(sensorData: SensorData, serialNumber: String, _ callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
-        LogsAccessor.log("start calibrateSensor")
-        let libreData = sensorData.bytes
-        let sensorState = LibreSensorState(stateByte: libreData[4])
-        let body = Array(libreData[24 ..< 320])
-        let sensorTime = Int(body[293]) << 8 + Int(body[292])
-        guard sensorTime >= 60 else {
-            callback(([], .starting, sensorTime))
-            LogsAccessor.log("sensorTime < 60")
-            return
-        }
-        
-        calibrateSensor(sensorData: sensorData, serialNumber: sensorData.serialNumber) {
-            (calibrationparams)  in
-            if let calibrationparams = calibrationparams {
-                LogsAccessor.log("calibrateSensor params: \(calibrationparams.description)")
-            }
-            callback((oopParams(libreData: libreData, params: calibrationparams),
-            sensorState,
-            sensorTime))
-        }
-    }
     
     static func handleGlucose(sensorData: SensorData, oopValue: LibreRawGlucoseWeb?, serialNumber: String, _ callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
         if let oopValue = oopValue, !oopValue.isError {
@@ -217,7 +222,9 @@ public class LibreOOPClient {
                 }
             }
         } else {
-            oop(sensorData: sensorData, serialNumber: serialNumber,  callback)
+            if !sensorData.isDirectLibre2 || sensorData.bytes.count < 300 {
+                oop(sensorData: sensorData, serialNumber: serialNumber,  callback)
+            }
         }
     }
     
@@ -228,31 +235,30 @@ public class LibreOOPClient {
             return
         }
         
-        if sensorData.isProSensor {
-            oop(sensorData: sensorData, serialNumber: sensorData.serialNumber,  callback)
-        } else {
-            if patchInfo.hasPrefix("A2") {
-                if lastA2Time.addingTimeInterval(30 * 60) > Date() {
-                    handleLibreA2Data(sensorData: sensorData) { (data) in
-                        handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
-                    }
-                } else {
-                    webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
-                        
-                        if let data = data {
+        if sensorData.isDirectLibre2 && sensorData.bytes.count < 300 {
+            if let data = UserDefaultsUnit.libre2Nfc344OriginalData?.hexadecimal {
+                let sData = SensorData(bytes: [UInt8](data), sn: sensorData.serialNumber, patchUid: patchUid, patchInfo: patchInfo)
+                webOOP(sensorData: sData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                    if let data = data, !data.isError {
+                        UserDefaultsUnit.libre2Nfc344OriginalData = nil
+                        webOOPLibre2(sensorData: sensorData, patchUid: patchUid, patchInfo: patchInfo) { (data) in
                             handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
-                        } else {
-                            lastA2Time = Date()
-                            handleLibreA2Data(sensorData: sensorData) { (data) in
-                                handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
-                            }
                         }
+                    } else {
+                        handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
                     }
                 }
             } else {
-                webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                webOOPLibre2(sensorData: sensorData, patchUid: patchUid, patchInfo: patchInfo) { (data) in
                     handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
                 }
+            }
+        } else {
+            webOOP(sensorData: sensorData, bubble: bubble, patchUid: patchUid, patchInfo: patchInfo) { (data) in
+                if let data = data, !data.isError {
+                    UserDefaultsUnit.libre2Nfc344OriginalData = nil
+                }
+                handleGlucose(sensorData: sensorData, oopValue: data, serialNumber: sensorData.serialNumber, callback)
             }
         }
     }
@@ -289,89 +295,108 @@ public class LibreOOPClient {
         return items
     }
     
-    private static func calibrateSensor(sensorData: SensorData, serialNumber: String,  callback: @escaping (LibreDerivedAlgorithmParameters?) -> Void) {
-        if let response = keychain.getLibreCalibrationData(),
-            response.serialNumber == sensorData.serialNumber {
-            LogsAccessor.log("parameters from keychain")
-            callback(response)
-            return
-        }
-        
-        post(bytes: sensorData.bytes, { (data, str, can) in
-            let decoder = JSONDecoder()
-            do {
-                let response = try decoder.decode(GetCalibrationStatus.self, from: data)
-                if let slope = response.slope {
-                    var p = LibreDerivedAlgorithmParameters.init(slope_slope: slope.slopeSlope ?? 0,
-                                                                 slope_offset: slope.slopeOffset ?? 0,
-                                                                 offset_slope: slope.offsetSlope ?? 0,
-                                                                 offset_offset: slope.offsetOffset ?? 0)
-                    p.serialNumber = serialNumber
-                    if p.slope_slope != 0 ||
-                        p.slope_offset != 0 ||
-                        p.offset_slope != 0 ||
-                        p.offset_offset != 0 {
-                        LogsAccessor.log("parameters: \(p.description)")
-                        try? keychain.setLibreCalibrationData(p)
-                        callback(p)
+}
+
+
+extension LibreOOPClient {
+    public static func localParse(sensorData: SensorData, _ callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState, sensorTimeInMinutes: Int?)) -> Void) {
+        if sensorData.bytes.count == 344 {
+            let body = Array(sensorData.bytes[24 ..< 320])
+            let sensorTime = Int(body[293]) << 8 + Int(body[292])
+            
+            guard sensorTime >= 60 else {
+                callback(([], .starting, sensorTime))
+                return
+            }
+            
+            let data = Data(sensorData.bytes)
+            let calibrationInfo: CalibrationInfo
+            if sensorData.isProSensor {
+                if let proOriginal344Data = UserDefaultsUnit.proOriginal344Data {
+                    LogsAccessor.log("proOriginal344Data: \(proOriginal344Data.hexEncodedString())")
+                    calibrationInfo = Libre2.calibrationInfo2(fram: proOriginal344Data)
+                } else {
+                    callback(([], .ready, sensorTime))
+                    LogsAccessor.log("no proOriginal344Data")
+                    return
+                }
+            } else {
+                calibrationInfo = Libre2.calibrationInfo(fram: data)
+            }
+            LogsAccessor.log("\(calibrationInfo)")
+            
+            let current = Libre2.readTrendValues(data: data, calibrationInfo: calibrationInfo)
+            if current.glucoseLevelRaw < 39 || current.glucoseLevelRaw > 501 {
+                if sensorTime < 60 {
+                    callback(([], .starting, sensorTime))
+                } else {
+                    callback(([], .failure, sensorTime))
+                }
+            } else {
+                var last32 = Libre2.readHistoricalValues(data: data, calibrationInfo: calibrationInfo).filter { $0.glucoseLevelRaw >= 39 && $0.glucoseLevelRaw <= 501 && $0.timeStamp >= Date().adding(.minute, value: -sensorTime) }
+                last32.reverse()
+                let last96 = split(current: current, glucoseData: last32)
+                
+                for value in last96 {
+                    for local in last32 {
+                        if Int(value.timeStamp.timeIntervalSince1970) - Int(local.timeStamp.timeIntervalSince1970) == 0 {
+                            value.rawTemperature = local.rawTemperature
+                            value.rawGlucose = local.rawGlucose
+                            break
+                        }
+                    }
+                }
+                callback((last96, .ready, sensorTime))
+            }
+        } else if sensorData.bytes.count == 46 {
+            if let uid = UserDefaultsUnit.patchUid,
+               let uidData = uid.hexadecimal,
+               let calibrationInfo = UserDefaultsUnit.calibrationInfo,
+               let bytes = try? Libre2.decryptBLE(id: Data(uidData.reversed()), data: Data(sensorData.bytes)) {
+                
+                LogsAccessor.log("decryptBLE data: \(Data(bytes).hexEncodedString())")
+                LogsAccessor.log("calibrationInfo: \(calibrationInfo)")
+                let result = Libre2.parseBLEData(Data(bytes), info: calibrationInfo)
+                if !result.glucoses.isEmpty {
+                    var valueValid = true
+                    for g in result.glucoses {
+                        if g.glucoseLevelRaw < 39 || g.glucoseLevelRaw > 501 {
+                            valueValid = false
+                        }
+                    }
+                    
+                    if valueValid {
+                        callback((result.glucoses, .ready, nil))
                     } else {
-                        callback(nil)
+                        callback((result.glucoses, .failure, nil))
                     }
                 } else {
-                    callback(nil)
+                    callback(([], .ready, nil))
                 }
-            } catch {
-                LogsAccessor.log("calibrateSensor decode: \(error.localizedDescription)")
-                callback(nil)
+            } else {
+                callback(([], .ready, nil))
             }
-        })
-    }
-    
-    // MARK: - private functions
-    
-    public static func post(bytes: [UInt8],_ completion:@escaping (( _ data_: Data, _ response: String, _ success: Bool ) -> Void)) {
-        let date = Date().toMillisecondsAsInt64()
-        let bytesAsData = Data(bytes: bytes, count: bytes.count)
-        let json: [String: String] = [
-            "token": token,
-            "content": "\(bytesAsData.hexEncodedString())",
-            "timestamp": "\(date)",
-        ]
-        LogsAccessor.log("start calibrateSensor")
-        if let uploadURL = URL.init(string: "\(baseUrl)/calibrateSensor") {
-            let request = NSMutableURLRequest(url: uploadURL)
-            request.httpMethod = "POST"
-            request.setBodyContent(contentMap: json)
-            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-            
-            let task = URLSession.shared.dataTask(with: request as URLRequest) {
-                data, response, error in
-                
-                guard let data = data else {
-                    DispatchQueue.main.sync {
-                        completion("network error".data(using: .utf8)!, "network error", false)
-                    }
-                    return
-                    
-                }
-                
-                if let response = String(data: data, encoding: String.Encoding.utf8) {
-                    DispatchQueue.main.sync {
-                        LogsAccessor.log(response)
-                        completion(data, response, true)
-                    }
-                    return
-                }
-                
-                DispatchQueue.main.sync {
-                    completion("response error".data(using: .utf8)!, "response error", false)
-                }
-                
-            }
-            task.resume()
         }
     }
     
+    public static func oop(sensorData: SensorData, serialNumber: String, _ callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState?, sensorTimeInMinutes: Int?)?) -> Void) {
+        localParse(sensorData: sensorData, callback)
+    }
+}
+
+extension LibreOOPClient {
+    
+    private static func calibrateSensor(sensorData: SensorData, serialNumber: String,  callback: @escaping (LibreDerivedAlgorithmParameters?) -> Void) {
+        if let response = keychain.getLibreCalibrationData(),
+            response.serialNumber == sensorData.serialNumber,
+            !response.versionChanged
+        {
+            LogsAccessor.log("parameters from keychain")
+            callback(response)
+        } else {
+            callback(nil)
+        }
+    }
     
     private static func trendMeasurements(bytes: [UInt8], date: Date, _ offset: Double = 0.0, slope: Double = 0.1, LibreDerivedAlgorithmParameterSet: LibreDerivedAlgorithmParameters?) -> [LibreMeasurement] {
         guard bytes.count >= 320 else { return [] }

@@ -47,17 +47,17 @@ private final class OverrideEmojiDataSource: EmojiDataSource {
     init() {
         sections = [
             EmojiSection(
-                title: LocalizedString("Activity", comment: "The title for the override emoji activity section"),
+                title: NSLocalizedString("Activity", comment: "The title for the override emoji activity section"),
                 items: type(of: self).activity,
                 indexSymbol: " 🏃‍♀️ "
             ),
             EmojiSection(
-                title: LocalizedString("Condition", comment: "The title for the override emoji condition section"),
+                title: NSLocalizedString("Condition", comment: "The title for the override emoji condition section"),
                 items: type(of: self).condition,
                 indexSymbol: "🤒"
             ),
             EmojiSection(
-                title: LocalizedString("Other", comment: "The title for override emoji miscellaneous section"),
+                title: NSLocalizedString("Other", comment: "The title for override emoji miscellaneous section"),
                 items: type(of: self).other,
                 indexSymbol: "⋯ "
             )

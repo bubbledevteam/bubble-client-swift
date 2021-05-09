@@ -30,7 +30,9 @@ extension ShareService: ServiceAuthenticationUI {
                      value: KnownShareServers.US.rawValue),
                     (title: LocalizedString("Outside US", comment: "Outside US share server option title"),
                      value: KnownShareServers.NON_US.rawValue)
-
+                    // remove the comment markers on lines 34 and 35 to use a custom share server
+                    // ,(title: LocalizedString("Custom", comment: "Custom share server option title"),
+                    //  value: KnownShareServers.CUSTOM.rawValue)
                 ]
             )
         ]
