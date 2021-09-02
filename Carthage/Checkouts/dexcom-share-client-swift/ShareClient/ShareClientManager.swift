@@ -107,7 +107,7 @@ public class ShareClientManager: CGMManager {
             }
             let newGlucose = glucose.filterDateRange(startDate, nil)
             let newSamples = newGlucose.filter({ $0.isStateValid }).map {
-                return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, wasUserEntered: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
+                return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, trend: $0.trendType, isDisplayOnly: false, wasUserEntered: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
             }
 
             self.latestBackfill = newGlucose.first
@@ -133,7 +133,9 @@ public class ShareClientManager: CGMManager {
 
 // MARK: - AlertResponder implementation
 extension ShareClientManager {
-    public func acknowledgeAlert(alertIdentifier: Alert.AlertIdentifier) { }
+    public func acknowledgeAlert(alertIdentifier: Alert.AlertIdentifier, completion: @escaping (Error?) -> Void) {
+        completion(nil)
+    }
 }
 
 // MARK: - AlertSoundVendor implementation

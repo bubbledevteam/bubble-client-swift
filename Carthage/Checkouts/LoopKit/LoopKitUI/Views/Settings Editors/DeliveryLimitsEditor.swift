@@ -26,7 +26,7 @@ public struct DeliveryLimitsEditor: View {
     @State var settingBeingEdited: DeliveryLimits.Setting?
 
     @State var showingConfirmationAlert = false
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismissAction) var dismiss
     @Environment(\.authenticate) var authenticate
     @Environment(\.appName) var appName
 
@@ -54,6 +54,7 @@ public struct DeliveryLimitsEditor: View {
     }
     
     public init(
+        mode: SettingsPresentationMode,
         therapySettingsViewModel: TherapySettingsViewModel,
         didSave: (() -> Void)? = nil
     ) {
@@ -77,14 +78,17 @@ public struct DeliveryLimitsEditor: View {
                 therapySettingsViewModel?.saveDeliveryLimits(limits: newLimits)
                 didSave?()
             },
-            mode: therapySettingsViewModel.mode
+            mode: mode
         )
     }
 
     public var body: some View {
         switch mode {
-        case .settings: return AnyView(contentWithCancel)
-        case .acceptanceFlow: return AnyView(content)
+        case .acceptanceFlow:
+            content
+        case .settings:
+            contentWithCancel
+                .navigationBarTitle("", displayMode: .inline)
         }
     }
     
@@ -128,7 +132,6 @@ public struct DeliveryLimitsEditor: View {
             }
         )
         .alert(isPresented: $showingConfirmationAlert, content: confirmationAlert)
-        .navigationBarTitle("", displayMode: .inline)
         .simultaneousGesture(TapGesture().onEnded {
             withAnimation {
                 self.userDidTap = true
@@ -334,35 +337,30 @@ struct DeliveryLimitsGuardrailWarning: View {
             preconditionFailure("A guardrail warning requires at least one crossed threshold")
         case 1:
             let (setting, threshold) = crossedThresholds.first!
-            let title: Text, caption: Text?
+            let title: Text
             switch setting {
             case .maximumBasalRate:
                 switch threshold {
                 case .minimum, .belowRecommended:
                     title = Text(LocalizedString("Low Maximum Basal Rate", comment: "Title text for low maximum basal rate warning"))
-                    caption = Text(TherapySetting.deliveryLimits.guardrailCaptionForLowValue)
                 case .aboveRecommended, .maximum:
                     title = Text(LocalizedString("High Maximum Basal Rate", comment: "Title text for high maximum basal rate warning"))
-                    caption = Text(TherapySetting.deliveryLimits.guardrailCaptionForHighValue)
                 }
             case .maximumBolus:
                 switch threshold {
                 case .minimum, .belowRecommended:
                     title = Text(LocalizedString("Low Maximum Bolus", comment: "Title text for low maximum bolus warning"))
-                    caption = Text(TherapySetting.deliveryLimits.guardrailCaptionForLowValue)
                 case .aboveRecommended, .maximum:
                     title = Text(LocalizedString("High Maximum Bolus", comment: "Title text for high maximum bolus warning"))
-                    caption = nil
                 }
             }
 
-            return GuardrailWarning(title: title, threshold: threshold, caption: caption)
+            return GuardrailWarning(therapySetting: .deliveryLimits, title: title, threshold: threshold)
         case 2:
             return GuardrailWarning(
+                therapySetting: .deliveryLimits,
                 title: Text(LocalizedString("Delivery Limits", comment: "Title text for crossed thresholds guardrail warning")),
-                thresholds: Array(crossedThresholds.values),
-                caption: Text(TherapySetting.deliveryLimits.guardrailCaptionForOutsideValues)
-            )
+                thresholds: Array(crossedThresholds.values))
         default:
             preconditionFailure("Unreachable: only two delivery limit settings exist")
         }

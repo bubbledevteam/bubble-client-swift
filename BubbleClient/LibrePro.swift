@@ -10,6 +10,15 @@ import Foundation
 
 // this class is for libre pro/h 
 open class LibrePro {
+    
+    static let currentBlocks = 24
+    static let historyBlocks = 25
+    
+    static var totalBlocks: Int {
+        currentBlocks + historyBlocks
+    }
+    
+    
     static let max = 24
     
     private(set) var f126c: CLongLong = 0
@@ -257,8 +266,9 @@ open class LibrePro {
     /// data 使用未解析的 344 (f127d)
     static func calibrationInfo2(fram: Data) -> CalibrationInfo {
         let b = 14 + 42
-        let i1 = Libre2.readBits(fram, 26, 0, 3)
-        let i2 = Libre2.readBits(fram, 26, 3, 0xa)
+        let b1 = 47
+        let i1 = Libre2.readBits(fram, b1, 0, 3)
+        let i2 = Libre2.readBits(fram, b1, 3, 0xa)
         let i3 = Libre2.readBits(fram, b, 0, 8)
         let i4 = Libre2.readBits(fram, b, 8, 0xe)
         let negativei3 = Libre2.readBits(fram, b, 0x21, 1) != 0
@@ -266,5 +276,53 @@ open class LibrePro {
         let i6 = Libre2.readBits(fram, b, 0x34, 0xc) << 2
 
         return CalibrationInfo(i1: i1, i2: i2, i3: negativei3 ? -i3 : i3, i4: i4, i5: i5, i6: i6)
+    }
+    
+    public static func readHistoricalValues(data: Data, calibrationInfo: CalibrationInfo) -> [GlucoseData] {
+        let history = 256 * Int(data[79]) + Int(data[78])
+        let sensorTime = 256 * Int(data[75]) + Int(data[74])
+        var histories = [GlucoseData]()
+        let dataHistory = data.subdata(in: (LibrePro.currentBlocks * 8) ..< ((LibrePro.currentBlocks + LibrePro.historyBlocks) * 8) )
+        
+        var proHistoryStart = 0
+        if history > 32 {
+            let historyByteLen = (history - 32) * 6 + 176
+            proHistoryStart = historyByteLen % 8
+        }
+        
+        if history < 32 {
+            for i in 0 ..< history {
+                let  address = i * 6
+                let value = Libre2.readGlucoseValue(dataHistory, address, calibrationInfo)
+                let time = abs((sensorTime - 3) / 15) * 15 - (history - i) * 15
+                if sensorTime - time >= sensorTime {
+                    continue
+                }
+                value.timeStamp = Date().adding(.minute, value: time - sensorTime)
+                LogsAccessor.log("hs: raw: \(value.glucoseLevelRaw), ts: \(value.timeStamp.localString())")
+                histories.append(value)
+            }
+        } else {
+            for i in 0 ..< 32 {
+                let address = i * 6 + proHistoryStart
+                let value = Libre2.readGlucoseValue(dataHistory, address, calibrationInfo)
+                let time = abs((sensorTime - 3) / 15) * 15 - i * 15
+                if sensorTime - time >= sensorTime {
+                    continue
+                }
+                value.timeStamp = Date().adding(.minute, value: time - sensorTime)
+                LogsAccessor.log("hs: raw: \(value.glucoseLevelRaw), ts: \(value.timeStamp.localString())")
+                histories.append(value)
+            }
+        }
+        return histories
+    }
+    
+    public static func readTrendValues(data: Data, calibrationInfo: CalibrationInfo) -> GlucoseData {
+        let trend = 256 * Int(data[77]) + Int(data[76])
+        let address = trend * 6 + 80
+        let value = Libre2.readGlucoseValue(data, address, calibrationInfo)
+        LogsAccessor.log("current: raw: \(value.glucoseLevelRaw), ts: \(value.timeStamp.localString()), address: \(address)")
+        return value
     }
 }

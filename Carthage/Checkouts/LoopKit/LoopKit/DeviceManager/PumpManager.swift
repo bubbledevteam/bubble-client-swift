@@ -13,7 +13,7 @@ public enum PumpManagerResult<T> {
     case failure(PumpManagerError)
 }
 
-public protocol PumpManagerStatusObserver: class {
+public protocol PumpManagerStatusObserver: AnyObject {
     func pumpManager(_ pumpManager: PumpManager, didUpdate status: PumpManagerStatus, oldStatus: PumpManagerStatus)
 }
 
@@ -50,6 +50,15 @@ public protocol PumpManagerDelegate: DeviceManagerDelegate, PumpManagerStatusObs
 
 
 public protocol PumpManager: DeviceManager {
+    /// The maximum number of scheduled basal rates in a single day supported by the pump. Used during onboarding by therapy settings.
+    static var onboardingMaximumBasalScheduleEntryCount: Int { get }
+
+    /// All user-selectable basal rates, in Units per Hour. Must be non-empty. Used during onboarding by therapy settings.
+    static var onboardingSupportedBasalRates: [Double] { get }
+
+    /// All user-selectable bolus volumes, in Units. Must be non-empty. Used during onboarding by therapy settings.
+    static var onboardingSupportedBolusVolumes: [Double] { get }
+
     /// Rounds a basal rate in U/hr to a rate supported by this pump.
     ///
     /// - Parameters:
@@ -131,8 +140,8 @@ public protocol PumpManager: DeviceManager {
     ///   - units: The number of units to deliver
     ///   - automatic: Whether the dose was triggered automatically as opposed to commanded by user
     ///   - completion: A closure called after the command is complete
-    ///   - result: A DoseEntry or an error describing why the command failed
-    func enactBolus(units: Double, automatic: Bool, completion: @escaping (_ result: PumpManagerResult<DoseEntry>) -> Void)
+    ///   - error: An optional error describing why the command failed
+    func enactBolus(units: Double, automatic: Bool, completion: @escaping (_ error: PumpManagerError?) -> Void)
 
     /// Cancels the current, in progress, bolus.
     ///
@@ -147,8 +156,8 @@ public protocol PumpManager: DeviceManager {
     ///   - unitsPerHour: The temporary basal rate to set
     ///   - duration: The duration of the temporary basal rate.
     ///   - completion: A closure called after the command is complete
-    ///   - result: A DoseEntry or an error describing why the command failed
-    func enactTempBasal(unitsPerHour: Double, for duration: TimeInterval, completion: @escaping (_ result: PumpManagerResult<DoseEntry>) -> Void)
+    ///   - error: An optional error describing why the command failed
+    func enactTempBasal(unitsPerHour: Double, for duration: TimeInterval, completion: @escaping (_ error: PumpManagerError?) -> Void)
 
     /// Send a command to the pump to suspend delivery
     ///
@@ -164,12 +173,6 @@ public protocol PumpManager: DeviceManager {
     ///   - error: An error describing why the command failed
     func resumeDelivery(completion: @escaping (_ error: Error?) -> Void)
     
-    /// Notifies the PumpManager of a change in the user's preference for maximum basal rate.
-    ///
-    /// - Parameters:
-    ///   - rate: The maximum rate the pumpmanager should expect to receive in an enactTempBasal command.
-    func setMaximumTempBasalRate(_ rate: Double)
-
     typealias SyncSchedule = (_ items: [RepeatingScheduleValue<Double>], _ completion: @escaping (Result<BasalRateSchedule, Error>) -> Void) -> Void
 
     /// Sync the schedule of basal rates to the pump, annotating the result with the proper time zone.

@@ -78,7 +78,10 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     private var proRxBuffer = Data()
     var sensorData: SensorData?
     var patchInfo: String?
-    var isDecryptedDataPacket = false
+    
+    var isPro: Bool {
+        patchInfo?[0 ..< 2] == "70"
+    }
     
     //    fileprivate let serviceUUIDs:[CBUUID]? = [CBUUID(string: "6E400001B5A3F393E0A9E50E24DCCA9E")]
     fileprivate var deviceName = "Bubble"
@@ -143,7 +146,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         data = data.subdata(in: 0..<344)
         sensorData = SensorData(uuid: Data(), bytes: [UInt8](data), date: Date(), patchInfo: "A20800045B37")
         sensorData?.patchUid = "45F4820500A007E0"
-        sensorData?.isDecryptedDataPacket = true
+//        sensorData?.isDecryptedDataPacket = true
         // Check if sensor data is valid and, if this is not the case, request data again after thirty second
         if let sensorData = sensorData {
             let bubble = Bubble(hardware: "1", firmware: "1", battery: 20)
@@ -256,28 +259,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         }
     }
     
-    func unlock() {
-        #if !WATCH
-        
-        let unlockCount = UserDefaultsUnit.unlockCount!
-        
-        if let uid = UserDefaultsUnit.patchUid, let info = UserDefaultsUnit.patchInfo {
-            if var uidData = uid.hexadecimal, let infoData = info.hexadecimal {
-                uidData = Data(uidData.reversed())
-                LogsAccessor.log("info: \(infoData.hexEncodedString()), uid: \(uidData.hexEncodedString())")
-                // connectToDevice===1e85a80100a407e0==9d0830012413
-                let payload = Libre2.streamingUnlockPayload(id: uidData, info: infoData, enableTime: 42, unlockCount: unlockCount)
-
-                LogsAccessor.log("Bluetooth: writing streaming unlock payload: \(Data(payload).hexEncodedString()) unlock code: \(42), unlock count: \(unlockCount)")
-                
-                if let peripheral = peripheral, let writeCharacteristic = writeCharacteristic {
-                    peripheral.writeValue(Data(payload), for: writeCharacteristic, type: .withResponse)
-                }
-            }
-        }
-        #endif
-    }
-    
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if let characteristics = service.characteristics {
             for characteristic in characteristics {
@@ -286,9 +267,9 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                     LogsAccessor.log("characteristics: \(uuidString)")
                     if uuidString == "F002" {
                         receiveCharacteristic = characteristic
+                        peripheral.setNotifyValue(true, for: characteristic)
                     } else if uuidString == "F001" {
                         writeCharacteristic = characteristic
-                        unlock()
                     }
                 } else {
                     if (characteristic.properties.intersection(.notify)) == .notify && characteristic.uuid == CBUUID(string: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E") {
@@ -307,12 +288,6 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     
     func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         LogsAccessor.log("didWriteValueFor: \(characteristic.uuid.uuidString)")
-        if characteristic.uuid.uuidString == "F001" {
-            var unlockCount = UserDefaultsUnit.unlockCount!
-            unlockCount += 1
-            UserDefaultsUnit.unlockCount = unlockCount
-            peripheral.setNotifyValue(true, for: receiveCharacteristic!)
-        }
     }
     
     
@@ -350,13 +325,20 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                         delegate?.BubbleBluetoothManagerMessageChanged()
                         LogsAccessor.log("Battery: \(battery)")
                     case .dataPacket, .decryptedDataPacket:
-                        isDecryptedDataPacket = bubbleResponseState == .decryptedDataPacket
                         guard rxBuffer.count >= 8 else { return }
                         rxBuffer.append(value.suffix(from: 4))
-                        if rxBuffer.count >= 352 {
-                            handleCompleteMessage()
-                            resetBuffer()
+                        
+                        if isPro {
+                            if rxBuffer.count >= (LibrePro.currentBlocks + LibrePro.historyBlocks) * 8 {
+                                handleProDataPackage()
+                            }
+                        } else {
+                            if rxBuffer.count >= 352 {
+                                handleCompleteMessage()
+                                resetBuffer()
+                            }
                         }
+                        
                     case .noSensor:
                         delegate?.BubbleBluetoothManagerReceivedMessage(0x0000, txFlags: 0x34, payloadData: rxBuffer)
                         resetBuffer()
@@ -400,12 +382,12 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 
                 guard latestUpdateDate.addingTimeInterval(60 * 4) < Date() else { return }
                 let bubble = Bubble(hardware: "1.0", firmware: "1.0", battery: 100)
-                guard let uid = UserDefaultsUnit.patchUid?.hexadecimal,
+                guard let uid = UserDefaultsUnit.patchUid,
                       let info = UserDefaultsUnit.patchInfo else {
                     return
                 }
                 
-                let sensorData = SensorData(bytes: [UInt8](data), sn: UserDefaultsUnit.sensorSerialNumber ?? "", patchUid: Data(uid.reversed()).hexEncodedString(), patchInfo: info)
+                let sensorData = SensorData(bytes: [UInt8](data), sn: UserDefaultsUnit.sensorSerialNumber ?? "", patchUid: uid, patchInfo: info)
                 
                 delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
             }
@@ -438,19 +420,24 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
         LogsAccessor.log("receive 344")
         let data = rxBuffer.subdata(in: 8 ..< 352)
         sensorData = SensorData(uuid: rxBuffer.subdata(in: 0..<8), bytes: [UInt8](data), date: Date(), patchInfo: patchInfo)
-        guard var sensorData = sensorData else { return }
+        guard let sensorData = sensorData else { return }
         
         if sensorData.isProSensor {
-            if !isDecryptedDataPacket {
-                UserDefaultsUnit.proOriginal344Data = data
-            }
+            UserDefaultsUnit.proOriginal344Data = data
         }
         
-        if isDecryptedDataPacket || sensorData.isFirstSensor {
-            sensorData.isDecryptedDataPacket = true
-            // Inform delegate that new data is available
-            delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
-        }
+        delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
+    }
+    
+    func handleProDataPackage() {
+        let data = rxBuffer[8...]
+        let cd = data.subdata(in: 0..<(8 * LibrePro.currentBlocks)).hexEncodedString()
+        let hd = data.subdata(in: (8 * LibrePro.currentBlocks) ..< (LibrePro.currentBlocks + LibrePro.historyBlocks) * 8).hexEncodedString()
+        LogsAccessor.log("current: \(cd)\nhistory: \(hd)")
+        
+        sensorData = SensorData(uuid: rxBuffer.subdata(in: 0..<8), bytes: [UInt8](data), date: Date(), patchInfo: patchInfo)
+        guard let sensorData = sensorData, let bubble = bubble else { return }
+        delegate?.BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: sensorData, Bubble: bubble)
     }
     
     deinit {

@@ -11,7 +11,6 @@ import LoopKit
 import LoopKitUI
 import UserNotifications
 import CoreBluetooth
-
 import os.log
 import HealthKit
 
@@ -349,7 +348,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
         LogsAccessor.log("name: \(sensorData.sensorName), patchInfo: \(sensorData.patchInfo ?? ""), patchUid: \(sensorData.patchUid ?? ""), \ncontent: \(Data(sensorData.bytes).hexEncodedString()), state: \(sensorData.state.description)")
         if sensorData.state != .ready { return }
         
-        if !sensorData.isDirectLibre2 && !sensorData.hasValidCRCs {
+        if !sensorData.isDirectLibre2 && !sensorData.hasValidCRCs && !sensorData.isSecondSensor {
             LogsAccessor.log("crc failed")
             return
         }
@@ -414,7 +413,7 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
             }
             
             let newGlucose = filterred.map {
-                return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, isDisplayOnly: false, wasUserEntered: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
+                return NewGlucoseSample(date: $0.startDate, quantity: $0.quantity, trend: $0.trendType, isDisplayOnly: false, wasUserEntered: false, syncIdentifier: "\(Int($0.startDate.timeIntervalSince1970))", device: self.device)
             }
             
             // update current glucose value every time.
@@ -467,6 +466,9 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
 // MARK: - AlertResponder implementation
 extension BubbleClientManager {
     public func acknowledgeAlert(alertIdentifier: Alert.AlertIdentifier) { }
+    public func acknowledgeAlert(alertIdentifier: Alert.AlertIdentifier, completion: @escaping (Error?) -> Void) {
+        completion(nil)
+    }
 }
 
 // MARK: - AlertSoundVendor implementation

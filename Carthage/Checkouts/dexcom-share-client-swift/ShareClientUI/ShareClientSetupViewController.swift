@@ -11,9 +11,8 @@ import LoopKitUI
 import ShareClient
 
 
-class ShareClientSetupViewController: UINavigationController, CGMManagerCreateNotifying, CGMManagerOnboardNotifying, CompletionNotifying {
-    weak var cgmManagerCreateDelegate: CGMManagerCreateDelegate?
-    weak var cgmManagerOnboardDelegate: CGMManagerOnboardDelegate?
+class ShareClientSetupViewController: UINavigationController, CGMManagerOnboarding, CompletionNotifying {
+    weak var cgmManagerOnboardingDelegate: CGMManagerOnboardingDelegate?
     weak var completionDelegate: CompletionDelegate?
 
     let cgmManager = ShareClientManager()
@@ -43,8 +42,8 @@ class ShareClientSetupViewController: UINavigationController, CGMManagerCreateNo
     }
 
     @objc private func save() {
-        cgmManagerCreateDelegate?.cgmManagerCreateNotifying(didCreateCGMManager: cgmManager)
-        cgmManagerOnboardDelegate?.cgmManagerOnboardNotifying(didOnboardCGMManager: cgmManager)
+        cgmManagerOnboardingDelegate?.cgmManagerOnboarding(didCreateCGMManager: cgmManager)
+        cgmManagerOnboardingDelegate?.cgmManagerOnboarding(didOnboardCGMManager: cgmManager)
         completionDelegate?.completionNotifyingDidComplete(self)
     }
 }

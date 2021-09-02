@@ -160,7 +160,8 @@ public struct MockPumpManagerState {
     public var progressWarningThresholdPercentValue: Double?
     public var progressCriticalThresholdPercentValue: Double?
     
-    public var insulinType: InsulinType
+    public var insulinType: InsulinType?
+    public var timeZone: TimeZone
     
     public var dosesToStore: [UnfinalizedDose] {
         return finalizedDoses + [unfinalizedTempBasal, unfinalizedBolus].compactMap {$0}
@@ -203,6 +204,7 @@ public struct MockPumpManagerState {
         self.progressWarningThresholdPercentValue = progressWarningThresholdPercentValue
         self.progressCriticalThresholdPercentValue = progressCriticalThresholdPercentValue
         self.insulinType = insulinType
+        self.timeZone = .currentFixed
     }
 
     public mutating func finalizeFinishedDoses() {
@@ -278,6 +280,12 @@ extension MockPumpManagerState: RawRepresentable {
         } else {
             self.insulinType = .novolog
         }
+
+        if let timeZoneOffset = rawValue["timeZone"] as? Int {
+            self.timeZone = TimeZone(secondsFromGMT: timeZoneOffset) ?? .currentFixed
+        } else {
+            self.timeZone = .currentFixed
+        }
     }
 
     public var rawValue: RawValue {
@@ -287,7 +295,7 @@ extension MockPumpManagerState: RawRepresentable {
             "supportedBolusVolumes": supportedBolusVolumes,
             "supportedBasalRates": supportedBasalRates,
             "reservoirUnitsRemaining": reservoirUnitsRemaining,
-            "insulinType": insulinType.rawValue
+            "timeZone": timeZone.secondsFromGMT()
         ]
 
         raw["basalRateSchedule"] = basalRateSchedule?.rawValue
@@ -338,6 +346,8 @@ extension MockPumpManagerState: RawRepresentable {
         raw["progressWarningThresholdPercentValue"] = progressWarningThresholdPercentValue
         raw["progressCriticalThresholdPercentValue"] = progressCriticalThresholdPercentValue
         
+        raw["insulinType"] = insulinType?.rawValue
+        
         return raw
     }
 }
@@ -366,6 +376,7 @@ extension MockPumpManagerState: CustomDebugStringConvertible {
         * progressPercentComplete: \(progressPercentComplete as Any)
         * progressWarningThresholdPercentValue: \(progressWarningThresholdPercentValue as Any)
         * progressCriticalThresholdPercentValue: \(progressCriticalThresholdPercentValue as Any)
+        * insulinType: \(insulinType as Any)
         """
     }
 }

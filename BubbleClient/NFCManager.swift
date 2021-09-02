@@ -64,19 +64,19 @@ public class NFCManager: NSObject, NFCReceive {
     }
     
     public func set(sn value: Data, patchInfo: String) {
-        self.patchInfo = patchInfo
-        UserDefaultsUnit.patchInfo = patchInfo
-        
-        let uid = value.hexEncodedString().uppercased()
-        UserDefaultsUnit.patchUid = uid
-        UserDefaultsUnit.unlockCount = 1
-        
-        LogsAccessor.log( "patchInfo: \(patchInfo), patchUid: \(uid)")
-        
-        let reversed = Data(value.reversed())
-        patchUid = reversed.hexEncodedString().uppercased()
-        if let sensorSerialNumber = SensorSerialNumber(withUID: reversed, patchInfo: patchInfo) {
-            UserDefaultsUnit.sensorSerialNumber = sensorSerialNumber.serialNumber
+        DispatchQueue.main.async {
+            self.patchInfo = patchInfo
+            UserDefaultsUnit.patchInfo = patchInfo
+            
+            let reversed = Data(value.reversed())
+            self.patchUid = reversed.hexEncodedString().uppercased()
+            UserDefaultsUnit.patchUid = self.patchUid
+            
+            LogsAccessor.log("patchInfo: \(patchInfo), patchUid: \(self.patchUid ?? "")")
+            
+            if let sensorSerialNumber = SensorSerialNumber(withUID: reversed, patchInfo: patchInfo) {
+                UserDefaultsUnit.sensorSerialNumber = sensorSerialNumber.serialNumber
+            }
         }
     }
 }
@@ -203,15 +203,15 @@ final class BaseNFCManager: NSObject, NFCManager1 {
                         return Fail(error: NFCManagerError.unsupportedSensorType).eraseToAnyPublisher()
                     }
                     return tag.readFRAM(blocksCount: BaseNFCManager.Config.numberOfFRAMBlocks)
-                        .flatMap { data1 -> AnyPublisher<Data, Error> in
-                            if data1.count >= 344 {
-                                DispatchQueue.main.async {
-                                    self.delegate?.handleLibre2CalibrationInfo(data: data1[0..<344])
-                                }
-                            }
-                            return tag.enableStreamingPayload(info: data, uid: Data(snData.reversed()))
-                        }
-                        .eraseToAnyPublisher()
+//                        .flatMap { data1 -> AnyPublisher<Data, Error> in
+//                            if data1.count >= 344 {
+//                                DispatchQueue.main.async {
+//                                    self.delegate?.handleLibre2CalibrationInfo(data: data1[0..<344])
+//                                }
+//                            }
+//                            return tag.enableStreamingPayload(info: data, uid: Data(snData.reversed()))
+//                        }
+//                        .eraseToAnyPublisher()
                 case .readState:
                     return tag.readFRAM(blocksCount: 1)
                 }

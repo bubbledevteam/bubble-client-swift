@@ -398,7 +398,7 @@ open class Libre2 {
             if (i < 0) { i += 32 }
 //            let address = ((i + startIndex + 32) % 32) * 6 + 124
             let address = i * 6 + 124
-            let value = readGlucoseValue(data, address, index, calibrationInfo)
+            let value = readGlucoseValue(data, address, calibrationInfo)
             let time = abs((sensorTime - 3) / 15) * 15 - index * 15
             if sensorTime - time >= sensorTime {
                 continue
@@ -415,12 +415,12 @@ open class Libre2 {
         let indexTrend = Int(data[26])
         let i = indexTrend - 0 - 1
         let address = i * 6 + 28
-        let value = readGlucoseValue(data, address, i, calibrationInfo)
+        let value = readGlucoseValue(data, address, calibrationInfo)
         LogsAccessor.log("current: raw: \(value.glucoseLevelRaw), ts: \(value.timeStamp.localString()), address: \(address), startIndex: \(startIndex)")
         return value
     }
     
-    public static func readGlucoseValue(_ data: Data, _ offset: Int, _ i: Int, _ calibrationInfo: CalibrationInfo) -> GlucoseData {
+    public static func readGlucoseValue(_ data: Data, _ offset: Int, _ calibrationInfo: CalibrationInfo) -> GlucoseData {
 
         var temperatureAdjustment = (readBits(data, offset, 0x26, 0x9) << 2)
         let negativeAdjustment = readBits(data, offset, 0x2f, 0x1) != 0

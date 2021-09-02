@@ -40,6 +40,7 @@ public struct CarbRatioScheduleEditor: View {
     }
     
     public init(
+        mode: SettingsPresentationMode,
         therapySettingsViewModel: TherapySettingsViewModel,
         didSave: (() -> Void)? = nil
     ) {
@@ -49,7 +50,7 @@ public struct CarbRatioScheduleEditor: View {
                 therapySettingsViewModel?.saveCarbRatioSchedule(carbRatioSchedule: $0)
                 didSave?()
             },
-            mode: therapySettingsViewModel.mode
+            mode: mode
         )
     }
 
@@ -92,6 +93,7 @@ private struct CarbRatioGuardrailWarning: View {
     var body: some View {
         assert(!crossedThresholds.isEmpty)
         return GuardrailWarning(
+            therapySetting: .carbRatio,
             title: crossedThresholds.count == 1 ? singularWarningTitle(for: crossedThresholds.first!) : multipleWarningTitle,
             thresholds: crossedThresholds
         )

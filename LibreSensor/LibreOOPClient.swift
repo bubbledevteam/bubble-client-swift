@@ -30,19 +30,14 @@ public class LibreOOPClient {
         let bytesAsData = Data(sensorData.bytes)
         
         let item = URLQueryItem(name: "accesstoken", value: token)
-        var item1 = URLQueryItem(name: "patchUid", value: patchUid)
-        var item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
+        let item1 = URLQueryItem(name: "patchUid", value: patchUid)
+        let item2 = URLQueryItem(name: "patchInfo", value: patchInfo)
         let item3 = URLQueryItem(name: "content", value: bytesAsData.hexEncodedString())
         let item5 = URLQueryItem(name: "oopType", value: "OOP1AndOOP2")
         let item6 = URLQueryItem(name: "session", value: UUID().uuidString)
         var items = [item, item1, item2, item3, item5, item6]
         if sensorData.isDirectLibre2 {
             items.append(URLQueryItem(name: "cgmType", value: "libre2ble"))
-        } else {
-            if !sensorData.isFirstSensor {
-                item1 = URLQueryItem(name: "patchUid", value: "7683376000A007E0")
-                item2 = URLQueryItem(name: "patchInfo", value: "DF0000080000")
-            }
         }
         
         var urlComponents = URLComponents(string: "\(baseUrl)/libreoop2AndCalibrate")!
@@ -300,7 +295,27 @@ public class LibreOOPClient {
 
 extension LibreOOPClient {
     public static func localParse(sensorData: SensorData, _ callback: @escaping ((glucoseData: [GlucoseData], sensorState: LibreSensorState, sensorTimeInMinutes: Int?)) -> Void) {
-        if sensorData.bytes.count == 344 {
+        if sensorData.isProSensor {
+            let libreData = sensorData.bytes
+            let dataCurrent = Data(libreData[0..<(LibrePro.currentBlocks * 8)])
+            let calibrationInfo = LibrePro.calibrationInfo2(fram: dataCurrent)
+            let sensorTime = 256 * Int(dataCurrent[75]) + Int(dataCurrent[74])
+            let current = LibrePro.readTrendValues(data: dataCurrent, calibrationInfo: calibrationInfo)
+            if current.glucoseLevelRaw < 39 || current.glucoseLevelRaw > 501 {
+                if sensorTime < 60 {
+                    callback(([], .starting, sensorTime))
+                } else {
+                    callback(([], .failure, sensorTime))
+                }
+            } else {
+                let dataHistory = Data(libreData)
+                var last32 = LibrePro.readHistoricalValues(data: dataHistory, calibrationInfo: calibrationInfo).filter { $0.glucoseLevelRaw >= 39 && $0.glucoseLevelRaw <= 501 && $0.timeStamp >= Date().adding(.minute, value: -sensorTime) }
+                last32.reverse()
+                let last96 = split(current: current, glucoseData: last32)
+                callback((last96, .ready, sensorTime))
+            }
+            
+        } else if sensorData.bytes.count == 344 {
             let body = Array(sensorData.bytes[24 ..< 320])
             let sensorTime = Int(body[293]) << 8 + Int(body[292])
             
@@ -352,7 +367,7 @@ extension LibreOOPClient {
             if let uid = UserDefaultsUnit.patchUid,
                let uidData = uid.hexadecimal,
                let calibrationInfo = UserDefaultsUnit.calibrationInfo,
-               let bytes = try? Libre2.decryptBLE(id: Data(uidData.reversed()), data: Data(sensorData.bytes)) {
+               let bytes = try? Libre2.decryptBLE(id: uidData, data: Data(sensorData.bytes)) {
                 
                 LogsAccessor.log("decryptBLE data: \(Data(bytes).hexEncodedString())")
                 LogsAccessor.log("calibrationInfo: \(calibrationInfo)")

@@ -7,6 +7,7 @@
 //
 
 import HealthKit
+import LoopKit
 
 open class SettingsNavigationViewController: UINavigationController, CompletionNotifying {
 
@@ -18,22 +19,14 @@ open class SettingsNavigationViewController: UINavigationController, CompletionN
 
 }
 
-open class CGMManagerSettingsNavigationViewController: SettingsNavigationViewController, CGMManagerOnboardNotifying {
+open class CGMManagerSettingsNavigationViewController: SettingsNavigationViewController, CGMManagerOnboarding {
 
-    open weak var cgmManagerOnboardDelegate: CGMManagerOnboardDelegate?
-
-    open func notifySetup(cgmManager: CGMManagerUI) {
-        cgmManagerOnboardDelegate?.cgmManagerOnboardNotifying(didOnboardCGMManager: cgmManager)
-    }
+    open weak var cgmManagerOnboardingDelegate: CGMManagerOnboardingDelegate?
 
 }
 
-open class PumpManagerSettingsNavigationViewController: SettingsNavigationViewController, PumpManagerOnboardNotifying {
+open class PumpManagerSettingsNavigationViewController: SettingsNavigationViewController, PumpManagerOnboarding {
 
-    open weak var pumpManagerOnboardDelegate: PumpManagerOnboardDelegate?
-
-    open func notifySetup(pumpManager: PumpManagerUI, withFinalSettings settings: PumpManagerSetupSettings) {
-        pumpManagerOnboardDelegate?.pumpManagerOnboardNotifying(didOnboardPumpManager: pumpManager, withFinalSettings: settings)
-    }
-
+    open weak var pumpManagerOnboardingDelegate: PumpManagerOnboardingDelegate?
+    
 }

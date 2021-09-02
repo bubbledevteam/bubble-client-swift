@@ -12,7 +12,7 @@ import BubbleClient
 import BubbleClientUI
 import os.log
 
-class BubbleClientPlugin: NSObject, LoopUIPlugin {
+class BubbleClientPlugin: NSObject, CGMManagerUIPlugin {
     
     private let log = OSLog(category: "BubbleClientPlugin")
     

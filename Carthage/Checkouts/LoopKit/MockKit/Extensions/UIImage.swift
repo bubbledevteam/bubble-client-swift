@@ -6,6 +6,8 @@
 //  Copyright © 2021 LoopKit Authors. All rights reserved.
 //
 
+// TODO: UIKit should not be in MockKit
+
 import UIKit
 
 private class FrameworkBundle {

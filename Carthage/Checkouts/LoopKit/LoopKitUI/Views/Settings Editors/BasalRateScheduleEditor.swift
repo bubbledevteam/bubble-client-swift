@@ -57,6 +57,7 @@ public struct BasalRateScheduleEditor: View {
     }
     
     public init(
+        mode: SettingsPresentationMode,
         therapySettingsViewModel: TherapySettingsViewModel,
         didSave: (() -> Void)? = nil
     ) {
@@ -70,7 +71,7 @@ public struct BasalRateScheduleEditor: View {
                 therapySettingsViewModel?.saveBasalRates(basalRates: newBasalRates)
                 didSave?()
             },
-            mode: therapySettingsViewModel.mode
+            mode: mode
         )
     }
 
@@ -148,6 +149,7 @@ private struct BasalRateGuardrailWarning: View {
             : nil
 
         return GuardrailWarning(
+            therapySetting: .basalRate,
             title: crossedThresholds.count == 1 ? singularWarningTitle(for: crossedThresholds.first!) : multipleWarningTitle,
             thresholds: crossedThresholds,
             caption: caption

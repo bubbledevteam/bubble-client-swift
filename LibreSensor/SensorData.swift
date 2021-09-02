@@ -93,7 +93,7 @@ public struct SensorData {
         return LibreSensorState(stateByte: header[4])
     }
     
-    var isDecryptedDataPacket = false
+//    var isDecryptedDataPacket = false
     
     var isDirectLibre2 = false
     

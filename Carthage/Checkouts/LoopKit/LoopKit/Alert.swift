@@ -9,7 +9,7 @@
 import Foundation
 
 /// Protocol that describes any class that issues and retract Alerts.
-public protocol AlertIssuer: class {
+public protocol AlertIssuer: AnyObject {
     /// Issue (post) the given alert, according to its trigger schedule.
     func issueAlert(_ alert: Alert)
     /// Retract any alerts with the given identifier.  This includes both pending and delivered alerts.
@@ -17,9 +17,9 @@ public protocol AlertIssuer: class {
 }
 
 /// Protocol that describes something that can deal with a user's response to an alert.
-public protocol AlertResponder: class {
-    /// Acknowledge alerts with a given type identifier
-    func acknowledgeAlert(alertIdentifier: Alert.AlertIdentifier) -> Void
+public protocol AlertResponder: AnyObject {
+    /// Acknowledge alerts with a given type identifier. If the alert fails to clear, an error should be passed to the completion handler, indicating the cause of failure.
+    func acknowledgeAlert(alertIdentifier: Alert.AlertIdentifier, completion: @escaping (Error?) -> Void) -> Void
 }
 
 /// Structure that represents an Alert that is issued from a Device.
