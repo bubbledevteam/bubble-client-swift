@@ -346,9 +346,8 @@ public final class BubbleClientManager: CGMManager, BubbleBluetoothManagerDelega
     public func BubbleBluetoothManagerDidUpdateSensorAndBubble(sensorData: SensorData, Bubble: Bubble) {
         reloadData?()
         LogsAccessor.log("name: \(sensorData.sensorName), patchInfo: \(sensorData.patchInfo ?? ""), patchUid: \(sensorData.patchUid ?? ""), \ncontent: \(Data(sensorData.bytes).hexEncodedString()), state: \(sensorData.state.description)")
-        if sensorData.state != .ready { return }
         
-        if !sensorData.isDirectLibre2 && !sensorData.hasValidCRCs && !sensorData.isSecondSensor {
+        if !sensorData.isDirectLibre2 && !sensorData.hasValidCRCs && sensorData.isFirstSensor {
             LogsAccessor.log("crc failed")
             return
         }

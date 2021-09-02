@@ -321,7 +321,8 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                     case .bubbleInfo:
                         let battery = Int(value[4])
                         let firmware = "\(value[2]).\(value[3])"
-                        bubble = Bubble(hardware: "0", firmware: firmware, battery: battery)
+                        let hardware = "\(value[9]).\(value[10])"
+                        bubble = Bubble(hardware: hardware, firmware: firmware, battery: battery)
                         delegate?.BubbleBluetoothManagerMessageChanged()
                         LogsAccessor.log("Battery: \(battery)")
                     case .dataPacket, .decryptedDataPacket:
@@ -331,6 +332,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
                         if isPro {
                             if rxBuffer.count >= (LibrePro.currentBlocks + LibrePro.historyBlocks) * 8 {
                                 handleProDataPackage()
+                                resetBuffer()
                             }
                         } else {
                             if rxBuffer.count >= 352 {
@@ -430,7 +432,7 @@ final class BubbleBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeriph
     }
     
     func handleProDataPackage() {
-        let data = rxBuffer[8...]
+        let data = rxBuffer.subdata(in: 8..<rxBuffer.count)
         let cd = data.subdata(in: 0..<(8 * LibrePro.currentBlocks)).hexEncodedString()
         let hd = data.subdata(in: (8 * LibrePro.currentBlocks) ..< (LibrePro.currentBlocks + LibrePro.historyBlocks) * 8).hexEncodedString()
         LogsAccessor.log("current: \(cd)\nhistory: \(hd)")
